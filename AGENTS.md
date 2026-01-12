@@ -1,26 +1,39 @@
 # AGENTS.md
 
-This document outlines the template for Python project development. Use this as a starting point to maintain consistency and best practices across Python projects.
+## Project overview
 
-## Template Structure
+tutorials for building deep agents using LangChain and LangGraph.
 
+## Preferences and dependencies
+
+1. Use Python 3.12 or later
+2. Install dependencies using pip:
+
+   ```bash
+   pip install -r requirements.txt
+   ```
+
+3. Load environment variables from a `.env` file for API keys and configurations.
+
+4. Use Ollama as the local LLM backend.
+
+```Python
+from langchain_ollama import ChatOllama, OllamaEmbeddings
+from langchain_openai import ChatOpenAI
+
+llm = ChatOllama(model='llama3.2')
+embedding = OllamaEmbeddings(model='nomic-embed-text')
+
+llm = ChatOpenAI(model="gpt-4.1-nano", max_tokens=500)
 ```
-project_name/
-|-- .gitignore
-|-- README.md
-|-- requirements.txt
-|-- setup.py
-|-- src/
-|   |-- __init__.py
-|   |-- main.py
-|-- tests/
-|   |-- __init__.py
-|   |-- test_main.py
-```
 
-## Description
-- `README.md`: Project Documentation.
-- `requirements.txt`: List of Python dependencies.
-- `setup.py`: Project setup script.
-- `src/`: Contains the source code.
-- `tests/`: Contains unit 
+## Project structure
+
+
+## Key files and their purposes
+
+## Build and test commands
+
+## Code style guidelines
+
+## Testing instructions
