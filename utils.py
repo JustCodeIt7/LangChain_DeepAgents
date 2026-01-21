@@ -3,102 +3,51 @@ Utility functions for LangChain Deep Agents
 """
 import json
 from typing import Dict, List, Any
+from rich import print
 
-
-def print_agent_execution(result: Dict[str, Any], verbose: bool = True) -> None:
+def print_agent_execution(result: Dict[str, Any], max_length: int = 500) -> None:
     """
-    Print the agent's execution path in a readable format.
-    
-    Shows:
-    - User queries
-    - Tool calls made by the agent
-    - Tool results
-    - Agent responses
-    
+    Print the agent's execution path in a simple, readable format.
+
+    Shows the message type and content for each message in the conversation.
+
     Args:
         result: The result dictionary from agent.invoke() containing messages
-        verbose: If True, show full tool results; if False, truncate long outputs
+        max_length: Maximum characters to show per message (default: 500)
     """
     messages = result.get("messages", [])
     
     print("\n" + "═" * 80)
     print("🤖 AGENT EXECUTION TRACE")
-    print("═" * 80)
-    
-    step = 1
-    
-    for i, msg in enumerate(messages):
-        # Handle different message types
-        msg_type = getattr(msg, 'type', None)
-        
-        if msg_type == "human":
-            # User message
-            print(f"\n📨 USER INPUT:")
-            print(f"   └─ {msg.content}")
-            print()
-            
-        elif msg_type == "ai":
-            # AI message - check if it has tool calls
-            tool_calls = getattr(msg, 'tool_calls', [])
-            
+    print("═" * 80 + "\n")
+
+    for i, msg in enumerate(messages, 1):
+        # Get message type
+        msg_type = getattr(msg, "type", "unknown")
+
+        # Choose emoji based on type
+        emoji_map = {"human": "👤", "ai": "🤖", "tool": "🔧"}
+        emoji = emoji_map.get(msg_type, "❓")
+
+        # Get content
+        content = getattr(msg, "content", "")
+
+        # Truncate if too long
+        if len(content) > max_length:
+            content = content[:max_length] + "..."
+
+        # Check if AI message has tool calls
+        tool_call_info = ""
+        if msg_type == "ai":
+            tool_calls = getattr(msg, "tool_calls", [])
             if tool_calls:
-                # Agent is calling tools
-                print(f"🔧 STEP {step}: AGENT TOOL CALLS")
-                for tc in tool_calls:
-                    tool_name = tc.get('name', 'unknown')
-                    tool_args = tc.get('args', {})
-                    print(f"   ├─ Tool: {tool_name}")
-                    print(f"   └─ Args: {json.dumps(tool_args, indent=6)}")
-                print()
-                step += 1
-            else:
-                # Final agent response
-                content = msg.content
-                if content:
-                    print(f"✅ FINAL RESPONSE:")
-                    print(f"   {content}")
-                    print()
-                    
-        elif msg_type == "tool":
-            # Tool result
-            tool_name = getattr(msg, 'name', 'unknown')
-            content = msg.content
-            
-            print(f"📊 TOOL RESULT: {tool_name}")
-            
-            # Try to parse as JSON for better formatting
-            try:
-                parsed_content = json.loads(content)
-                
-                # Handle different tool result structures
-                if "results" in parsed_content:
-                    results = parsed_content["results"]
-                    print(f"   ├─ Found {len(results)} results")
-                    
-                    if verbose:
-                        for idx, res in enumerate(results[:3], 1):  # Show first 3
-                            print(f"   ├─ Result {idx}:")
-                            print(f"   │  ├─ Title: {res.get('title', 'N/A')}")
-                            print(f"   │  ├─ URL: {res.get('url', 'N/A')}")
-                            print(f"   │  └─ Score: {res.get('score', 'N/A')}")
-                        if len(results) > 3:
-                            print(f"   └─ ... and {len(results) - 3} more results")
-                    else:
-                        print(f"   └─ (Use verbose=True to see details)")
-                elif "Error" in content:
-                    print(f"   └─ ❌ {content}")
-                else:
-                    # Generic JSON output
-                    print(f"   └─ {json.dumps(parsed_content, indent=6)[:500]}")
-                    
-            except (json.JSONDecodeError, AttributeError):
-                # Not JSON, print as text
-                if len(content) > 200 and not verbose:
-                    print(f"   └─ {content[:200]}... (truncated)")
-                else:
-                    print(f"   └─ {content}")
-            
-            print()
+                tool_names = [tc.get("name", "unknown") for tc in tool_calls]
+                tool_call_info = f" - Calling: {', '.join(tool_names)}"
+
+        # Print message
+        print(f"{emoji} Message {i} [{msg_type.upper()}]{tool_call_info}:")
+        print(f"{content}")
+        print()
     
     print("═" * 80)
     print("✨ Execution complete!")

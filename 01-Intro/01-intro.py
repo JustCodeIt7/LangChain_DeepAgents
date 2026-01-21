@@ -21,11 +21,10 @@ from dotenv import load_dotenv
 from tavily import TavilyClient
 from deepagents import create_deep_agent
 from langchain_ollama import ChatOllama
-
+from rich import print
 # Add parent directory to path to import utils
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 from utils import print_agent_execution, print_agent_summary, save_agent_result
-
 # Load API keys from .env file
 load_dotenv()
 OLLAMA_BASE_URL = os.environ.get("OLLAMA_BASE_URL", "http://localhost:11434")
@@ -87,9 +86,11 @@ result = agent.invoke({
 
 # %%
 # Print the agent's execution trace - shows all steps
-print_agent_execution(result, verbose=True)
+print_agent_execution(result)
 
 # Print a quick summary of what happened
-print_agent_summary(result)
+# print_agent_summary(result)
 
+# %%
+save_agent_result(result)
 # %%

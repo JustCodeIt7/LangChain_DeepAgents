@@ -1,0 +1,111 @@
+{
+    "messages": [
+        {
+            "content": "Research what LangGraph is and write a brief summary.",
+            "additional_kwargs": {},
+            "response_metadata": {},
+            "type": "human",
+            "name": null,
+            "id": "0a32e02d-c2aa-4a29-9a53-624b8f6828fd"
+        },
+        {
+            "content": "",
+            "additional_kwargs": {},
+            "response_metadata": {
+                "model": "gpt-oss:20b",
+                "created_at": "2026-01-21T10:45:46.162837404Z",
+                "done": true,
+                "done_reason": "stop",
+                "total_duration": 810247336,
+                "load_duration": 248360510,
+                "prompt_eval_count": 4472,
+                "prompt_eval_duration": 6806777,
+                "eval_count": 111,
+                "eval_duration": 511126476,
+                "message": {
+                    "role": "assistant",
+                    "content": "",
+                    "images": null,
+                    "tool_calls": [
+                        {
+                            "function": {
+                                "name": "internet_search",
+                                "arguments": {
+                                    "query": "LangGraph",
+                                    "max_results": 5,
+                                    "topic": "general",
+                                    "include_raw_content": false
+                                }
+                            }
+                        }
+                    ]
+                }
+            },
+            "type": "ai",
+            "name": null,
+            "id": "lc_run--019be029-0be2-7ee1-8bb6-6bcdf94c4c62-0",
+            "tool_calls": [
+                {
+                    "name": "internet_search",
+                    "args": {
+                        "query": "LangGraph",
+                        "max_results": 5,
+                        "topic": "general",
+                        "include_raw_content": false
+                    },
+                    "id": "b9a2b7fb-9cbd-4c4e-ba30-c19514566e96",
+                    "type": "tool_call"
+                }
+            ],
+            "invalid_tool_calls": [],
+            "usage_metadata": {
+                "input_tokens": 4472,
+                "output_tokens": 111,
+                "total_tokens": 4583
+            }
+        },
+        {
+            "content": "{\"query\": \"LangGraph\", \"response_time\": 0.58, \"follow_up_questions\": null, \"answer\": null, \"images\": [], \"results\": [{\"url\": \"https://www.geeksforgeeks.org/machine-learning/what-is-langgraph/\", \"title\": \"What is LangGraph?\", \"content\": \"LangGraph is an open-source framework built by LangChain that streamlines the creation and management of AI agent workflows. At its core, LangGraph combines large language models (LLMs) with graph-based architectures allowing developers to map, organize and optimize how AI agents interact and make decisions. By treating workflows as interconnected nodes and edges, LangGraph offers a scalable, transparent and developer-friendly way to design advanced AI systems ranging from simple chatbots to multi-agent system. The diagram below shows how LangGraph structures its agent-based workflow using distinct tools and stages. By designing workflows, users combine multiple nodes into powerful, dynamic AI processes. * ****langgraph:**** Framework for building graph-based AI workflows. ### Step 6: Build LangGraph Workflow. * Build the workflow graph using LangGraph, adding nodes for classification and response, connecting them with edges and compiling the app. * Send each input through the workflow graph and returns the bot\u2019s response, either a greeting or an AI-powered answer. + Machine Learning Interview Questions and Answers15+ min read.\", \"score\": 0.910998, \"raw_content\": null}, {\"url\": \"https://github.com/langchain-ai/langgraph\", \"title\": \"langchain-ai/langgraph: Build resilient language agents as ...\", \"content\": \"You signed in with another tab or window. You signed out in another tab or window. docs.langchain.com/oss/python/langgraph/. 23.5k stars   4.1k forks   Branches   Tags   Activity. # langchain-ai/langgraph. ## Repository files navigation. Trusted by companies shaping the future of agents \u2013 including Klarna, Replit, Elastic, and more \u2013 LangGraph is a low-level orchestration framework for building, managing, and deploying long-running, stateful agents. Get started with the LangGraph Quickstart. To quickly build agents with LangChain's `create_agent` (built on LangGraph), see the LangChain Agents documentation. LangGraph provides low-level supporting infrastructure for *any* long-running, stateful workflow or agent. While LangGraph can be used standalone, it also integrates seamlessly with any LangChain product, giving developers a full suite of tools for building agents. Discover, reuse, configure, and share agents across teams \u2014 and iterate quickly with visual prototyping in LangGraph Studio. docs.langchain.com/oss/python/langgraph/. python   open-source   enterprise   framework   ai   gemini   openai   multiagent   agents   ai-agents   rag   pydantic   llm   generative-ai   chatgpt   langchain   langgraph   deepagents.\", \"score\": 0.86713725, \"raw_content\": null}, {\"url\": \"https://www.langchain.com/langgraph\", \"title\": \"LangGraph\", \"content\": \"Gain control with LangGraph to design agents. Design agent-driven user experiences with LangGraph Platform's APIs. Quickly deploy and scale your application with infrastructure built for agents. ### Developers trust LangGraph to build reliable agents. LangGraph sets the foundation for how we can build and scale AI workloads \u2014 from conversational agents, complex task automation, to custom LLM-backed experiences that 'just work'. The next chapter in building complex production-ready features with LLMs is agentic, and with LangGraph and LangSmith, LangChain delivers an out-of-the-box solution to iterate quickly, debug immediately, and scale effortlessly.\u201d. LangGraph sets the foundation for how we can build and scale AI workloads \u2014 from conversational agents, complex task automation, to custom LLM-backed experiences that 'just work'. The next chapter in building complex production-ready features with LLMs is agentic, and with LangGraph and LangSmith, LangChain delivers an out-of-the-box solution to iterate quickly, debug immediately, and scale effortlessly.\u201d.\", \"score\": 0.7120925, \"raw_content\": null}, {\"url\": \"https://www.deeplearning.ai/short-courses/ai-agents-in-langgraph/\", \"title\": \"AI Agents in LangGraph - DeepLearning.AI\", \"content\": \"# AI Agents in LangGraph. Instructors: Harrison Chase, Rotem Weiss. * Learn about LangGraph\u2019s components and how they enable the development, debugging, and maintenance of AI agents. * Learn directly from LangChain founder Harrison Chase and Tavily founder Rotem Weiss. In this course you will learn to build an agent from scratch using Python and an LLM, and then you will rebuild it using LangGraph, learning about\u00a0 its components and how to combine them to build flow-based applications. Additionally, you will learn about agentic search, which returns multiple answers in an agent-friendly format, enhancing the agent\u2019s built-in knowledge. * Build an agent from scratch, and understand the division of tasks between the LLM and the code around the LLM. Start building more controllable agents using LangGraph! If you have intermediate Python knowledge and want to learn how to create more controllable agents using the LangGraph open source framework, this course is for you. ## AI Agents in LangGraph.\", \"score\": 0.49553296, \"raw_content\": null}, {\"url\": \"https://www.youtube.com/watch?v=1w5cCXlh7JQ\", \"title\": \"LangGraph Tutorial - How to Build Advanced AI Agent Systems\", \"content\": \"LangGraph Tutorial - How to Build Advanced AI Agent Systems\\nTech With Tim\\n1930000 subscribers\\n3683 likes\\n169577 views\\n5 May 2025\\nDownload PyCharm and use it for free forever with one month of Pro included: https://www.jetbrains.com/pycharm/\\n\\nIn this video, you're going to learn how to build AI agents using LangGraph. LangGraph is a much more professional and in-depth framework compared to something like LangChain or LlamaIndex, which allows you to build a really complicated and well thought out AI agents. If you're looking to push something into production, you want to have scalability features, and overall you just want more control, then LangGraph is what you should be using.\\n\\n\ud83d\ude80 My Software Development Program: https://coursecareers.com/a/techwithtim?course=software-dev-fundamentals&campaign=youtubedescription\\n\\n\ud83d\udcec Join my Newsletter: https://techwithtim.net/newsletter\\n\\n\ud83c\udf93 Get private mentorship from me: https://training.techwithtim.net\\n\\n\ud83c\udf9e Video Resources \ud83c\udf9e\\nCode In This Video: https://github.com/techwithtim/LangGraph-Tutorial\\nUV Website: https://docs.astral.sh/uv/\\nUV Video: https://www.youtube.com/watch?v=6pttmsBSi8M&ab_channel=TechWithTim\\nAnthropic Console: https://console.anthropic.com/settings/keys\\nLangGraph Getting Started Guide: https://langchain-ai.github.io/langgraph/tutorials/introduction/#part-1-build-a-basic-chatbot\\n\\n\u23f3 Timestamps \u23f3\\n00:00 | Overview\\n00:44 | LangGraph Core Features\\n02:31 | LangGraph Examples\\n04:20 | IDE Choice\\n05:00 | Environment Setup/Install\\n07:45 | Getting LLM API Token\\n08:59 | Simple LangGraph Chatbot\\n23:20 | Generating The Visual Graph\\n24:25 | Complex LangGraph Chatbot\\n\\nHashtags\\n#LangGraph #LangChain #AiAgents\\n98 comments\\n\", \"score\": 0.66045773, \"raw_content\": null}], \"request_id\": \"8fd80c3e-495a-4f68-beea-68795ec854b5\"}",
+            "additional_kwargs": {},
+            "response_metadata": {},
+            "type": "tool",
+            "name": "internet_search",
+            "id": "a6f65eb0-e59f-4198-80a7-0072a7be5efc",
+            "tool_call_id": "b9a2b7fb-9cbd-4c4e-ba30-c19514566e96",
+            "artifact": null,
+            "status": "success"
+        },
+        {
+            "content": "**LangGraph \u2013 A Quick Overview**\n\nLangGraph is an open\u2011source, low\u2011level orchestration framework created by the LangChain team. It lets developers design, build, and deploy long\u2011running, stateful AI agents that can perform complex, multi\u2011step tasks while keeping full control over the workflow.\n\n| Feature | What it means | Source |\n|---------|---------------|--------|\n| **Graph\u2011based workflow** | Agents are represented as nodes in a directed graph; edges define the flow of data and control between steps. This structure makes it easier to visualise, debug, and modify agent logic. | [GeeksforGeeks article](https://www.geeksforgeeks.org/machine-learning/what-is-langgraph/) |\n| **Stateful, long\u2011running agents** | Unlike short\u2011lived request\u2011response bots, LangGraph agents maintain internal state across interactions, enabling tasks that require memory, context, or multi\u2011turn conversations. | [GitHub repo description](https://github.com/langchain-ai/langgraph) |\n| **Low\u2011level infrastructure** | It is a building block that can be used on its own or as the core engine behind higher\u2011level LangChain products (e.g., `create_agent`). | [GitHub repo description] |\n| **Integration with LangSmith** | Together with LangSmith, LangGraph offers visual debugging, monitoring, and scaling capabilities for production workloads. | [LangChain website](https://www.langchain.com/langgraph) |\n| **Flexibility** | You can combine custom Python code, tool calls, and LLM prompts inside the graph, giving fine\u2011grained control over when and how the LLM is invoked. | [DeepLearning.AI course overview] |\n| **Use cases** | Conversational agents, complex task automation, RAG pipelines, multi\u2011agent coordination, and any scenario that benefits from a declarative, graph\u2011driven design. | [YouTube tutorial by Tech With Tim] |\n\nIn short, LangGraph provides the plumbing for building sophisticated, production\u2011ready AI agents that need to remember context, orchestrate multiple sub\u2011tasks, and expose a visual workflow for developers to tweak and debug.",
+            "additional_kwargs": {},
+            "response_metadata": {
+                "model": "gpt-oss:20b",
+                "created_at": "2026-01-21T10:45:49.253014333Z",
+                "done": true,
+                "done_reason": "stop",
+                "total_duration": 2613577511,
+                "load_duration": 133544619,
+                "prompt_eval_count": 6165,
+                "prompt_eval_duration": 156564595,
+                "eval_count": 474,
+                "eval_duration": 2160317031,
+                "message": {
+                    "role": "assistant",
+                    "content": "",
+                    "images": null,
+                    "tool_calls": null
+                }
+            },
+            "type": "ai",
+            "name": null,
+            "id": "lc_run--019be029-11c1-7fa1-9390-ee6b255685e8-0",
+            "tool_calls": [],
+            "invalid_tool_calls": [],
+            "usage_metadata": {
+                "input_tokens": 6165,
+                "output_tokens": 474,
+                "total_tokens": 6639
+            }
+        }
+    ]
+}
