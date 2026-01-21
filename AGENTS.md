@@ -39,6 +39,16 @@ Tutorials for building deep, multi-step agents using LangChain and LangGraph. Th
 
 5. Do not make the code too complex; keep it simple and focused on demonstrating deep agent capabilities.
 
+6. Always load secrets from `.env` using `python-dotenv`.
+
+7. Use rich print statements for better console output.
+
+    ``` python
+    from rich import print
+    print("Hello, [bold magenta]World[/bold magenta]!")
+    ```
+
+
 ## Project structure
 
 - `01-Intro/01-intro.py`: Main tutorial showing a research agent that uses Tavily web search, planning, and trace logging.
