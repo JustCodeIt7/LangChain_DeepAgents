@@ -2,7 +2,7 @@
 
 ## Project overview
 
-tutorials for building deep agents using LangChain and LangGraph.
+tutorials for building deepagents using LangChain and LangGraph. the code will be used to create YouTube videos.
 
 ## Preferences and dependencies
 
@@ -29,11 +29,6 @@ llm = ChatOpenAI(model="gpt-4.1-nano", max_tokens=500)
 
 ## Project structure
 
-
 ## Key files and their purposes
 
-## Build and test commands
-
 ## Code style guidelines
-
-## Testing instructions
