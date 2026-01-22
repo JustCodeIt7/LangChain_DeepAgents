@@ -36,7 +36,7 @@ pip install -r requirements.txt
 If you do not have a requirements file yet, install the core libs directly:
 
 ```bash
-pip install deepagents langchain-ollama langchain-openai tavily python-dotenv
+pip install deepagents langchain-ollama langchain-openai tavily-python python-dotenv rich
 ```
 
 3. Create a `.env` file for secrets and configuration (do not commit it)
@@ -77,13 +77,35 @@ What it does:
 from utils import print_agent_execution, print_agent_summary, save_agent_result
 
 result = agent.invoke({"messages": [{"role": "user", "content": "Research ..."}]})
-print_agent_execution(result)   # Detailed step-by-step log
-print_agent_summary(result)     # Quick counts of messages and tool calls
-save_agent_result(result)       # Persist run output as JSON
+print_agent_execution(result)              # Message-by-message trace with emojis
+print_agent_execution(result, max_length=200)  # Truncate long messages
+print_agent_summary(result)                # Quick counts of messages and tool calls
+save_agent_result(result, "output.json")   # Persist run output as JSON
 ```
+
+The execution trace shows:
+- 👤 Human messages (user input)
+- 🤖 AI messages (agent responses and tool calls)
+- 🔧 Tool messages (tool results)
+
+AI messages with tool calls display: `[AI] - Calling: tool_name`
+
+## AI Coding Agent Support
+
+This project includes comprehensive instructions for AI coding agents (GitHub Copilot, Cursor, Windsurf, etc.) in `.github/copilot-instructions.md`. The instructions cover:
+
+- Project architecture and deep agent patterns
+- Development workflow (conda environment, Ollama setup)
+- Project-specific conventions (cell markers, imports, system prompts)
+- YouTube tutorial constraints (<100 lines per example)
+- Common patterns for debugging and adding new tutorials
+
+AI agents using these instructions will understand the project structure and coding conventions immediately.
 
 ## Tips
 
 - Keep secrets in `.env`; never commit keys.
 - Swap the model by changing `ChatOllama(model=...)` or uncommenting the `ChatOpenAI` lines in `01-Intro/01-intro.py`.
 - If you add new examples, follow the pattern in `01-Intro/01-intro.py`: define tools, craft a clear system prompt, and log the run with the provided utilities.
+- Use `# %%` cell markers for step-by-step execution in VS Code or Jupyter.
+- For local development, this project uses conda environment `py312`: `conda activate /Users/james/miniconda3/envs/py312`
