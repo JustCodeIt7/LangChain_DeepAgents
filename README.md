@@ -1,111 +1,126 @@
 # LangChain Deep Agents Tutorials
 
-Hands-on tutorials for building deep, multi-step agents with LangChain/LangGraph. The examples show how to combine local LLMs (Ollama), web search, and simple observability utilities to plan, execute, and review agent runs.
+A YouTube tutorial series on building AI agents with LangChain's [`deepagents`](https://github.com/langchain-ai/deepagents) package. The examples are local-first (Ollama) and cloud-ready (OpenAI), and each one is a self-contained script you can run end-to-end.
 
-## What is inside
+The series has two tracks:
 
-- `01-Intro/01-intro.py`: Research agent that uses Tavily web search, runs on an Ollama-hosted model, and logs execution traces. Demonstrates planning, tool use, and report generation.
-- `01-Intro/01-intro copy.py`: Minimal variant that wires a small Ollama model and Tavily search to answer a single question.
-- `01-Intro/agent_response.json`: Sample output produced by the intro script.
-- `utils.py`: Helper functions to pretty-print agent traces, summarize runs, and save JSON responses.
-- `result.csv`: Preserved experiment output (not used by the intro scripts but kept for reference).
+- **CodeIt** (main) — build a full coding agent from scratch across 15 episodes: model factory → agentic loop → filesystem & shell tools → permission gating → planning → sub-agents → MCP → a real CLI.
+- **Research agents** (legacy) — earlier examples that build research agents with web search (Tavily) and a Streamlit UI.
 
-## Prerequisites
+## CodeIt: building a coding agent
 
-- Python 3.12+
-- pip and a virtual environment tool (`python -m venv` recommended)
-- Ollama running locally (`OLLAMA_BASE_URL` defaults to `http://localhost:11434`). Pull a model such as `gpt-oss:20b` or `llama3.2` before running: `ollama pull gpt-oss:20b`.
-- Tavily API key for web search.
-- Optional: OpenAI API key if you want to swap in `gpt-4.1-nano` or another hosted model.
+Each episode in [`episodes/`](episodes/) is a standalone, heavily-commented Python script that builds on the previous one. Run them in order to follow the full build.
+
+| # | Episode | What you build |
+|---|---------|----------------|
+| 1 | [model-factory](episodes/01-model-factory/) | Provider-agnostic model factory (Ollama/OpenAI) + a minimal agent |
+| 2 | [agentic-loop](episodes/02-agentic-loop/) | A custom `@tool` + live streaming of the reasoning loop |
+| 3 | [filesystem-tools](episodes/03-filesystem-tools/) | `FilesystemBackend` for safe code exploration |
+| 4 | [write-sandbox](episodes/04-write-sandbox/) | `write_file` + the workspace sandbox |
+| 5 | [shell-tool](episodes/05-shell-tool/) | A custom shell tool (and why it's dangerous) |
+| 6 | [approval-gate](episodes/06-approval-gate/) | Human-in-the-loop permission gating |
+| 7 | [system-prompt](episodes/07-system-prompt/) | Engineering personality & rules via the system prompt |
+| 8 | [surgical-edits](episodes/08-surgical-edits/) | `edit_file` + a fuzzy fallback wrapper |
+| 9 | [repo-map](episodes/09-repo-map/) | Context management: repo map & token trimming |
+| 10 | [todo-planning](episodes/10-todo-planning/) | TodoList & task decomposition |
+| 11 | [error-recovery](episodes/11-error-recovery/) | Self-healing error-recovery loops |
+| 12 | [subagents](episodes/12-subagents/) | Sub-agents: specialists in isolated context |
+| 13 | [mcp-skills](episodes/13-mcp-skills/) | MCP + Skills: the standard protocol |
+| 14 | [cli-streaming](episodes/14-cli-streaming/) | Shipping CodeIt: a real CLI with event streaming |
+| 15 | [stretch](episodes/15-stretch/) | LangSmith observability appendix |
+
+Each episode folder contains the script (`NN-name.py`) and a `README.md` with the goal, key concepts, run instructions, and env vars.
 
 ## Setup
 
-1. Clone the repo and create a virtual environment
+**Prerequisites**
+
+- Python 3.11+
+- [Ollama](https://ollama.ai) for local models — or an OpenAI API key
+- A [Tavily](https://tavily.com) API key (research track only)
+
+**Install dependencies**
+
+The project is managed with [uv](https://docs.astral.sh/uv/) (see `pyproject.toml` + `uv.lock`):
 
 ```bash
-python -m venv .venv
-source .venv/bin/activate  # Windows: .venv\\Scripts\\activate
+uv sync            # creates .venv and installs all deps
+source .venv/bin/activate
 ```
 
-2. Install dependencies (once `requirements.txt` is present)
+Or with plain pip:
 
 ```bash
-pip install -r requirements.txt
+python -m venv .venv && source .venv/bin/activate
+pip install deepagents langchain langchain-ollama langchain-openai rich python-dotenv
 ```
 
-If you do not have a requirements file yet, install the core libs directly:
+**Configure environment**
 
 ```bash
-pip install deepagents langchain-ollama langchain-openai tavily-python python-dotenv rich
+cp .env.example .env
+# edit .env — set LLM_PROVIDER, LLM_MODEL, and any API keys
 ```
 
-3. Create a `.env` file for secrets and configuration (do not commit it)
+## Running an episode
 
-```dotenv
-OLLAMA_BASE_URL=http://localhost:11434
-TAVILY_API_KEY=your_tavily_key
-# Optional when using hosted models
-OPENAI_API_KEY=your_openai_key
-```
-
-## Running the intro tutorial
-
-1. Ensure Ollama is running and the chosen model is pulled.
-2. Ensure `TAVILY_API_KEY` is set in `.env`.
-3. Run the script:
+Each episode is a standalone script. `cd` into its folder and pass a prompt as the first argument:
 
 ```bash
-python 01-Intro/01-intro.py
+# Local Ollama (default)
+cd episodes/01-model-factory
+LLM_PROVIDER=ollama python 01-model-factory.py "Say hello in one sentence."
+
+# Cloud OpenAI
+LLM_PROVIDER=openai OPENAI_API_KEY=your-key LLM_MODEL=gpt-4o-mini \
+    python 01-model-factory.py "Hello"
 ```
 
-What it does:
+Later episodes that touch the filesystem take a working directory:
 
-- Loads environment variables from `.env`.
-- Starts an Ollama-backed chat model (`gpt-oss:20b` by default; adjust in the script if you prefer another model).
-- Registers a Tavily-powered `internet_search` tool and builds a deep agent via `create_deep_agent` with research instructions.
-- Invokes the agent to research LangGraph, prints a detailed execution trace, prints a summary, and can save the response to `01-Intro/agent_response.json` via the utilities.
-
-## Minimal variant
-
-`python "01-Intro/01-intro copy.py"` wires a lightweight Ollama model (`ollama:qwen3:1.7b`) with Tavily search to answer a single question. Use this when you want the smallest possible local model footprint.
-
-## Utilities
-
-`utils.py` exposes small helpers you can reuse in additional tutorials:
-
-```python
-from utils import print_agent_execution, print_agent_summary, save_agent_result
-
-result = agent.invoke({"messages": [{"role": "user", "content": "Research ..."}]})
-print_agent_execution(result)              # Message-by-message trace with emojis
-print_agent_execution(result, max_length=200)  # Truncate long messages
-print_agent_summary(result)                # Quick counts of messages and tool calls
-save_agent_result(result, "output.json")   # Persist run output as JSON
+```bash
+CODEIT_WORKDIR=./workspace python 05-shell-tool.py "List the files in the workspace."
 ```
 
-The execution trace shows:
-- 👤 Human messages (user input)
-- 🤖 AI messages (agent responses and tool calls)
-- 🔧 Tool messages (tool results)
+## Environment variables
 
-AI messages with tool calls display: `[AI] - Calling: tool_name`
+| Variable | Default | Description |
+|---|---|---|
+| `LLM_PROVIDER` | `ollama` | Provider selector: `ollama` or `openai` |
+| `LLM_MODEL` | `qwen2.5-coder:7b` | Model name (e.g. `gpt-4o-mini` for OpenAI) |
+| `OLLAMA_BASE_URL` | `http://localhost:11434` | Ollama API base URL |
+| `OPENAI_API_KEY` | *(empty)* | Required when `LLM_PROVIDER=openai` |
+| `OPENAI_BASE_URL` | *(empty)* | Optional override for OpenAI-compatible endpoints |
+| `CODEIT_WORKDIR` | `./workspace` | Working directory the agent's file/shell tools operate in |
+| `CODEIT_AUTO_APPROVE` | `false` | Skip the approval gate (the `--yolo` flag sets this at runtime) |
+| `CODEIT_MAX_ITERS` | `25` | Recursion-limit guard for the agent loop |
 
-## AI Coding Agent Support
+## Project structure
 
-This project includes comprehensive instructions for AI coding agents (GitHub Copilot, Cursor, Windsurf, etc.) in `.github/copilot-instructions.md`. The instructions cover:
+```
+.
+├── episodes/                  # CodeIt series — 15 standalone episodes
+│   ├── 01-model-factory/      #   each: NN-name.py + README.md
+│   ├── ...
+│   └── 15-stretch/
+├── 01-Intro/                  # Legacy: research agent with Tavily web search
+├── DeepResearch/              # Legacy: Streamlit + LangGraph research assistant
+├── utils.py                   # Legacy: trace/summary/save helpers
+├── pyproject.toml             # codeit package config (uv-managed)
+├── uv.lock
+├── .env.example               # env var template
+└── README.md
+```
 
-- Project architecture and deep agent patterns
-- Development workflow (conda environment, Ollama setup)
-- Project-specific conventions (cell markers, imports, system prompts)
-- YouTube tutorial constraints (<100 lines per example)
-- Common patterns for debugging and adding new tutorials
+## Legacy: research agents
 
-AI agents using these instructions will understand the project structure and coding conventions immediately.
+Before the CodeIt series, the repo contained two research-focused examples:
 
-## Tips
+- **`01-Intro/01-intro.py`** — a deep research agent that uses Tavily web search, planning, and trace logging.
+- **`DeepResearch/`** — a Streamlit web UI over a LangGraph plan → search → synthesize workflow.
 
-- Keep secrets in `.env`; never commit keys.
-- Swap the model by changing `ChatOllama(model=...)` or uncommenting the `ChatOpenAI` lines in `01-Intro/01-intro.py`.
-- If you add new examples, follow the pattern in `01-Intro/01-intro.py`: define tools, craft a clear system prompt, and log the run with the provided utilities.
-- Use `# %%` cell markers for step-by-step execution in VS Code or Jupyter.
-- For local development, this project uses conda environment `py312`: `conda activate /Users/james/miniconda3/envs/py312`
+See [`01-Intro/`](01-Intro/) and [`DeepResearch/README.md`](DeepResearch/README.md) for details.
+
+## License
+
+MIT — see [LICENSE](LICENSE).
