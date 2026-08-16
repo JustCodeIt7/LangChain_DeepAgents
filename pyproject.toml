@@ -1,0 +1,45 @@
+[project]
+name = "codeit"
+version = "0.1.0"
+description = "CodeIt — a Deep Agents coding harness (LangChain/LangGraph)."
+readme = "README.md"
+license = { text = "MIT" }
+requires-python = ">=3.11"
+dependencies = [
+    "deepagents==0.6.12",
+    "langchain>=1.0,<2.0",
+    "langchain-core>=1.0,<2.0",
+    "langgraph>=1.0,<2.0",
+    "langchain-ollama>=1.0,<2.0",
+    "langchain-openai>=1.0,<2.0",
+    "python-dotenv",
+    "rich>=13.0",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=8.0",
+    "ruff>=0.6",
+]
+
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools]
+packages = ["codeit"]
+
+[tool.ruff]
+line-length = 100
+target-version = "py311"
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "UP", "B"]
+# Allow fast, safe fixes only (autofix is opt-in via `ruff check --fix`).
+fixable = ["ALL"]
+
+[tool.pytest.ini_options]
+markers = [
+    "live: tests that hit a real model provider (Ollama/OpenAI); skipped in CI.",
+]
+testpaths = ["tests"]
