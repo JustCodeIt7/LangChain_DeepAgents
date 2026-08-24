@@ -14,6 +14,25 @@
 2. Watch the tool calls: a `read_file` for `SKILL.md` BEFORE the answer is the skill being pulled in
 3. The output follows the skill's house style (here: release-notes format)
 
+## Teaching Notes
+
+**Hook:** "A skill is a folder with a SKILL.md — the agent sees the name and description up front, and reads the full file only when the task calls for it."
+
+**Walk the cells:**
+- **Step 2 — The layout:** `skills/release-notes/SKILL.md` — frontmatter (name, description) + instructions.
+- **Step 3 — Register the directory (the gotcha):** Skills are read THROUGH the backend, not off the host OS. The default StateBackend can't see your disk, so use a real `FilesystemBackend` and the path as the backend sees it (`/skills`). Only the frontmatter is injected into the system prompt — that's what keeps 50 skills from blowing up the context.
+- **Step 4 — A task the skill covers:** We never mention the skill by name — the agent matches the request against the description.
+- **Step 5 — Watch progressive disclosure:** A `read_file` for SKILL.md BEFORE the answer is the skill being pulled in.
+- **Step 6 — The output follows the house style.**
+
+**On camera:**
+- The "<- loading the skill" marker in the tool-call list is the money shot.
+
+**If it goes wrong:**
+- If the agent doesn't read the skill, the output won't follow the format — that's a description-matching problem. Make the skill's description specific.
+
+**Bridge to ep. 17:** "Skills are on-demand expertise. Next: see the agent work as it happens — streaming."
+
 ## Run Instructions
 ```bash
 cd deepagents_101/16-skills

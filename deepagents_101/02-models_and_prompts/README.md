@@ -22,16 +22,19 @@
 **Hook:** "Two ways to give the agent a brain — and a surprise about where your system prompt lands."
 
 **Walk the cells:**
+
 - **Step 2 — A. model as a string:** `create_deep_agent(model=MODEL)`. deepagents hands the string to `init_chat_model`, so any LangChain provider works. Run it, show the answer.
 - **Step 3 — B. model as an instance:** `init_chat_model(MODEL, temperature=0)`. Use this when you need to tune parameters (temperature, max_tokens, base_url). Run the same question — same behavior, more control.
 - **Step 4 — C. custom system_prompt:** The pirate. This is the memorable moment — let it land. Then the key teaching point: your prompt is placed FIRST and the framework's tool guidance is appended AFTER it. The agent is still a full deep agent, just a pirate one.
 - **Step 5 — D. debug=True:** Verbose LangGraph trace. Keep the question tiny ("say ready"). Scroll fast — don't read it line by line.
 
 **On camera:**
+
 - Run A and B back to back with the same question to show they behave identically.
 - The pirate answer is your clip — pause on it.
 
 **If it goes wrong:**
+
 - The debug trace is long and can look scary. Frame it: "This is every graph step — verbose by design, and it's how you debug."
 
 **Bridge to ep. 03:** "So far the agent only has built-in tools. Next: add your own — a tool is just a Python function with a docstring."

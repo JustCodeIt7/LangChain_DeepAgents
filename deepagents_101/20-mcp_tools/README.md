@@ -14,6 +14,24 @@
 2. MCP is a standard: the same `mcp_server.py` could be used by Claude Desktop, an IDE, or another agent
 3. The bundled server exposes one tool, `check_stock`, over a tiny in-memory inventory
 
+## Teaching Notes
+
+**Hook:** "MCP is a standard way to expose tools to any agent — deepagents treats them as normal tools."
+
+**Walk the cells:**
+- **Step 2 — Point at the server:** `{"inventory": {"transport": "stdio", "command": sys.executable, "args": [str(SERVER_SCRIPT)]}}` launches `mcp_server.py` as a subprocess. The HTTP alternative is in the comments.
+- **Step 3 — Everything MCP is async:** The work happens in a coroutine; `get_tools()` starts the server and returns ordinary LangChain tools.
+- **Step 4 — Same create_deep_agent call:** MCP tools go in `tools=` exactly like the hand-written ones from ep. 03.
+- **Step 5 — Await the run:** `ainvoke`, not `invoke`.
+
+**On camera:**
+- The "Tools discovered over MCP" list is the payoff — the agent found a tool it was never told about, over a wire protocol.
+
+**If it goes wrong:**
+- The only episode needing an extra dependency (`langchain-mcp-adapters`). If the subprocess doesn't start, check the path and interpreter.
+
+**Bridge (series finale):** Recap the arc — from one function call (ep. 01) to an agent that plans, works on files, delegates, remembers, and now pulls tools from the outside world.
+
 ## Run Instructions
 ```bash
 cd deepagents_101/20-mcp_tools

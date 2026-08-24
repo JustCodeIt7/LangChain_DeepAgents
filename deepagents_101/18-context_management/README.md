@@ -14,6 +14,25 @@
 2. The episode tracks the message count after each turn to show the history shrinking
 3. A checkpointer + `thread_id` is needed so the conversation persists across turns
 
+## Teaching Notes
+
+**Hook:** "Long conversations exceed the context window — `SummarizationMiddleware` compresses old turns automatically."
+
+**Walk the cells:**
+- **Step 2 — Force it early:** `trigger=("messages", 4)`, `keep=("messages", 2)`. The `.name` matches the built-in, so it REPLACES the default instead of stacking a second one.
+- **Step 3 — A conversation long enough to trip it:** The message count plateaus instead of climbing 2, 4, 6, 8…
+- **Step 4 — Look at what survived:** A summary standing in for the early turns, plus the newest kept verbatim.
+- **Step 5 — Compression is not amnesia:** The early details are still answerable.
+- **Step 6 — The other half:** Huge tool results (>20k tokens) are offloaded to a file.
+
+**On camera:**
+- The "message count after each turn" table with the "<- compressed" marker is the money shot.
+
+**If it goes wrong:**
+- The recall question depends on the summary retaining details — a tiny model's summary may be lossy. That's a fair teaching moment about summarization trade-offs.
+
+**Bridge to ep. 19:** "Everything so far, in one agent — the capstone."
+
 ## Run Instructions
 ```bash
 cd deepagents_101/18-context_management

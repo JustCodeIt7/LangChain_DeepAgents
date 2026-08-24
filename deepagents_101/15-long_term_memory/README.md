@@ -14,6 +14,25 @@
 2. `InMemoryStore` is the dev store; swap in a Postgres-backed store for production
 3. Inspect what was stored with `store.search(("demo-user",))`
 
+## Teaching Notes
+
+**Hook:** "A checkpointer remembers ONE thread; a store remembers ALL of them."
+
+**Walk the cells:**
+- **Step 2 — A store + namespace:** `InMemoryStore` + `StoreBackend(namespace=lambda rt: ("demo-user",))`. The namespace is a callable, so real deployments can scope memory per user.
+- **Step 3 — Mount at /memories/:** Everything else stays virtual. `memory=[MEMORY_FILE]` loads that file into the system prompt on every run.
+- **Step 4 — Teach it something on thread "monday."**
+- **Step 5 — Inspect the store:** The file is now outside any conversation history.
+- **Step 6 — A brand-new thread "friday":** Recall comes from the memory file, not the conversation.
+
+**On camera:**
+- The friday recall is the payoff — the agent has never met this conversation but knows you're vegetarian.
+
+**If it goes wrong:**
+- The agent must actually write the file — the prompt says "save it to your memory file." If it doesn't, the friday recall fails. That's a teaching moment about making the save explicit.
+
+**Bridge to ep. 16:** "Memory is files in a store. What if the expertise is a document the agent loads on demand? Next: skills."
+
 ## Run Instructions
 ```bash
 cd deepagents_101/15-long_term_memory

@@ -14,6 +14,24 @@
 2. The task should fit the schema (a book review for a `BookReview` model)
 3. Structured output rides on the model following a tool/JSON schema — it's a contract, not a guarantee
 
+## Teaching Notes
+
+**Hook:** "Pass a Pydantic model and get a typed object back — no more regex-parsing the model's prose."
+
+**Walk the cells:**
+- **Step 2 — Describe the shape:** `Field(description=...)` is sent to the model as part of the schema — it acts as per-field instructions. Keep schemas flat.
+- **Step 3 — Attach the schema:** `response_format=BookReview`.
+- **Step 4 — Ask a question that fits:** Wrapped in try/except — small models sometimes drift off the schema; fail gracefully.
+- **Step 5 — Use it like a Python object:** Attribute access, then `model_dump_json()`.
+
+**On camera:**
+- The star-rating line (★★★★☆) is a nice visual. Show the JSON output — "ready for an API or database."
+
+**If it goes wrong:**
+- A small local model may not produce valid structured output. The script prints a red message and suggests a larger model — have that fallback line ready.
+
+**Bridge to ep. 12:** "Structured output is great for one run. What about remembering across runs? Next: checkpointers and threads."
+
 ## Run Instructions
 ```bash
 cd deepagents_101/11-structured_output

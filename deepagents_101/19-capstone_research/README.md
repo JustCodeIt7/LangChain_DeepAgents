@@ -14,6 +14,25 @@
 2. The orchestrator's context stays small by design — that is what makes the pattern scale
 3. No network calls: the model provider is the only external dependency
 
+## Teaching Notes
+
+**Hook:** "Everything from the series in one agent: planning, filesystem, subagents, streaming. It researches a local corpus and writes a report."
+
+**Walk the cells:**
+- **Step 2 — The corpus:** The agent's "world" — local files so it's fast, free, and reproducible.
+- **Step 3 — A specialist subagent:** The `analyst` reads one source and reports back. Isolated context means long file contents never clog the orchestrator.
+- **Step 4 — Assemble:** `TodoListMiddleware` (ep. 04) + `subagents` (ep. 09) + a numbered workflow in the system prompt.
+- **Step 5 — Run, streaming:** `stream_mode="values"` gives the full state each step, so we can grab files.
+- **Step 6 — The deliverable:** `/report.md`.
+
+**On camera:**
+- This is the payoff episode — let it run, show the streaming progress, then reveal the report.
+
+**If it goes wrong:**
+- The most moving parts of the series; a small model may skip a step (not delegate, or not write the report). The numbered workflow prompt is the mitigation. If it fails, that's a great "why bigger models matter" moment.
+
+**Bridge to ep. 20:** "The last piece: tools from the outside world — MCP."
+
 ## Run Instructions
 ```bash
 cd deepagents_101/19-capstone_research

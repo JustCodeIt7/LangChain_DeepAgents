@@ -15,6 +15,24 @@
 2. Content can be a string (Ollama) or a list of blocks (OpenAI) — normalize before printing
 3. Combine with episode 09's subagents to show each delegated task progressing independently
 
+## Teaching Notes
+
+**Hook:** "Two streaming modes: `updates` for progress UIs, `messages` for chat UIs."
+
+**Walk the cells:**
+- **Step 2 — A tool to watch:** `add`, so there's something to see besides text.
+- **Step 3 — Mode 1, "updates":** One chunk per graph step, shaped `{node_name: state_update}`. This is what you render as "Thinking…", "Calling add…", "Done".
+- **Step 4 — Mode 2, "messages":** Tokens as the model produces them. NOTE the shape: it yields `(message_chunk, metadata)` TUPLES — unpacking it wrong is the most common streaming bug. Filter to `AIMessageChunk` and drop summarization internals.
+- **Step 5 — subgraphs=True:** Also surfaces what subagents are doing.
+
+**On camera:**
+- Run `updates` first (fast, discrete), then `messages` (live tokens) — the contrast is the lesson.
+
+**If it goes wrong:**
+- "too many values to unpack" = you're in `messages` mode and treating chunks as plain dicts. Point at the tuple unpacking.
+
+**Bridge to ep. 18:** "Streaming shows the work. But long conversations grow — next keeps them small."
+
 ## Run Instructions
 ```bash
 cd deepagents_101/17-streaming
