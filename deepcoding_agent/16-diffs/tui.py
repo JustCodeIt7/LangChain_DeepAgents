@@ -125,7 +125,10 @@ class DeepCoderApp(App):
             if output:
                 self.add(output, "tool")
             return
+        self.send(question)
 
+    def send(self, question: str) -> None:
+        """Start an agent turn. Commands like /init reuse this entry point."""
         sessions.remember(self.thread_id, question)
         self.add(f"**you** — {question}", "user")
         self.buffer = ""

@@ -175,3 +175,17 @@ async def test_subagent_work_renders_indented() -> None:
         nested = app.query(".nested")
         assert len(nested) == 1
         assert "read_file" in str(nested[0]._markdown)
+
+
+@pytest.mark.anyio
+async def test_init_command_starts_an_agent_turn() -> None:
+    """/init is a command that SENDS a prompt rather than printing text."""
+    app = DeepCoderApp(agent=PlanningAgent())
+    async with app.run_test() as pilot:
+        await pilot.press(*"/init")
+        await pilot.press("enter")
+        await app.workers.wait_for_complete()
+        for _ in range(4):
+            await pilot.pause()
+        # The synthetic prompt shows up as a user message mentioning AGENTS.md.
+        assert any("AGENTS.md" in line for line in rendered(app))
