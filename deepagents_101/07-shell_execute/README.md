@@ -14,6 +14,24 @@
 2. Be specific about the command in the prompt; never let untrusted input reach this agent
 3. The episode prints every `execute` tool call so you can see exactly what ran
 
+## Teaching Notes
+
+**Hook:** "The `execute` tool only exists when the backend can run a shell — and there is NO sandbox."
+
+**Walk the cells:**
+- **Step 2 — The negative demo first:** Ask the virtual agent to run `echo hi`. It can't — the tool isn't offered at all. That's the safe default, and proving it is the point.
+- **Step 4 — Build a shell backend:** `LocalShellBackend(root_dir, timeout=30, inherit_env=False)`. `inherit_env=False` keeps your secrets out of the subprocess.
+- **Step 5 — One explicit, safe command:** Be specific about the command. Say out loud: this runs with your user's permissions.
+- **Step 6 — Verify the side effect:** Read `greeting.txt` back from real disk.
+
+**On camera:**
+- The before/after contrast (no execute → execute) is the teaching structure. Show the `$ echo ...` line in the output.
+
+**If it goes wrong:**
+- This runs real commands. Never feed untrusted input to this agent — whatever it decides to run WILL run.
+
+**Bridge to ep. 08:** "One backend, one place. What if I want some paths virtual and some real? Next: mixing backends."
+
 ## Run Instructions
 ```bash
 cd deepagents_101/07-shell_execute

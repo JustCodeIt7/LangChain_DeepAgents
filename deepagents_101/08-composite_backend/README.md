@@ -14,6 +14,23 @@
 2. This is the pattern for "scratch work in memory, deliverables on disk"
 3. The episode moves data across the boundary: write to `/scratch/`, read it back, copy to `/disk/`
 
+## Teaching Notes
+
+**Hook:** "Mount points for your agent's filesystem — route different paths to different backends in one agent."
+
+**Walk the cells:**
+- **Step 3 — Build the composite:** `routes={"/disk/": FilesystemBackend(...)}`. Think of it as mount points; longest matching prefix wins.
+- **Step 4 — Move data across the boundary:** The agent writes to the virtual side, reads it back, copies to the real side — same tools, only the path prefix differs.
+- **Step 5 — Prove each half:** The virtual file is only in `result["files"]`; the `/disk/` file is a genuine file on disk.
+
+**On camera:**
+- The "mount table" printout is a great visual. The tool-call list showing `/scratch/...` and `/disk/...` side by side is the payoff.
+
+**If it goes wrong:**
+- The task is numbered steps; a small model may reorder or skip one. The "follow the numbered steps exactly" prompt is the mitigation.
+
+**Bridge to ep. 09:** "Backends decide where data lives. Next: agents that delegate work — subagents."
+
 ## Run Instructions
 ```bash
 cd deepagents_101/08-composite_backend

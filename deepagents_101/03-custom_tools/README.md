@@ -14,6 +14,25 @@
 2. Keep parameter types simple (`str`/`int`/`bool`) — smaller models coerce them better
 3. Tool results come back as `ToolMessage` objects in `result["messages"]`
 
+## Teaching Notes
+
+**Hook:** "A tool is just a Python function with a docstring. Two ways to write one."
+
+**Walk the cells:**
+- **Step 2 — Plain function:** `word_count`. deepagents inspects the signature and docstring to build the schema. Stress: the docstring IS what the model reads — write it for the model. Keep param types simple (str/int/bool).
+- **Step 3 — @tool decorator:** `reverse_text`. Same result, but explicit control (custom name, args schema, return_direct) and a real BaseTool object.
+- **Step 4 — Hand both to the agent:** `tools=` is ADDITIVE — it never removes the built-ins. The system prompt says "do not use filesystem tools" to keep the demo focused.
+- **Step 5 — A task needing BOTH tools:** Forces two separate tool calls.
+- **Step 6 — Inspect:** Show the `tool_calls` on the AI messages, then the `ToolMessage` results.
+
+**On camera:**
+- The "Tool calls made" section is the payoff — show `reverse_text` then `word_count` firing in sequence.
+
+**If it goes wrong:**
+- A small model may answer without calling the tools (count the words in its head). The prompt says "use your tools for both steps." If it skips, that's a teaching moment about model size vs. instruction-following.
+
+**Bridge to ep. 04:** "Tools are great, but multi-step work needs a plan. Next: the agent's to-do list."
+
 ## Run Instructions
 ```bash
 cd deepagents_101/03-custom_tools
