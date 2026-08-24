@@ -43,7 +43,7 @@ QUESTION = "In one short sentence, what is LangChain? Do not use tools."
 
 # deepagents hands the string to init_chat_model, so any provider LangChain
 # supports works: "ollama:...", "openai:...", "anthropic:...", "google_genai:..."
-string_agent = create_deep_agent(model=MODEL, temperature=0.1)
+string_agent = create_deep_agent(model=MODEL)
 print("[bold cyan]A. model as a string[/bold cyan]")
 print(f"spec: [yellow]{MODEL}[/yellow]")
 print(f"{ask(string_agent, QUESTION)}\n")
