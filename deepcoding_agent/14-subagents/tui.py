@@ -35,11 +35,12 @@ class Chunk(Message):
 
 
 class ToolLine(Message):
-    """The agent started a tool."""
+    """The agent started a tool. Nested = inside a subagent."""
 
-    def __init__(self, label: str) -> None:
+    def __init__(self, label: str, nested: bool = False) -> None:
         super().__init__()
         self.label = label
+        self.nested = nested
 
 
 class PlanUpdate(Message):
@@ -155,8 +156,8 @@ class DeepCoderApp(App):
                 match event:
                     case runner.Token(text=text):
                         self.post_message(Chunk(text))
-                    case runner.ToolStart(name=name, args=args):
-                        self.post_message(ToolLine(summarize(name, args)))
+                    case runner.ToolStart(name=name, args=args, nested=nested):
+                        self.post_message(ToolLine(summarize(name, args), nested))
                     case runner.Plan(todos=todos):
                         self.post_message(PlanUpdate(todos))
                     case runner.Done(usage=usage):
@@ -226,8 +227,9 @@ class DeepCoderApp(App):
         self.query_one("#chat", VerticalScroll).scroll_end(animate=False)
 
     def on_tool_line(self, message: ToolLine) -> None:
-        """Show a tool call as its own dim line."""
-        self.add(f"`{message.label}`", "tool")
+        """Show a tool call as its own dim line; indent subagent work."""
+        prefix = "&nbsp;&nbsp;&nbsp;&nbsp;· " if message.nested else ""
+        self.add(f"{prefix}`{message.label}`", "tool nested" if message.nested else "tool")
 
     def on_plan_update(self, message: PlanUpdate) -> None:
         """Redraw the plan panel."""
@@ -262,6 +264,8 @@ class DeepCoderApp(App):
 
 def summarize(name: str, args: dict) -> str:
     """One readable line describing what the agent is doing."""
+    if name == "task":
+        return f"task → {args.get('subagent_type', '?')}: {args.get('description', '')[:40]}"
     if name == "execute":
         return f"run: {args.get('command', '')}"
     path = args.get("file_path") or args.get("path") or ""

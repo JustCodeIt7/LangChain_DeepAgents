@@ -107,12 +107,16 @@ def run_turn(agent, payload, config: dict, seen: set[str] | None = None) -> Iter
     seen = seen if seen is not None else set()
 
     try:
-        for mode, data in agent.stream(
-            payload, config=config, stream_mode=["updates", "messages"]
+        # subgraphs=True surfaces what SUBAGENTS do. Every chunk now arrives
+        # as a 3-tuple: (namespace, mode, payload). The namespace is () for
+        # the main agent and ("tools:<id>",) inside a delegated task.
+        for namespace, mode, data in agent.stream(
+            payload, config=config, stream_mode=["updates", "messages"], subgraphs=True
         ):
+            nested = bool(namespace)
             if mode == "updates":
                 for node_update in data.values():
-                    yield from _tool_starts(node_update, seen)
+                    yield from _tool_starts(node_update, seen, nested)
                     # TodoListMiddleware puts the plan in state under "todos".
                     if isinstance(node_update, dict) and node_update.get("todos"):
                         yield Plan(todos=node_update["todos"])
@@ -125,8 +129,8 @@ def run_turn(agent, payload, config: dict, seen: set[str] | None = None) -> Iter
             elif mode == "messages":
                 # This mode yields (chunk, metadata) tuples.
                 chunk, meta = data
-                if meta.get("lc_source") == "summarization":
-                    continue  # internal machinery, not the user's answer
+                if nested or meta.get("lc_source") == "summarization":
+                    continue  # subagent chatter and internals are not the answer
                 text = _token_text(chunk)
                 if text:
                     answer.append(text)

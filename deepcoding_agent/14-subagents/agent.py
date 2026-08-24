@@ -60,6 +60,29 @@ def build_backend() -> CompositeBackend:
     )
 
 
+# Subagents get their own context window: the main agent sees only the final
+# report, not the dozens of tool calls that produced it. deepagents exposes
+# them through the built-in `task` tool.
+SUBAGENTS = [
+    {
+        "name": "code-reviewer",
+        "description": "Reviews code in the project and reports issues. "
+        "Give it file paths; it returns a short prioritized review.",
+        "system_prompt": "You are a strict code reviewer. Read the files you are "
+        "asked about with read_file. Report at most 5 issues, worst first, each "
+        "as one line: severity, file, problem. Do not modify anything.",
+    },
+    {
+        "name": "test-runner",
+        "description": "Runs the project's tests or a shell command and reports "
+        "the outcome. Give it the command to run.",
+        "system_prompt": "You run commands with the execute tool and report the "
+        "result in two lines: PASS or FAIL, then the key output line.",
+        "interrupt_on": {"execute": True},  # gated even inside the subagent
+    },
+]
+
+
 def build_agent():
     """Assemble the agent: model + shell + memory + approval gates.
 
@@ -77,4 +100,5 @@ def build_agent():
         # write_todos is opt-in in deepagents 0.7: without this middleware the
         # tool does not exist and the agent cannot show you its plan.
         middleware=[TodoListMiddleware()],
+        subagents=SUBAGENTS,
     )

@@ -82,3 +82,7 @@ ApprovalScreen {
     background: $panel;
     color: $text;
 }
+
+.nested {
+    color: $text-muted;
+}
