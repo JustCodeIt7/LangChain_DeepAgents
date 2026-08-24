@@ -1,54 +1,58 @@
-# Part 15 — Project Memory (AGENTS.md)
+# Part 16 — Seeing the Diff Before You Approve
 
-**Adds:** Standing instructions. The agent reads `AGENTS.md` before every run, and `/init` writes
-one for you by exploring the project.
-**Diff:** ~50 lines (changed: `agent.py`, `tui.py`, `commands.py`)
+**Adds:** File-changing actions show a syntax-highlighted unified diff in the approval modal.
+**Diff:** ~55 lines (changed: `widgets.py`, `app.tcss`)
 
 ## What's new
 
-- **`memory=["/AGENTS.md"]`** — one parameter. Files listed here are loaded into the system prompt
-  at the **start of every run** (fresh read each turn, so edits apply immediately). A missing file
-  is skipped silently — a brand-new project doesn't crash.
-- **The path is backend-relative** — `/AGENTS.md` resolves through the same `CompositeBackend` as
-  the file tools, so it means `<workdir>/AGENTS.md`. One mental model for all paths.
-- **`/init`** — a command that *sends a prompt* instead of printing text. `submit()` grew a
-  `send()` entry point so commands can start agent turns; `/init` asks the agent to explore with
-  `ls`/`read_file` and write the guide. The write is gated like any other — you approve it.
-- **Self-editing memory** — the agent can `edit_file` its own AGENTS.md. Tell it "always run tests
-  after edits, remember that" and the rule persists for every future session.
+- **`diff_for(action)`** — computes the *after* text exactly the way the tool will, then hands both
+  versions to `difflib.unified_diff`:
+  - `write_file` → `content` replaces the whole file
+  - `edit_file` → `old_string` → `new_string`, once (or everywhere with `replace_all`)
+  - anything else → `None`, so `execute` and friends don't grow a pointless diff
+- **`Syntax(diff, "diff")` inside a `Static`** — Textual hosts Rich renderables directly, so
+  `+`/`-` colouring costs nothing extra and adds no dependency.
+- **Virtual → real path mapping** — the model says `/calc.py`; the file lives at
+  `WORKDIR/calc.py`. `_current_text()` does that translation (`lstrip("/")`) and returns `""` for
+  a file that doesn't exist yet, which renders as an all-additions diff for new files.
+
+## Why this part matters most
+
+Part 5 gave you a veto. But approving `edit_file: /calc.py` tells you *nothing* about what changes
+— you were clicking yes on faith. Now you approve the actual change. This is the difference between
+a safety prompt and a safety *feature*, and it's the closest DeepCoder gets to how Claude Code and
+opencode feel.
 
 ## Talking points
 
-1. Put a silly rule in AGENTS.md ("end every reply with BANANA") and show it obeyed with zero
-   prompting. Then show the trap this build hit: a user prompt that *conflicts* with the rule
-   ("reply in exactly two words") wins — standing instructions are context, not law.
-2. Run `/init` on a real project and read what it wrote. (Live here, it even documented
-   `.deepcoder/` as "do not modify manually".)
-3. AGENTS.md is an emerging convention (agents.md) — same file works across coding agents.
-4. Difference from Part 13: sessions remember *conversations*; memory remembers *rules*.
+1. Plant `return a - b` in a file, ask for a fix, and read the `-`/`+` lines in the dialog before
+   pressing `y`. (That exact flow was used to verify this part.)
+2. Show a *new* file: the diff is all `+` lines, because "before" is empty.
+3. Explain why the app recomputes the after-text rather than asking the tool: the tool hasn't run
+   yet — that's the whole point.
+4. Note the tradeoff: this reimplements the tool's edit semantics, so it must stay in sync with them.
 
 ## Run it
 
 ```bash
-cd deepcoding_agent/15-project-memory
+cd deepcoding_agent/16-diffs
 python main.py
 ```
 
-Try `/init`, approve the write, then `cat workspace/AGENTS.md`.
+Try: put a bug in `workspace/calc.py`, then `calc.py subtracts but should add — fix it.`
 
 ## Files in this snapshot
 
 | File | Role |
 |---|---|
-| `agent.py` | Adds `memory=["/AGENTS.md"]` |
-| `commands.py` | Adds `/init` |
-| `tui.py` | Extracts `send()` so commands can start turns |
+| `widgets.py` | `_current_text()`, `diff_for()`, diff rendering in the modal |
+| `app.tcss` | `.diff` styling (scrolls past 12 lines) |
 
 ## Extend this yourself
 
-1. Add `/remember <rule>` that appends a bullet to AGENTS.md without a model call.
-2. Load a personal `~/.deepcoder/AGENTS.md` too — route a second memory path to a different backend.
-3. Show a 📋 indicator in the status bar when AGENTS.md is present.
+1. Add a keybinding to expand a long diff full-screen.
+2. Show a `+3 −1` summary line next to each action.
+3. Warn in red when a `write_file` would overwrite an existing non-empty file.
 
 ## Verify without a live model
 
