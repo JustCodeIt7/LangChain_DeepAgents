@@ -1,6 +1,6 @@
 # 01 — Your First Deep Agent
 
-* ## Overview
+## Overview
 
 **Goal:** Create a working deep agent with a single function call and inspect what it does under the hood.
 
