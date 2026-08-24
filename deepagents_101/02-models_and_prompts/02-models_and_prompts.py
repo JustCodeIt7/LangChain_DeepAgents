@@ -3,7 +3,7 @@
 ==============================
 - Two ways to specify a model: a "provider:model" string or a model instance
 - How `system_prompt` steers the agent (and where it lands in the final prompt)
-- Tracing every graph step with stream_mode="updates"
+- `debug=True` for seeing every graph step
 
 Run:  python 02-models_and_prompts.py
 """
@@ -16,64 +16,29 @@ from dotenv import load_dotenv
 from langchain.chat_models import init_chat_model  # builds a model from a string spec
 from rich import print
 
-################################ Environment & Defaults ################################
-
-# Load provider keys / endpoints from .env before any model is constructed
 load_dotenv()
-
-# Allow the model to be swapped without editing code; fall back to a small local model
 MODEL = os.getenv("DEEPAGENTS_MODEL", "ollama:qwen3.5:2b")
 
 
-################################ Helper: Ask an Agent ################################
+def text_of(message) -> str:
+    """Normalize message content across providers (str vs content blocks)."""
+    content = message.content
+    if isinstance(content, str):
+        return content
+    return "".join(block.get("text", "") for block in content if isinstance(block, dict))
 
 
 def ask(agent, question: str) -> str:
     """Invoke an agent with a single question and return its final text."""
     result = agent.invoke({"messages": [{"role": "user", "content": question}]})
-    # `.text` is provider-agnostic: works whether the provider returned a
-    # plain string or a list of content blocks.
-    return result["messages"][-1].text.strip()
+    return text_of(result["messages"][-1]).strip()
 
 
-def trace(agent, question: str) -> str:
-    """Run the agent, printing a readable trace of every graph step."""
-    last_ai = ""
-    for step, update in enumerate(
-        agent.stream({"messages": [{"role": "user", "content": question}]}, stream_mode="updates"),
-        start=1,
-    ):
-        for node, state in update.items():
-            print(f"\n[bold magenta]step {step}[/bold magenta] [yellow]· {node}[/yellow]")
-            for msg in (state or {}).get("messages", []):
-                label = {"human": "👤 user", "ai": "🤖 model", "tool": "🔧 tool"}.get(msg.type, msg.type)
-                text = msg.text.strip()
-                if len(text) > 100:
-                    text = text[:100] + "…"
-                if text:
-                    print(f"  {label}: {text}")
-                for call in msg.tool_calls:
-                    print(f"  🔧 calls {call['name']}({call['args']})")
-                if msg.usage_metadata:
-                    u = msg.usage_metadata
-                    print(f"  [dim]tokens: {u['input_tokens']} in / {u['output_tokens']} out[/dim]")
-                if msg.type == "ai" and text:
-                    last_ai = text
-            if not (state or {}).get("messages"):
-                print("  [dim](no new messages)[/dim]")
-    return last_ai
-
-
-# Reuse one prompt across every demo so differences come only from configuration
 QUESTION = "In one short sentence, what is LangChain? Do not use tools."
 
 # %% Step 2: Option A — pass a "provider:model" string
 # deepagents hands the string to init_chat_model, so any provider LangChain
 # supports works: "ollama:...", "openai:...", "anthropic:...", "google_genai:..."
-
-################################ A. Model as a String ################################
-
-# Simplest path: let the framework build the model for you
 string_agent = create_deep_agent(model=MODEL)
 print("[bold cyan]A. model as a string[/bold cyan]")
 print(f"spec: [yellow]{MODEL}[/yellow]")
@@ -82,23 +47,16 @@ print(f"{ask(string_agent, QUESTION)}\n")
 # %% Step 3: Option B — pass a pre-built model instance
 # Build the model yourself when you need to tune parameters (temperature,
 # max_tokens, timeouts, base_url...). deepagents uses the instance as-is.
-
-################################ B. Model as an Instance ################################
-
-llm = init_chat_model(MODEL, temperature=0, max_tokens=100, timeout=30)  # temperature=0 for deterministic demos
+llm = init_chat_model(MODEL, temperature=0)
 instance_agent = create_deep_agent(model=llm)
 print("[bold cyan]B. model as an instance[/bold cyan]")
-print(f"  class: [yellow]{type(llm).__name__}[/yellow] (temperature=0, max_tokens=100, timeout=30)")
+print(f"  class: [yellow]{type(llm).__name__}[/yellow] (temperature=0)")
 print(f"  {ask(instance_agent, QUESTION)}\n")
 
 # %% Step 4: The system prompt steers behavior
 # IMPORTANT: your `system_prompt` does not REPLACE the deep-agent instructions.
 # It is placed FIRST, and the framework's own tool guidance is appended after it.
 # That is why the agent still knows how to use write_file, task, etc.
-
-################################ C. Custom System Prompt ################################
-
-# Use an obvious persona so the prompt's effect is visible in the output
 pirate_agent = create_deep_agent(
     model=MODEL,
     system_prompt="You are a pirate. Answer every question in pirate speak, briefly.",
@@ -106,16 +64,12 @@ pirate_agent = create_deep_agent(
 print("[bold cyan]C. custom system_prompt[/bold cyan]")
 print(f"  {ask(pirate_agent, QUESTION)}\n")
 
-# %% Step 5: Tracing the graph
-# `debug=True` on create_deep_agent() dumps every raw state update — a wall of
-# message objects. Cleaner: stream the graph yourself with stream_mode="updates"
-# and format each step (see trace() above).
-
-################################ D. Tracing the Graph ################################
-
-print("[bold cyan]D. tracing the graph (stream_mode='updates')[/bold cyan]")
-traced_agent = create_deep_agent(model=MODEL)
-answer = trace(traced_agent, "Say the word 'ready' and nothing else.")  # minimal trace
+# %% Step 5: debug=True prints every graph step
+# Verbose! Use it while developing to see the model/tool nodes as they execute.
+# Keep the question tiny — the trace is long.
+print("[bold cyan]D. debug=True (expect a verbose LangGraph trace below)[/bold cyan]")
+debug_agent = create_deep_agent(model=MODEL, debug=True)
+answer = ask(debug_agent, "Say the word 'ready' and nothing else.")
 print(f"\n[bold green]Final answer:[/bold green] {answer}")
 
 # %%
