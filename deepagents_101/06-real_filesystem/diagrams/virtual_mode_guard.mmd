@@ -1,0 +1,5 @@
+flowchart TB
+    call["Agent asks for a path"] --> guard{"virtual_mode=True<br/>inside root_dir?"}
+    guard -->|"/shopping.md"| ok["Allowed — resolved under root_dir"]
+    guard -->|"../../.ssh/id_rsa"| blocked["Blocked — cannot escape the sandbox"]
+    guard -->|"~/secrets.txt"| blocked

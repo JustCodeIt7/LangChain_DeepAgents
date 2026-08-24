@@ -1,0 +1,5 @@
+flowchart TB
+    fs["The agent's file tools<br/>ls · read_file · write_file · edit_file · glob · grep"] --> be{"backend="}
+    be -->|"StateBackend (default)"| st["Virtual — lives in graph state<br/>discarded when the run ends"]
+    be -->|FilesystemBackend| disk["Real files under root_dir<br/>ep. 06"]
+    be -->|StoreBackend| store["Persistent across conversations<br/>ep. 15"]

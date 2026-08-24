@@ -1,0 +1,6 @@
+flowchart LR
+    seed["seed_files<br/>path -> create_file_data(...)"] --> inv["agent.invoke({messages, files})"]
+    inv --> graph["LangGraph state<br/>StateBackend holds the files"]
+    graph --> tools["ls · read_file · edit_file · write_file"]
+    tools --> graph
+    graph --> out["result['files']<br/>same path -> FileData shape"]

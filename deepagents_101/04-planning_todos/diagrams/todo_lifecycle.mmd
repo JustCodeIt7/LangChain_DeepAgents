@@ -1,0 +1,6 @@
+stateDiagram-v2
+    [*] --> pending: write_todos lays out the plan
+    pending --> in_progress: agent starts the step
+    in_progress --> completed: step finished
+    completed --> [*]
+    in_progress --> pending: plan revised mid-run

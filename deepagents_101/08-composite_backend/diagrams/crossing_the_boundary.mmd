@@ -1,0 +1,10 @@
+sequenceDiagram
+    participant A as Agent
+    participant V as StateBackend (virtual)
+    participant D as FilesystemBackend (/disk/)
+    A->>V: write_file /scratch/note.md
+    A->>V: read_file /scratch/note.md
+    V-->>A: "ideas for episode 8"
+    A->>D: write_file /disk/note.md — same content
+    Note over V: visible in result["files"]
+    Note over D: real ./workspace/note.md on disk

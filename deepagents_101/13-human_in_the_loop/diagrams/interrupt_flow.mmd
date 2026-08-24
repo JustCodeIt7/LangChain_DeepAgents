@@ -1,0 +1,14 @@
+sequenceDiagram
+    participant U as You
+    participant A as Agent
+    participant L as LangGraph + checkpointer
+    participant H as Human
+    U->>A: "Email alice@example.com..."
+    A->>L: tool_call send_email(...)
+    L->>L: interrupt_on matched — pause and persist
+    L-->>U: result["__interrupt__"] with action_requests
+    U->>H: show name + args
+    H-->>U: approve / reject / edit / respond
+    U->>L: Command(resume={"decisions": [...]})
+    L-->>A: resume execution
+    A-->>U: final answer

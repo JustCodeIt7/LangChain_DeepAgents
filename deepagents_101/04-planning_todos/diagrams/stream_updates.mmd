@@ -1,0 +1,12 @@
+sequenceDiagram
+    participant U as Your loop
+    participant G as agent.stream(stream_mode="updates")
+    participant M as Model node
+    participant T as write_todos
+    G-->>U: chunk {model: ...}
+    M->>T: write_todos([3 steps])
+    G-->>U: chunk with "todos" — revision 1
+    Note over M,T: agent works the steps
+    M->>T: write_todos(status updates)
+    G-->>U: chunk with "todos" — revision 2
+    G-->>U: chunk with the final answer

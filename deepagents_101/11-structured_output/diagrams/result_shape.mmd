@@ -1,0 +1,6 @@
+flowchart LR
+    inv["agent.invoke({messages: [...]})"] --> res["result dict"]
+    res --> m["messages<br/>the conversation, as always"]
+    res --> f["files<br/>the virtual filesystem"]
+    res --> sr["structured_response<br/>ONLY present when response_format is set"]
+    sr --> guard["May be missing or invalid on small models<br/>wrap in try/except"]

@@ -1,0 +1,11 @@
+sequenceDiagram
+    participant U as User
+    participant O as Orchestrator
+    participant C as critic subagent
+    U->>O: "critique this sentence"
+    O->>O: match request to the subagent's description
+    O->>C: task(subagent_type="critic", description="...")
+    Note over C: fresh context — nothing from the orchestrator's history
+    C->>C: reason, draft, revise
+    C-->>O: three bullet points (only this crosses back)
+    O-->>U: one-sentence summary

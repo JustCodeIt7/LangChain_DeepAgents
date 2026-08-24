@@ -1,0 +1,12 @@
+sequenceDiagram
+    participant U as You
+    participant A as Agent
+    participant B as LocalShellBackend
+    participant OS as Your machine
+    U->>A: "run: echo 'hello' > greeting.txt"
+    A->>B: execute(command="echo 'hello' > greeting.txt")
+    B->>OS: subprocess in root_dir, timeout=30, inherit_env=False
+    OS-->>B: stdout / stderr / exit code
+    B-->>A: tool result
+    A-->>U: one-sentence confirmation
+    OS-->>U: ./workspace/greeting.txt exists on disk

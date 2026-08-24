@@ -1,0 +1,7 @@
+flowchart TB
+    subgraph before["Without response_format"]
+        b1["Model returns prose"] --> b2["You regex / string-parse it"] --> b3["Breaks on every rewording"]
+    end
+    subgraph after["With response_format"]
+        a1["Model fills the schema"] --> a2["Pydantic validates it"] --> a3["review.rating — typed, safe, serializable"]
+    end

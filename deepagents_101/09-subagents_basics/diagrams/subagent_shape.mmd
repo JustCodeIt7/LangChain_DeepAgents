@@ -1,0 +1,9 @@
+flowchart LR
+    subgraph d["SubAgent dict"]
+        n["name<br/>how you address it"]
+        desc["description<br/>the ORCHESTRATOR reads this"]
+        sp["system_prompt<br/>the SUBAGENT reads this"]
+        t["tools (optional)<br/>replaces the inherited set — ep. 10"]
+    end
+    d --> reg["subagents=[critic]"]
+    reg --> avail["Available via the task tool<br/>alongside the built-in general-purpose subagent"]

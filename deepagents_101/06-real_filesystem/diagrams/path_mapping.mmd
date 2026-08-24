@@ -1,0 +1,12 @@
+flowchart LR
+    subgraph agentview["What the agent writes"]
+        p1["/shopping.md"]
+        p2["/greeting.txt"]
+    end
+    subgraph hostview["Where it lands on disk"]
+        h1["./workspace/shopping.md"]
+        h2["./workspace/greeting.txt"]
+    end
+    p1 -->|root_dir prefix| h1
+    p2 -->|root_dir prefix| h2
+    bad["workspace/shopping.md<br/>(the folder named twice)"] -->|creates| worse["./workspace/workspace/shopping.md"]

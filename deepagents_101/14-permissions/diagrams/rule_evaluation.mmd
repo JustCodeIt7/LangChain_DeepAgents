@@ -1,0 +1,5 @@
+flowchart TB
+    op["Tool call: write /secrets/api_key.md"] --> r1{"Rule 1<br/>write on /secrets/** — deny"}
+    r1 -->|matches| deny["REFUSED before the tool runs<br/>first match wins, evaluation stops"]
+    r1 -->|no match| r2{"More rules?"}
+    r2 -->|no rule matched| allow["ALLOWED — unmatched is permitted by default"]

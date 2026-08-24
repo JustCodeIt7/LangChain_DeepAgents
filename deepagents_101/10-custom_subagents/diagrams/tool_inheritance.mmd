@@ -1,0 +1,4 @@
+flowchart LR
+    orch["Orchestrator<br/>built-in suite + your tools"] --> q{"Subagent declares tools=?"}
+    q -->|no| inherit["Inherits the orchestrator's tool set"]
+    q -->|"yes — tools=[celsius_to_fahrenheit]"| replace["Sees ONLY that list<br/>inherited tools are replaced"]

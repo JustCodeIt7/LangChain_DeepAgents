@@ -1,0 +1,4 @@
+flowchart TB
+    cda["create_deep_agent(backend=...)"] --> q{"Can this backend run a shell?"}
+    q -->|"StateBackend — no"| no["execute tool NOT attached<br/>model cannot even try"]
+    q -->|"LocalShellBackend — yes"| yes["execute tool attached<br/>real subprocess on your machine"]

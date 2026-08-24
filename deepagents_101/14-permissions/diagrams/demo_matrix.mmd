@@ -1,0 +1,8 @@
+flowchart TB
+    subgraph fs["Seeded virtual filesystem"]
+        s["/secrets/api_key.md"]
+        n["/notes/scratch.md"]
+    end
+    s -->|read| ok1["allowed — the rule covers write only"]
+    s -->|write| no1["denied — /secrets/** write rule"]
+    n -->|write| ok2["allowed — no rule matches"]

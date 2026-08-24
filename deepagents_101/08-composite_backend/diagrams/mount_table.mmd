@@ -1,0 +1,4 @@
+flowchart LR
+    tools["read_file · write_file · ls · edit_file"] --> comp["CompositeBackend"]
+    comp -->|"prefix /disk/"| real["FilesystemBackend<br/>root_dir=./workspace<br/>persists on disk"]
+    comp -->|"default — everything else"| virt["StateBackend<br/>in graph state<br/>discarded after the run"]

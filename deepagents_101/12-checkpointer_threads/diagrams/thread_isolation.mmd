@@ -1,0 +1,5 @@
+flowchart TB
+    agent["One agent + one checkpointer"] --> a["thread_id 'alice'<br/>4 messages<br/>knows the number is 42"]
+    agent --> b["thread_id 'bob'<br/>2 messages<br/>has never heard of it"]
+    a --> note["Same deployment, separate histories<br/>this is how you serve many users safely"]
+    b --> note

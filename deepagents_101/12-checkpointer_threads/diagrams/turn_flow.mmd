@@ -1,0 +1,15 @@
+sequenceDiagram
+    participant U as User
+    participant A as Agent
+    participant C as InMemorySaver
+    U->>A: "My favorite number is 42." (thread=alice)
+    A->>C: save state
+    A-->>U: "Noted."
+    U->>A: "What is my favorite number?" (thread=alice)
+    A->>C: load state for alice
+    C-->>A: earlier messages
+    A-->>U: "42"
+    U->>A: "What is my favorite number?" (thread=bob)
+    A->>C: load state for bob
+    C-->>A: (empty)
+    A-->>U: "I don't know"

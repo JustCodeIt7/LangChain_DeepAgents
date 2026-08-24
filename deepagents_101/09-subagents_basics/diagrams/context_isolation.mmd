@@ -1,0 +1,11 @@
+flowchart TB
+    subgraph orch["Orchestrator context"]
+        m1["user request"] --> m2["task(subagent_type='critic')"]
+        m2 --> m3["ToolMessage: three bullets"]
+        m3 --> m4["one-sentence summary"]
+    end
+    subgraph sub["Subagent context — fresh and separate"]
+        s1["its own system_prompt"] --> s2["its own reasoning turns"] --> s3["its own tool calls"]
+    end
+    m2 -.->|brief| s1
+    s3 -.->|final answer only| m3
