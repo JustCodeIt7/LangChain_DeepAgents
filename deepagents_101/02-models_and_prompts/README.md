@@ -9,13 +9,13 @@
 - **Model as a string**: `"provider:model"` is handed to `init_chat_model`, so any LangChain provider works (`ollama:`, `openai:`, `anthropic:`, `google_genai:`)
 - **Model as an instance**: build it yourself with `init_chat_model(MODEL, temperature=0)` when you need to tune parameters (temperature, max_tokens, timeouts, base_url)
 - **Prompt composition**: your `system_prompt` does NOT replace the deep-agent instructions — it is placed FIRST, and the framework's tool guidance is appended after it (which is why the agent still knows how to use `write_file`, `task`, etc.)
-- **Tracing the graph**: `debug=True` dumps raw state updates; `stream_mode="updates"` + a small formatter gives a readable step-by-step trace
+- **Tracing the graph**: `debug=True` makes LangGraph print the state after every step — `[values]` (full state) and `[updates]` (per-node delta) — so you can watch each node, its messages, tool calls, and token counts
 
 ## Key Concepts
 
 1. String = simplest; instance = full control. deepagents uses the instance as-is
 2. The system prompt steers _personality and behavior_; tool knowledge comes from the framework
-3. `debug=True` dumps raw state; `stream_mode="updates"` gives a readable step-by-step trace
+3. `debug=True` prints every graph step as raw `[values]`/`[updates]` state dumps
 
 ## Teaching Notes
 
@@ -26,7 +26,7 @@
 - **Step 2 — A. model as a string:** `create_deep_agent(model=MODEL)`. deepagents hands the string to `init_chat_model`, so any LangChain provider works. Run it, show the answer.
 - **Step 3 — B. model as an instance:** `init_chat_model(MODEL, temperature=0)`. Use this when you need to tune parameters (temperature, max_tokens, base_url). Run the same question — same behavior, more control.
 - **Step 4 — C. custom system_prompt:** The pirate. This is the memorable moment — let it land. Then the key teaching point: your prompt is placed FIRST and the framework's tool guidance is appended AFTER it. The agent is still a full deep agent, just a pirate one.
-- **Step 5 — D. tracing the graph:** `stream_mode="updates"` + a small `trace()` formatter. Each step shows the node, its messages, tool calls, and token counts. Keep the question tiny ("say ready").
+- **Step 5 — D. tracing the graph:** `debug=True` makes LangGraph print the full state after every step — `[values]` (whole state) and `[updates]` (what each node changed). Each step shows the node, its messages, tool calls, and token counts. Keep the question tiny ("say ready").
 
 **On camera:**
 
