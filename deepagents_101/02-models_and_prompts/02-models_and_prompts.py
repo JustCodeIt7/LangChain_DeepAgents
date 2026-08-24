@@ -20,10 +20,18 @@ load_dotenv()
 MODEL = os.getenv("DEEPAGENTS_MODEL", "ollama:qwen3.5:2b")
 
 
+def text_of(message) -> str:
+    """Normalize message content across providers (str vs content blocks)."""
+    content = message.content
+    if isinstance(content, str):
+        return content
+    return "".join(block.get("text", "") for block in content if isinstance(block, dict))
+
+
 def ask(agent, question: str) -> str:
     """Invoke an agent with a single question and return its final text."""
     result = agent.invoke({"messages": [{"role": "user", "content": question}]})
-    return result["messages"][-1]
+    return text_of(result["messages"][-1]).strip()
 
 
 QUESTION = "In one short sentence, what is LangChain? Do not use tools."
@@ -33,8 +41,8 @@ QUESTION = "In one short sentence, what is LangChain? Do not use tools."
 # supports works: "ollama:...", "openai:...", "anthropic:...", "google_genai:..."
 string_agent = create_deep_agent(model=MODEL)
 print("[bold cyan]A. model as a string[/bold cyan]")
-print(f"  spec: [yellow]{MODEL}[/yellow]")
-print(f"  {ask(string_agent, QUESTION)}\n")
+print(f"spec: [yellow]{MODEL}[/yellow]")
+print(f"{ask(string_agent, QUESTION)}\n")
 
 # %% Step 3: Option B — pass a pre-built model instance
 # Build the model yourself when you need to tune parameters (temperature,
