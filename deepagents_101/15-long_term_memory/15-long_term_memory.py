@@ -18,7 +18,7 @@ from langgraph.store.memory import InMemoryStore  # dev store; swap for Postgres
 from rich import print
 
 load_dotenv()
-MODEL = os.getenv("DEEPAGENTS_MODEL", "ollama:qwen3.5:9b")
+MODEL = os.getenv("DEEPAGENTS_MODEL", "ollama:qwen3.5:2b")
 
 
 def text_of(message) -> str:

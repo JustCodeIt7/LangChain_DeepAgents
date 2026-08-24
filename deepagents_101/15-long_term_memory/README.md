@@ -25,6 +25,6 @@ DEEPAGENTS_MODEL=openai:gpt-4.1-mini python 15-long_term_memory.py
 ## Environment Variables
 | Variable | Default | Description |
 |---|---|---|
-| `DEEPAGENTS_MODEL` | `ollama:qwen3.5:9b` | Any LangChain provider string |
+| `DEEPAGENTS_MODEL` | `ollama:qwen3.5:2b` | Any LangChain provider string |
 
 Provider keys go in the repo-root `.env`. Setup is in the [series README](../README.md).

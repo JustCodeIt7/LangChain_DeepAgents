@@ -20,10 +20,10 @@ Written against **deepagents 0.7.x**. Episode 20 is the only one needing `langch
 Every script reads one environment variable and falls back to a local Ollama model:
 
 ```python
-MODEL = os.getenv("DEEPAGENTS_MODEL", "ollama:qwen3.5:9b")
+MODEL = os.getenv("DEEPAGENTS_MODEL", "ollama:qwen3.5:2b")
 ```
 
-Run with the default (requires `ollama serve` and `ollama pull qwen3.5:9b`):
+Run with the default (requires `ollama serve` and `ollama pull qwen3.5:2b`):
 
 ```bash
 python 01-deepagent_intro/01-deepagent_intro.py

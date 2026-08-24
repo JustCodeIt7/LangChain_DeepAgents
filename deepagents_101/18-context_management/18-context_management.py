@@ -18,7 +18,7 @@ from langgraph.checkpoint.memory import InMemorySaver
 from rich import print
 
 load_dotenv()
-MODEL = os.getenv("DEEPAGENTS_MODEL", "ollama:qwen3.5:9b")
+MODEL = os.getenv("DEEPAGENTS_MODEL", "ollama:qwen3.5:2b")
 
 # %% Step 2: Force summarization to trigger early
 # Every deep agent already summarizes automatically, but only near the model's

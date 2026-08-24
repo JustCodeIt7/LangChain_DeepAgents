@@ -20,7 +20,7 @@ from langchain.agents.middleware import TodoListMiddleware
 from rich import print
 
 load_dotenv()
-MODEL = os.getenv("DEEPAGENTS_MODEL", "ollama:qwen3.5:9b")
+MODEL = os.getenv("DEEPAGENTS_MODEL", "ollama:qwen3.5:2b")
 
 # %% Step 2: The corpus — the agent's "world"
 # In a real research agent these would be web pages or PDFs. Keeping them local

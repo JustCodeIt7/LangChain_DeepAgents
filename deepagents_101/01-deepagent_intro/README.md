@@ -26,6 +26,6 @@ DEEPAGENTS_MODEL=openai:gpt-4.1-mini python 01-deepagent_intro.py
 ## Environment Variables
 | Variable | Default | Description |
 |---|---|---|
-| `DEEPAGENTS_MODEL` | `ollama:qwen3.5:9b` | Any LangChain provider string (`openai:gpt-4.1-mini`, `anthropic:claude-sonnet-4-6`, …) |
+| `DEEPAGENTS_MODEL` | `ollama:qwen3.5:2b` | Any LangChain provider string (`openai:gpt-4.1-mini`, `anthropic:claude-sonnet-4-6`, …) |
 
 Provider keys go in the repo-root `.env` — every script calls `load_dotenv()`. Setup (env + deps) is in the [series README](../README.md).

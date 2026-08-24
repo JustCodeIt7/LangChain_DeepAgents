@@ -21,7 +21,7 @@ from langchain_mcp_adapters.client import MultiServerMCPClient
 from rich import print
 
 load_dotenv()
-MODEL = os.getenv("DEEPAGENTS_MODEL", "ollama:qwen3.5:9b")
+MODEL = os.getenv("DEEPAGENTS_MODEL", "ollama:qwen3.5:2b")
 
 # %% Step 2: Point at the MCP server
 # mcp_server.py sits next to this file and exposes one tool: check_stock.
