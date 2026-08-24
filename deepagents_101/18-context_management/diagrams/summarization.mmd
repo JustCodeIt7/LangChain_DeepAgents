@@ -1,0 +1,6 @@
+flowchart LR
+    h["Growing message history"] --> t{"trigger reached?<br/>default ~85% of context<br/>demo: ('messages', 4)"}
+    t -->|no| pass["Pass through unchanged"]
+    t -->|yes| sum["Summarize the OLD turns into one compact summary"]
+    sum --> keep["Keep the newest verbatim<br/>keep=('messages', 2)"]
+    keep --> out["Shorter history, same knowledge"]

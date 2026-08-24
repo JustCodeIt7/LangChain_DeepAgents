@@ -1,0 +1,10 @@
+sequenceDiagram
+    participant U as User
+    participant A as Agent
+    participant F as Backend (/skills)
+    Note over A: system prompt holds only name + description
+    U->>A: "Write release notes for 2.1.0 from these changes"
+    A->>A: match request against the skill description
+    A->>F: read_file /skills/release-notes/SKILL.md
+    F-->>A: full instructions (loaded ONLY now)
+    A-->>U: notes in the skill's house style

@@ -1,0 +1,6 @@
+flowchart TB
+    s["agent.stream(payload, stream_mode=...)"] --> u["'updates'<br/>{node_name: state_update}<br/>one chunk per graph step"]
+    s --> m["'messages'<br/>(message_chunk, metadata) TUPLES<br/>token by token"]
+    s --> v["'values'<br/>the full state after each step<br/>used in ep. 19"]
+    u --> ui1["Progress UI:<br/>Thinking… Calling add… Done"]
+    m --> ui2["Chat UI:<br/>text appearing as it is generated"]

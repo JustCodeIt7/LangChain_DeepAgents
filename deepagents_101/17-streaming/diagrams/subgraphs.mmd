@@ -1,0 +1,5 @@
+flowchart TB
+    d["Default: subagent internals are HIDDEN from the stream"] --> sg["subgraphs=True"]
+    sg --> shape["Each chunk arrives as (namespace_tuple, chunk)"]
+    shape --> ns["The namespace tells you WHICH subagent produced it"]
+    ns --> ui["Build a UI showing each delegated task<br/>progressing independently"]

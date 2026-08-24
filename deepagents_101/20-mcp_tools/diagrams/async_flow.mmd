@@ -1,0 +1,14 @@
+sequenceDiagram
+    participant M as asyncio.run(main())
+    participant C as MultiServerMCPClient
+    participant S as MCP server subprocess
+    participant A as Deep agent
+    M->>C: await client.get_tools()
+    C->>S: start + list tools
+    S-->>C: check_stock(item)
+    C-->>M: [LangChain tools]
+    M->>A: create_deep_agent(tools=tools)
+    M->>A: await agent.ainvoke({"messages": [...]})
+    A->>S: check_stock("widgets")
+    S-->>A: stock numbers
+    A-->>M: final answer

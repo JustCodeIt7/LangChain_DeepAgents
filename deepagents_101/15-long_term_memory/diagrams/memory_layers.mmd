@@ -1,0 +1,9 @@
+flowchart TB
+    subgraph short["Checkpointer — ep. 12"]
+        c["Remembers ONE thread<br/>thread_id scoped<br/>a new thread starts empty"]
+    end
+    subgraph long["Store — ep. 15"]
+        s["Remembers ACROSS threads<br/>namespace scoped (per user)<br/>survives every conversation"]
+    end
+    short --> use["Use both together:<br/>checkpointer for the chat, store for what should persist"]
+    long --> use

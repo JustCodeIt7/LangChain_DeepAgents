@@ -1,0 +1,10 @@
+sequenceDiagram
+    participant A as Agent
+    participant T as A tool with a huge result
+    participant B as Backend (filesystem)
+    A->>T: tool call
+    T-->>A: 200k-token response
+    Note over A,B: automatic — result exceeds ~20k tokens
+    A->>B: write the full result to a file
+    B-->>A: short preview + file path in the conversation
+    A->>B: read_file later, only if the details are needed
