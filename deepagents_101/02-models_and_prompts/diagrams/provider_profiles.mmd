@@ -1,0 +1,8 @@
+flowchart TB
+    subgraph reg["register_provider_profile — two levels, both can coexist"]
+        p["Provider level: 'openai'<br/>init_kwargs={'temperature': 0}"]
+        m["Model level: 'openai:gpt-5.5'<br/>init_kwargs={'reasoning_effort': 'medium'}"]
+    end
+    p --> merge["Merged init kwargs"]
+    m --> merge
+    merge --> out["Applies when you pass a provider:model string<br/>does NOT apply to preconfigured instances"]

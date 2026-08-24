@@ -1,0 +1,13 @@
+sequenceDiagram
+    participant U as You
+    participant G as LangGraph (debug=True)
+    participant M as Model node
+    participant T as Tool node
+    U->>G: invoke({"messages": [...]})
+    G->>M: model step — printed
+    M-->>G: tool call
+    G->>T: tool step — printed
+    T-->>G: tool result
+    G->>M: model step — printed
+    M-->>G: final answer
+    G-->>U: result
