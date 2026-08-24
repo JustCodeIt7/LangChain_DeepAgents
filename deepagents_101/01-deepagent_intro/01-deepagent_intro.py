@@ -83,9 +83,9 @@ print(f"\n[bold]Created a deep agent backed by:[/bold] [yellow]{MODEL}[/yellow]"
 
 # Input is a message list, exactly like any LangChain/LangGraph agent.
 # We tell it not to use tools so this first demo stays fast and predictable.
-question = "What is 7 times 6? Answer directly without using any tools."
+question = "What is 7 times 6? use your tools"
 result = agent.invoke({"messages": [{"role": "user", "content": question}]})  # run one turn to completion
-
+print(result)
 # %% Step 5: Inspect what happened
 ################################ Inspect the Resulting State ################################
 
@@ -100,7 +100,7 @@ print("\n[bold cyan]Message trace:[/bold cyan]")
 for message in result["messages"]:
     kind = message.__class__.__name__.replace("Message", "")  # e.g. HumanMessage -> Human
     body = text_of(message).strip() or "[dim](tool call only)[/dim]"  # tool-call messages carry no text
-    print(f"  [magenta]{kind:9}[/magenta] {body}")
+    print(f"\n  [magenta]{kind:9}[/magenta] {body}")
 
 # The last message is always the agent's final reply to the user
 print(f"\n[bold green]Final answer:[/bold green] {text_of(result['messages'][-1])}")

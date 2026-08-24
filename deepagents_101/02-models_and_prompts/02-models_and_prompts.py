@@ -20,18 +20,10 @@ load_dotenv()
 MODEL = os.getenv("DEEPAGENTS_MODEL", "ollama:qwen3.5:2b")
 
 
-def text_of(message) -> str:
-    """Normalize message content across providers (str vs content blocks)."""
-    content = message.content
-    if isinstance(content, str):
-        return content
-    return "".join(block.get("text", "") for block in content if isinstance(block, dict))
-
-
 def ask(agent, question: str) -> str:
     """Invoke an agent with a single question and return its final text."""
     result = agent.invoke({"messages": [{"role": "user", "content": question}]})
-    return text_of(result["messages"][-1]).strip()
+    return result["messages"][-1]
 
 
 QUESTION = "In one short sentence, what is LangChain? Do not use tools."
