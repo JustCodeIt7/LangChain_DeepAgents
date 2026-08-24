@@ -38,6 +38,11 @@
 
 **Bridge to ep. 07:** "Files are great. What about running commands? Next: a real shell."
 
+## Slides & Diagrams
+
+- `slides.md` — 3-slide Marp deck overview of the episode. Preview with the Marp VS Code extension or `npx @marp-team/marp-cli slides.md`
+- `diagrams/` — Mermaid sources (`.mmd`) with rendered `.svg`/`.png`: filesystem backend, path mapping, virtual-mode guard
+
 ## Run Instructions
 
 ```bash

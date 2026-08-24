@@ -39,6 +39,11 @@
 
 **Bridge to ep. 06:** "Virtual is safe but ephemeral — it vanishes when the process exits. Next: real files on disk."
 
+## Slides & Diagrams
+
+- `slides.md` — 3-slide Marp deck overview of the episode. Preview with the Marp VS Code extension or `npx @marp-team/marp-cli slides.md`
+- `diagrams/` — Mermaid sources (`.mmd`) with rendered `.svg`/`.png`: state backend, backend choice, file lifecycle
+
 ## Run Instructions
 
 ```bash

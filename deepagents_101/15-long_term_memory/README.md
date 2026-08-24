@@ -39,6 +39,11 @@
 
 **Bridge to ep. 16:** "Memory is files in a store. What if the expertise is a document the agent loads on demand? Next: skills."
 
+## Slides & Diagrams
+
+- `slides.md` — 3-slide Marp deck overview of the episode. Preview with the Marp VS Code extension or `npx @marp-team/marp-cli slides.md`
+- `diagrams/` — Mermaid sources (`.mmd`) with rendered `.svg`/`.png`: memory layers, store mount, recall flow
+
 ## Run Instructions
 
 ```bash

@@ -39,6 +39,11 @@
 
 **Bridge to ep. 20:** "The last piece: tools from the outside world — MCP."
 
+## Slides & Diagrams
+
+- `slides.md` — 3-slide Marp deck overview of the episode. Preview with the Marp VS Code extension or `npx @marp-team/marp-cli slides.md`
+- `diagrams/` — Mermaid sources (`.mmd`) with rendered `.svg`/`.png`: pipeline, architecture, context budget
+
 ## Run Instructions
 
 ```bash

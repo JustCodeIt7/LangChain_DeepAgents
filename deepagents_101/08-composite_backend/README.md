@@ -37,6 +37,11 @@
 
 **Bridge to ep. 09:** "Backends decide where data lives. Next: agents that delegate work — subagents."
 
+## Slides & Diagrams
+
+- `slides.md` — 3-slide Marp deck overview of the episode. Preview with the Marp VS Code extension or `npx @marp-team/marp-cli slides.md`
+- `diagrams/` — Mermaid sources (`.mmd`) with rendered `.svg`/`.png`: mount table, route resolution, crossing the boundary
+
 ## Run Instructions
 
 ```bash

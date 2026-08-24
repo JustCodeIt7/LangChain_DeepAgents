@@ -38,6 +38,11 @@
 
 **Bridge to ep. 10:** "That subagent used the orchestrator's tools and model. What if it needs its own? Next: customizing subagents."
 
+## Slides & Diagrams
+
+- `slides.md` — 3-slide Marp deck overview of the episode. Preview with the Marp VS Code extension or `npx @marp-team/marp-cli slides.md`
+- `diagrams/` — Mermaid sources (`.mmd`) with rendered `.svg`/`.png`: context isolation, the task tool, subagent shape
+
 ## Run Instructions
 
 ```bash

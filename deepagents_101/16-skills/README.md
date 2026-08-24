@@ -39,6 +39,11 @@
 
 **Bridge to ep. 17:** "Skills are on-demand expertise. Next: see the agent work as it happens — streaming."
 
+## Slides & Diagrams
+
+- `slides.md` — 3-slide Marp deck overview of the episode. Preview with the Marp VS Code extension or `npx @marp-team/marp-cli slides.md`
+- `diagrams/` — Mermaid sources (`.mmd`) with rendered `.svg`/`.png`: skill package, progressive disclosure, the backend gotcha
+
 ## Run Instructions
 
 ```bash

@@ -38,6 +38,11 @@
 
 **Bridge (series finale):** Recap the arc — from one function call (ep. 01) to an agent that plans, works on files, delegates, remembers, and now pulls tools from the outside world.
 
+## Slides & Diagrams
+
+- `slides.md` — 3-slide Marp deck overview of the episode. Preview with the Marp VS Code extension or `npx @marp-team/marp-cli slides.md`
+- `diagrams/` — Mermaid sources (`.mmd`) with rendered `.svg`/`.png`: MCP client, transports, async flow
+
 ## Run Instructions
 
 ```bash

@@ -38,6 +38,11 @@
 
 **Bridge to ep. 11:** "So far the agent's answer is prose. What if you need a typed object? Next: structured output."
 
+## Slides & Diagrams
+
+- `slides.md` — 3-slide Marp deck overview of the episode. Preview with the Marp VS Code extension or `npx @marp-team/marp-cli slides.md`
+- `diagrams/` — Mermaid sources (`.mmd`) with rendered `.svg`/`.png`: the two flavours, tool inheritance, routing
+
 ## Run Instructions
 
 ```bash

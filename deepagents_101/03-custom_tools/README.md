@@ -39,6 +39,11 @@
 
 **Bridge to ep. 04:** "Tools are great, but multi-step work needs a plan. Next: the agent's to-do list."
 
+## Slides & Diagrams
+
+- `slides.md` — 3-slide Marp deck overview of the episode. Preview with the Marp VS Code extension or `npx @marp-team/marp-cli slides.md`
+- `diagrams/` — Mermaid sources (`.mmd`) with rendered `.svg`/`.png`: tool definition, additive tools, tool call loop
+
 ## Run Instructions
 
 ```bash

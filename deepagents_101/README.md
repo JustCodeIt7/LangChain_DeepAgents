@@ -67,5 +67,7 @@ step, try a larger model before assuming the code is wrong.
 ## Notes
 
 - Episodes 06, 07 and 08 write to a `workspace/` folder inside their own directory (git-ignored).
+- Every episode ships a 3-slide Marp deck (`slides.md` / `slides.html`) and a `diagrams/` folder
+  of Mermaid sources with rendered `.svg`/`.png`.
 - Every script is also a VS Code interactive notebook — the `# %%` markers let you run it cell by cell.
 - Nothing here calls the internet except your model provider (and episode 20's local MCP subprocess).

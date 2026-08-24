@@ -38,6 +38,11 @@
 
 **Bridge to ep. 12:** "Structured output is great for one run. What about remembering across runs? Next: checkpointers and threads."
 
+## Slides & Diagrams
+
+- `slides.md` — 3-slide Marp deck overview of the episode. Preview with the Marp VS Code extension or `npx @marp-team/marp-cli slides.md`
+- `diagrams/` — Mermaid sources (`.mmd`) with rendered `.svg`/`.png`: response format, before/after, result shape
+
 ## Run Instructions
 
 ```bash

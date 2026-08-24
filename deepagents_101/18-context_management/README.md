@@ -39,6 +39,11 @@
 
 **Bridge to ep. 19:** "Everything so far, in one agent — the capstone."
 
+## Slides & Diagrams
+
+- `slides.md` — 3-slide Marp deck overview of the episode. Preview with the Marp VS Code extension or `npx @marp-team/marp-cli slides.md`
+- `diagrams/` — Mermaid sources (`.mmd`) with rendered `.svg`/`.png`: summarization, history growth, tool-result offload
+
 ## Run Instructions
 
 ```bash

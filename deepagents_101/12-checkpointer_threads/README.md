@@ -38,6 +38,11 @@
 
 **Bridge to ep. 13:** "Memory is great — but what if the agent wants to do something risky? Next: human in the loop."
 
+## Slides & Diagrams
+
+- `slides.md` — 3-slide Marp deck overview of the episode. Preview with the Marp VS Code extension or `npx @marp-team/marp-cli slides.md`
+- `diagrams/` — Mermaid sources (`.mmd`) with rendered `.svg`/`.png`: checkpointer, thread isolation, turn flow
+
 ## Run Instructions
 
 ```bash

@@ -39,6 +39,11 @@
 
 **Bridge to ep. 18:** "Streaming shows the work. But long conversations grow — next keeps them small."
 
+## Slides & Diagrams
+
+- `slides.md` — 3-slide Marp deck overview of the episode. Preview with the Marp VS Code extension or `npx @marp-team/marp-cli slides.md`
+- `diagrams/` — Mermaid sources (`.mmd`) with rendered `.svg`/`.png`: stream modes, message filtering, subgraphs
+
 ## Run Instructions
 
 ```bash

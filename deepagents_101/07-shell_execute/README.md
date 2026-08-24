@@ -38,6 +38,11 @@
 
 **Bridge to ep. 08:** "One backend, one place. What if I want some paths virtual and some real? Next: mixing backends."
 
+## Slides & Diagrams
+
+- `slides.md` — 3-slide Marp deck overview of the episode. Preview with the Marp VS Code extension or `npx @marp-team/marp-cli slides.md`
+- `diagrams/` — Mermaid sources (`.mmd`) with rendered `.svg`/`.png`: backend capability, execute flow, safety boundary
+
 ## Run Instructions
 
 ```bash

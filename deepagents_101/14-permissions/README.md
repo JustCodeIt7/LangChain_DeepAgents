@@ -40,6 +40,11 @@
 
 **Bridge to ep. 15:** "Permissions gate the filesystem. What about memory that outlives the conversation? Next: long-term memory."
 
+## Slides & Diagrams
+
+- `slides.md` — 3-slide Marp deck overview of the episode. Preview with the Marp VS Code extension or `npx @marp-team/marp-cli slides.md`
+- `diagrams/` — Mermaid sources (`.mmd`) with rendered `.svg`/`.png`: rule evaluation, three modes, demo matrix
+
 ## Run Instructions
 
 ```bash
