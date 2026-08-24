@@ -40,6 +40,11 @@
 
 **Bridge to ep. 02:** "We passed a model string. Next: the two ways to specify a model, and where your system prompt actually lands."
 
+## Slides & Diagrams
+
+- `slides.md` — 14-slide Marp deck covering the framework overview. Preview with the Marp VS Code extension or `npx @marp-team/marp-cli slides.md`
+- `diagrams/` — Mermaid sources (`.mmd`) with rendered `.svg`/`.png`: architecture, virtual filesystem, context management, delegation, human-in-the-loop
+
 ## Run Instructions
 
 ```bash

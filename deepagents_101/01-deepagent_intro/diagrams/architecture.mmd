@@ -1,0 +1,5 @@
+flowchart TB
+    subgraph harness["Deep Agents — the agent harness (built on LangChain · LangGraph runtime)"]
+        direction LR
+        ee["Execution Environment<br/><br/>tools · virtual filesystem<br/>optional sandboxed code execution"] ~~~ cm["Context Management<br/><br/>memory · skill loading<br/>automatic summarization"] ~~~ del["Delegation<br/><br/>subagents<br/>structured task planning"] ~~~ steer["Steering<br/><br/>human-in-the-loop approvals<br/>declarative filesystem permission rules"]
+    end

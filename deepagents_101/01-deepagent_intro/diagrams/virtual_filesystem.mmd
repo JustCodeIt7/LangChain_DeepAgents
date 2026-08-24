@@ -1,0 +1,6 @@
+flowchart LR
+    agent["Deep agent"] --> ops["File operations<br/>list · read · edit · search"]
+    ops --> vfs["Virtual filesystem<br/>configurable permission rules"]
+    vfs --> b1["Pluggable backend 1"]
+    vfs --> b2["Pluggable backend 2"]
+    vfs --> b3["Pluggable backend 3"]
