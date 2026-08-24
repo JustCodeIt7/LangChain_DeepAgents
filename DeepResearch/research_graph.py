@@ -7,22 +7,23 @@ Multi-agent workflow for conducting comprehensive research using:
 - Synthesis Agent: Compiles findings into markdown reports
 """
 
-from typing import TypedDict, Annotated, List, Dict
 import operator
-from langgraph.graph import StateGraph, START, END
-from langchain_core.messages import HumanMessage, AIMessage, SystemMessage
+import os
+from typing import Annotated, TypedDict
+
+from langchain_core.messages import HumanMessage, SystemMessage
 from langchain_ollama import ChatOllama
 from langchain_openai import ChatOpenAI
+from langgraph.graph import END, START, StateGraph
 from tavily import TavilyClient
-import os
 
 
 class ResearchState(TypedDict):
     """State for the research workflow"""
 
     topic: str
-    research_plan: List[str]
-    search_results: Annotated[List[Dict], operator.add]
+    research_plan: list[str]
+    search_results: Annotated[list[dict], operator.add]
     final_report: str
     current_step: str
 
@@ -48,7 +49,7 @@ class ResearchGraph:
 
         self.graph = self._build_graph()
 
-    def _planning_agent(self, state: ResearchState) -> Dict:
+    def _planning_agent(self, state: ResearchState) -> dict:
         """
         Planning Agent: Decomposes research topic into structured execution plan
         """
@@ -80,7 +81,7 @@ Format your response as a numbered list of research questions only, no additiona
             "current_step": "planning_complete",
         }
 
-    def _research_agent(self, state: ResearchState) -> Dict:
+    def _research_agent(self, state: ResearchState) -> dict:
         """
         Research Agent: Performs web searches for each question in the plan
         """
@@ -116,7 +117,7 @@ Format your response as a numbered list of research questions only, no additiona
 
         return {"search_results": all_results, "current_step": "research_complete"}
 
-    def _synthesis_agent(self, state: ResearchState) -> Dict:
+    def _synthesis_agent(self, state: ResearchState) -> dict:
         """
         Synthesis Agent: Compiles research findings into structured markdown report
         """

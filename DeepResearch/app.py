@@ -7,8 +7,9 @@ Interactive web interface featuring:
 - Markdown preview of the final research report
 """
 
-import streamlit as st
 import os
+
+import streamlit as st
 from dotenv import load_dotenv
 from research_graph import ResearchGraph
 

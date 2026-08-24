@@ -59,7 +59,6 @@ from langgraph.checkpoint.memory import MemorySaver  # In-process state persiste
 # Rich — colored, live terminal output for the streaming view.
 from rich.console import Console  # Renders [color] tags + handles input()
 
-
 console = Console()  # Single shared console instance; reused across all print calls in this script
 
 

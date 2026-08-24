@@ -53,7 +53,6 @@ from langgraph.types import Command  # Resume: Command(resume={"decisions":[...]
 # Rich — colored, live terminal output for the streaming view.
 from rich.console import Console  # Renders [color] tags + handles input()
 
-
 console = Console()  # Single shared console instance; reused across all print calls in this script
 
 # MAX_OUTPUT_CHARS caps how much text a tool returns to the model. Failure output

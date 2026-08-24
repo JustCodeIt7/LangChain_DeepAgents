@@ -2,10 +2,12 @@
 Utility functions for LangChain Deep Agents
 """
 import json
-from typing import Dict, List, Any
+from typing import Any
+
 from rich import print
 
-def print_agent_execution(result: Dict[str, Any], max_length: int = 500) -> None:
+
+def print_agent_execution(result: dict[str, Any], max_length: int = 500) -> None:
     """
     Print the agent's execution path in a simple, readable format.
 
@@ -54,7 +56,7 @@ def print_agent_execution(result: Dict[str, Any], max_length: int = 500) -> None
     print("═" * 80 + "\n")
 
 
-def print_agent_summary(result: Dict[str, Any]) -> None:
+def print_agent_summary(result: dict[str, Any]) -> None:
     """
     Print a concise summary of the agent's execution.
     
@@ -86,7 +88,7 @@ def print_agent_summary(result: Dict[str, Any]) -> None:
     print("─" * 60 + "\n")
 
 
-def save_agent_result(result: Dict[str, Any], filename: str = "agent_response.json") -> None:
+def save_agent_result(result: dict[str, Any], filename: str = "agent_response.json") -> None:
     """
     Save agent result to a JSON file.
     

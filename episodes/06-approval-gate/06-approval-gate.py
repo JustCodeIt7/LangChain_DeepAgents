@@ -52,7 +52,6 @@ from langchain_core.messages import AIMessage  # Message type with tool_calls
 # MemorySaver is REQUIRED for interrupts to work: without it, Command(resume=...)
 # has nowhere to resume from because there's no checkpointer storing the graph state.
 # ─────────────────────────────────────────────────────────────────────────────
-
 from langgraph.checkpoint.memory import (
     MemorySaver,
 )  # In-process checkpointer — REQUIRED for interrupts
@@ -60,7 +59,6 @@ from langgraph.types import Command  # Resume primitive: Command(resume={"decisi
 
 # Rich — colored, live terminal output for the streaming view.
 from rich.console import Console  # Renders [color] tags + handles input()
-
 
 console = Console()  # Single shared console instance; reused across all print calls in this script
 

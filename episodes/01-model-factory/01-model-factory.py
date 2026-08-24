@@ -47,7 +47,6 @@ from langchain_core.language_models import BaseChatModel  # Return type of get_m
 # Rich — colored terminal output (print is patched to support [color] tags).
 from rich import print  # Drop-in replacement for builtin print with color tag support
 
-
 load_dotenv()  # Load .env file if present — must run BEFORE any os.getenv calls below
 
 

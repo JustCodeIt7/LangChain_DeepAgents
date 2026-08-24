@@ -60,7 +60,6 @@ from langgraph.checkpoint.memory import InMemorySaver  # In-process state persis
 # Rich — colored, live terminal output for the streaming view.
 from rich.console import Console  # Renders [color] tags + handles input()
 
-
 console = Console()  # Single shared console instance; reused across all print calls in this script
 
 MAX_OUTPUT_CHARS = 20_000  # ~5k tokens; keeps context window healthy

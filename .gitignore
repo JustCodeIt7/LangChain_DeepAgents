@@ -208,3 +208,7 @@ Plotly_Dash_Dashboards/01-Plotly_Basics_Charts/12-Sankey_Diagram/archive
 
 # deepagents_101 episode scratch dirs
 deepagents_101/**/workspace/
+
+# deepcoding_agent (DeepCoder series) scratch dirs
+deepcoding_agent/**/workspace/
+deepcoding_agent/**/.deepcoder/

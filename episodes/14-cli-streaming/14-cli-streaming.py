@@ -30,35 +30,34 @@ Requires: pip install deepagents langchain-ollama rich typer langchain-mcp-adapt
 # ─────────────────────────────────────────────────────────────────────────────
 from __future__ import annotations  # PEP 604 union syntax (X | Y) on Python 3.10+
 
-import asyncio   # Async event loop — required for MCP tool loading and v3 streaming
-import os        # Environment variable access for provider/model/workdir config
-import sys       # Command-line argument parsing and stderr output
+import asyncio  # Async event loop — required for MCP tool loading and v3 streaming
+import os  # Environment variable access for provider/model/workdir config
+import sys  # Command-line argument parsing and stderr output
 from pathlib import Path  # Object-oriented filesystem paths with .resolve()
-
-# Deep Agents harness — the core framework that compiles a LangGraph agent.
-from deepagents import create_deep_agent          # Creates compiled agent graph
-from deepagents.backends import FilesystemBackend  # Built-in fs tools: ls/read/write/edit/glob/grep
-
-# LangChain — provider-agnostic LLM integration and tool definitions.
-from langchain.chat_models import init_chat_model  # One call, any provider
-from langchain.tools import tool                  # Decorator → LLM-callable Tool
-
-# LangChain Core — type hints for model and message objects.
-from langchain_core.language_models import BaseChatModel  # Return type of get_model()
-from langchain_core.messages import AIMessage     # Message type with tool_calls
-
-# LangGraph — state persistence and interrupt/resume primitives.
-from langgraph.checkpoint.memory import MemorySaver      # REQUIRED for interrupts (Ep 6)
-from langgraph.types import Command                # Resume: Command(resume={"decisions":[...]})
-
-# Rich — colored, live terminal output for the streaming view.
-from rich.console import Console                   # Renders [color] tags + handles input()
-from rich.panel import Panel                       # Boxed containers for tool/assistant messages
-from rich.text import Text                         # Styled text with color/spans
 
 # Typer — modern CLI framework built on Click, used to build the `codeit` command.
 import typer  # Declarative CLI: @app.command() + type hints → auto-generated help
 
+# Deep Agents harness — the core framework that compiles a LangGraph agent.
+from deepagents import create_deep_agent  # Creates compiled agent graph
+from deepagents.backends import FilesystemBackend  # Built-in fs tools: ls/read/write/edit/glob/grep
+
+# LangChain — provider-agnostic LLM integration and tool definitions.
+from langchain.chat_models import init_chat_model  # One call, any provider
+from langchain.tools import tool  # Decorator → LLM-callable Tool
+
+# LangChain Core — type hints for model and message objects.
+from langchain_core.language_models import BaseChatModel  # Return type of get_model()
+from langchain_core.messages import AIMessage  # Message type with tool_calls
+
+# LangGraph — state persistence and interrupt/resume primitives.
+from langgraph.checkpoint.memory import MemorySaver  # REQUIRED for interrupts (Ep 6)
+from langgraph.types import Command  # Resume: Command(resume={"decisions":[...]})
+
+# Rich — colored, live terminal output for the streaming view.
+from rich.console import Console  # Renders [color] tags + handles input()
+from rich.panel import Panel  # Boxed containers for tool/assistant messages
+from rich.text import Text  # Styled text with color/spans
 
 console = Console()  # Single shared console instance; reused across all print calls in this script
 app = typer.Typer(help="CodeIt — your terminal coding agent.")  # Root Typer app for the CLI

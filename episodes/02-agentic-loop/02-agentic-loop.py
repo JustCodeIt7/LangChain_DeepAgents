@@ -35,7 +35,6 @@ from deepagents import create_deep_agent  # Creates compiled agent graph
 # would live in codeit/ package; here we inline a trimmed copy so this file
 # is self-contained — each episode script runs independently for YouTube viewers.
 # ─────────────────────────────────────────────────────────────────────────────
-
 # LangChain — provider-agnostic LLM integration and tool definitions.
 from langchain.chat_models import init_chat_model  # One call, any provider
 
@@ -57,7 +56,6 @@ from langgraph.checkpoint.memory import MemorySaver  # In-process state persiste
 
 # Rich — colored, live terminal output for the streaming view.
 from rich.console import Console  # Renders [color] tags + handles input()
-
 
 console = Console()  # Single shared console instance; reused across all print calls in this script
 
