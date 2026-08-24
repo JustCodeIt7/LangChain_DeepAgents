@@ -57,6 +57,7 @@ load_dotenv()  # Load .env file if present — must run BEFORE any os.getenv cal
 #    type hints for IDE autocomplete, while keeping env var access centralized.
 # ─────────────────────────────────────────────────────────────────────────────
 
+
 @dataclass(frozen=True)  # frozen = immutable; safe to pass anywhere without accidental mutation
 class Settings:
     """Typed configuration loaded from environment variables.
@@ -106,6 +107,7 @@ def get_settings() -> Settings:
 #    'OPENAI_API_KEY is required' hint instead of a cryptic stack trace.
 # ─────────────────────────────────────────────────────────────────────────────
 
+
 def get_model(settings: Settings | None = None) -> BaseChatModel:
     """Return a chat model for the configured provider.
 
@@ -141,10 +143,7 @@ def get_model(settings: Settings | None = None) -> BaseChatModel:
         # OpenAI requires an API key — validate it HERE before calling init_chat_model,
         # so the error message is clear and actionable (not a cryptic HTTP error).
         if not s.openai_api_key:
-            raise ValueError(
-                "OPENAI_API_KEY is required when LLM_PROVIDER=openai."
-                " Set it in .env or `export OPENAI_API_KEY=...`."
-            )
+            raise ValueError("OPENAI_API_KEY is required when LLM_PROVIDER=openai. Set it in .env or `export OPENAI_API_KEY=...`.")
 
         # Build kwargs dict — base_url is optional (for Azure/OpenAI-compatible endpoints).
         kwargs: dict = {"model": s.llm_model, "model_provider": "openai"}
@@ -161,6 +160,7 @@ def get_model(settings: Settings | None = None) -> BaseChatModel:
 # 3. Agent builder — thin wrapper around create_deep_agent.
 #    This is where we assemble the agent: model + tools + system prompt → compiled graph.
 # ─────────────────────────────────────────────────────────────────────────────
+
 
 def build_agent(model: BaseChatModel | None = None, system_prompt: str | None = None):
     """Build a tool-free Deep Agent. Just the brain.
@@ -193,6 +193,7 @@ def build_agent(model: BaseChatModel | None = None, system_prompt: str | None = 
 # 4. CLI demo — send one prompt, print the reply.
 #    This is the simplest possible agent invocation: invoke() runs to completion.
 # ─────────────────────────────────────────────────────────────────────────────
+
 
 def main() -> None:
     """Entry point — build a tool-free agent and run it on a single prompt.
