@@ -18,6 +18,7 @@ from rich import print  # colorized console output
 
 load_dotenv()
 MODEL = os.getenv("DEEPAGENTS_MODEL", "ollama:qwen3.5:2b")
+print(f"Using model: {MODEL}")
 
 
 def text_of(message) -> str:
