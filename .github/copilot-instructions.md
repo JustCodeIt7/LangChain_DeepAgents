@@ -197,3 +197,10 @@ agent = create_deep_agent(model=model, tools=[...], system_prompt=...)
 - `.env`: API keys (git-ignored, must create manually)
 - `AGENTS.md`: High-level project docs for AI agents
 - `README.md`: Human-readable setup guide
+
+<!-- mermaid-ai-skills:start -->
+## Mermaid Diagrams
+
+When the user asks to create, edit, or visualize a diagram, follow the
+instructions in `.github/instructions/mermaid.instructions.md`.
+<!-- mermaid-ai-skills:end -->
