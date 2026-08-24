@@ -7,10 +7,10 @@
 
 - **`health.py`** — checks the two things that actually break on a fresh machine:
   Ollama not running, and the model not pulled. Both otherwise surface as a confusing error deep
-  inside an HTTP client, *after* the user types their first question.
+  inside an HTTP client, _after_ the user types their first question.
 - **`urllib`, not a new dependency** — `GET /api/tags` with a 2-second timeout is the whole check.
 - **Actionable messages** — not "connection refused" but "run `ollama serve`", and for a missing
-  model, a list of the ones you *do* have.
+  model, a list of the ones you _do_ have.
 - **Non-Ollama providers are skipped** — a cloud model's missing API key reports itself clearly
   already; a false warning would be worse than none.
 - **`BINDINGS`** — `esc` cancel, `ctrl+l` clear, `ctrl+n` new, `ctrl+r` resume, `f1` help. Each
@@ -37,10 +37,10 @@ Press `f1`. Try `ctrl+n`, `ctrl+r`, `ctrl+l`.
 
 ## Files in this snapshot
 
-| File | Role |
-|---|---|
-| `health.py` | Ollama reachability + model-pulled checks |
-| `tui.py` | Runs the check on mount; adds `BINDINGS` and their actions |
+| File        | Role                                                       |
+| ----------- | ---------------------------------------------------------- |
+| `health.py` | Ollama reachability + model-pulled checks                  |
+| `tui.py`    | Runs the check on mount; adds `BINDINGS` and their actions |
 
 ## Extend this yourself
 

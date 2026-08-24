@@ -179,14 +179,14 @@ def _synthesis_agent(self, state: ResearchState) -> Dict:
 ```python
 def _build_graph(self) -> StateGraph:
     workflow = StateGraph(ResearchState)
-    
+
     # Add your custom node
     workflow.add_node("custom_node", self._custom_agent)
-    
+
     # Wire it into the graph
     workflow.add_edge("research_agent", "custom_node")
     workflow.add_edge("custom_node", "synthesis_agent")
-    
+
     return workflow.compile()
 ```
 
@@ -195,12 +195,14 @@ def _build_graph(self) -> StateGraph:
 ### Supported Models
 
 **Ollama (Local)**:
+
 - `gpt-oss:20b` (recommended for quality)
 - `llama3.2` (fast, good balance)
 - `qwen3:1.7b` (lightweight)
 - `gemma3:4b` (efficient)
 
 **OpenAI (Hosted)**:
+
 - `gpt-4o` (highest quality)
 - `gpt-4o-mini` (cost-effective)
 - `gpt-4-turbo` (fast)
@@ -245,6 +247,7 @@ pip install -r requirements.txt --force-reinstall
 ## Contributing
 
 This project is part of the LangChain Deep Agents tutorial series. Feel free to:
+
 - Report issues
 - Submit pull requests
 - Suggest improvements

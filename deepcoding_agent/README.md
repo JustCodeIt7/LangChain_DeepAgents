@@ -8,6 +8,7 @@ LangGraph) for the agent, [Ollama](https://ollama.com) for the model, and
 [Textual](https://textual.textualize.io) for the terminal UI.
 
 **The rules of the series:**
+
 - Every part adds **≤150 lines** of code. No part dumps a finished app on you.
 - Every part folder is a **complete, runnable snapshot**. `cd` into part 7, run it, and you get
   exactly what part 7 built.
@@ -52,26 +53,26 @@ building on local models actually feels like.
 
 ## The parts
 
-| # | Part | What you learn | New deps |
-|---|------|----------------|----------|
-| 01 | [intro](01-intro/) | `create_deep_agent`, model strings, the built-in toolbox | — |
-| 02 | [chat-loop](02-chat-loop/) | Checkpointers and `thread_id`: why agents forget | — |
-| 03 | [project-files](03-project-files/) | `CompositeBackend`, real files, the `num_ctx` trap | — |
-| 04 | [shell-execute](04-shell-execute/) | `LocalShellBackend`, the `execute` tool, `inherit_env` | — |
-| 05 | [approvals](05-approvals/) | `interrupt_on`, and why `decisions` is a **list** | — |
-| 06 | [streaming](06-streaming/) | `runner.py`: the event layer, dual `stream_mode` | — |
-| 07 | [streaming-approvals](07-streaming-approvals/) | Pauses as events; resuming mid-stream | — |
-| 08 | [textual-shell](08-textual-shell/) | A real TUI — that freezes, on purpose | `textual` |
-| 09 | [textual-worker](09-textual-worker/) | Thread workers, `post_message`, dropped-token bug | — |
-| 10 | [approval-modal](10-approval-modal/) | `ModalScreen`, `call_from_thread`, batched actions | — |
-| 11 | [plan-status](11-plan-status/) | `TodoListMiddleware`, plan sidebar, token counts | — |
-| 12 | [slash-commands](12-slash-commands/) | A command registry with autocomplete | — |
-| 13 | [sessions](13-sessions/) | `SqliteSaver` — conversations that survive a restart | `langgraph-checkpoint-sqlite` |
-| 14 | [subagents](14-subagents/) | Delegation, context quarantine, `subgraphs=True` | — |
-| 15 | [project-memory](15-project-memory/) | `AGENTS.md` via `memory=`, and `/init` | — |
-| 16 | [diffs](16-diffs/) | See the diff before you approve it | — |
-| 17 | [health-polish](17-health-polish/) | Startup checks, keybindings | — |
-| 18 | [mcp-packaging](18-mcp-packaging/) | MCP tools, async/sync bridging, `pip install -e .` | `langchain-mcp-adapters` |
+| #   | Part                                           | What you learn                                           | New deps                      |
+| --- | ---------------------------------------------- | -------------------------------------------------------- | ----------------------------- |
+| 01  | [intro](01-intro/)                             | `create_deep_agent`, model strings, the built-in toolbox | —                             |
+| 02  | [chat-loop](02-chat-loop/)                     | Checkpointers and `thread_id`: why agents forget         | —                             |
+| 03  | [project-files](03-project-files/)             | `CompositeBackend`, real files, the `num_ctx` trap       | —                             |
+| 04  | [shell-execute](04-shell-execute/)             | `LocalShellBackend`, the `execute` tool, `inherit_env`   | —                             |
+| 05  | [approvals](05-approvals/)                     | `interrupt_on`, and why `decisions` is a **list**        | —                             |
+| 06  | [streaming](06-streaming/)                     | `runner.py`: the event layer, dual `stream_mode`         | —                             |
+| 07  | [streaming-approvals](07-streaming-approvals/) | Pauses as events; resuming mid-stream                    | —                             |
+| 08  | [textual-shell](08-textual-shell/)             | A real TUI — that freezes, on purpose                    | `textual`                     |
+| 09  | [textual-worker](09-textual-worker/)           | Thread workers, `post_message`, dropped-token bug        | —                             |
+| 10  | [approval-modal](10-approval-modal/)           | `ModalScreen`, `call_from_thread`, batched actions       | —                             |
+| 11  | [plan-status](11-plan-status/)                 | `TodoListMiddleware`, plan sidebar, token counts         | —                             |
+| 12  | [slash-commands](12-slash-commands/)           | A command registry with autocomplete                     | —                             |
+| 13  | [sessions](13-sessions/)                       | `SqliteSaver` — conversations that survive a restart     | `langgraph-checkpoint-sqlite` |
+| 14  | [subagents](14-subagents/)                     | Delegation, context quarantine, `subgraphs=True`         | —                             |
+| 15  | [project-memory](15-project-memory/)           | `AGENTS.md` via `memory=`, and `/init`                   | —                             |
+| 16  | [diffs](16-diffs/)                             | See the diff before you approve it                       | —                             |
+| 17  | [health-polish](17-health-polish/)             | Startup checks, keybindings                              | —                             |
+| 18  | [mcp-packaging](18-mcp-packaging/)             | MCP tools, async/sync bridging, `pip install -e .`       | `langchain-mcp-adapters`      |
 
 ## The app at part 18
 
@@ -91,8 +92,8 @@ app.tcss      styling
 
 ## Three traps worth knowing before you start
 
-1. **`decisions` is a list.** One approval pause carries *every* gated tool call from that model
-   turn. Write a single-action handler and it works until the model asks to write a file *and*
+1. **`decisions` is a list.** One approval pause carries _every_ gated tool call from that model
+   turn. Write a single-action handler and it works until the model asks to write a file _and_
    run the tests in one turn — then it raises `ValueError` deep inside the graph. (Parts 5, 10.)
 2. **`Markdown.update()` is awaitable.** Call it once per streamed token and the calls race, and
    tokens get silently dropped. Buffer, and repaint on a timer. (Part 9.)

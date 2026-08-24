@@ -19,7 +19,7 @@
 1. What "deep agent" means: a plan/filesystem/subagent-capable loop, not just a chat wrapper.
 2. Why local models matter for a coding agent — your source never leaves the machine.
 3. Tour the built-in tools (`ls`, `read_file`, `write_file`, `edit_file`, `glob`, `grep`, `task`)
-   and note they're on a *virtual* filesystem right now. That's the hook for Part 3.
+   and note they're on a _virtual_ filesystem right now. That's the hook for Part 3.
 4. The agent has no memory yet — ask a follow-up question and watch it forget. Hook for Part 2.
 
 ## Run it
@@ -37,8 +37,8 @@ Requires Ollama running with the model pulled: `ollama pull qwen3.5:9b`.
 
 ## Files in this snapshot
 
-| File | Role |
-|---|---|
+| File      | Role                                                        |
+| --------- | ----------------------------------------------------------- |
 | `main.py` | Everything: config, agent construction, one-shot ask/answer |
 
 ## Extend this yourself

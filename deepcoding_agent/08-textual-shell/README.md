@@ -46,16 +46,16 @@ Quit with `ctrl+c`. Command palette is `ctrl+p`.
 
 ## Files in this snapshot
 
-| File | Role |
-|---|---|
-| `tui.py` | The Textual app: layout + (blocking) submit handler |
-| `app.tcss` | Styling |
-| `test_smoke.py` | Headless UI test |
-| `main.py` | Now just builds the app and calls `.run()` |
+| File            | Role                                                |
+| --------------- | --------------------------------------------------- |
+| `tui.py`        | The Textual app: layout + (blocking) submit handler |
+| `app.tcss`      | Styling                                             |
+| `test_smoke.py` | Headless UI test                                    |
+| `main.py`       | Now just builds the app and calls `.run()`          |
 
 ## Extend this yourself
 
-1. Add a `Static` above the input showing a spinner while the turn runs — then watch it *not*
+1. Add a `Static` above the input showing a spinner while the turn runs — then watch it _not_
    animate, because the UI thread is blocked. Perfect setup for Part 9.
 2. Change the theme with `App.theme = "nord"` and restyle the chat bubbles.
 3. Add a `BINDINGS` entry so `ctrl+l` clears the chat log.

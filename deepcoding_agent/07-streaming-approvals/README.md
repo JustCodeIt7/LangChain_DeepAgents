@@ -10,7 +10,7 @@ renderer answers it and the same turn resumes mid-stream.
 - **`resume_with(decisions)`** — builds the `Command(resume={"decisions": [...]})` payload.
   Keeping it in `runner.py` means no UI ever has to know that shape.
 - **`interrupt_on` is back** in `agent.py`, now that the event layer can express a pause.
-- **The resume loop** — `run_turn` *returns* on a pause; the caller collects decisions and calls
+- **The resume loop** — `run_turn` _returns_ on a pause; the caller collects decisions and calls
   `run_turn` again with the resume command. Same `thread_id`, same `seen` set, one continuous turn.
 
 ## Why this is a separate part from streaming
@@ -42,11 +42,11 @@ Try: `Write ok.txt containing yes, then confirm.` → `y`
 
 ## Files in this snapshot
 
-| File | Role |
-|---|---|
-| `runner.py` | Adds `ApprovalNeeded` + `resume_with()` |
-| `main.py` | `decide()` and the resume loop, driven by events |
-| `agent.py` | Restores `interrupt_on` |
+| File        | Role                                             |
+| ----------- | ------------------------------------------------ |
+| `runner.py` | Adds `ApprovalNeeded` + `resume_with()`          |
+| `main.py`   | `decide()` and the resume loop, driven by events |
+| `agent.py`  | Restores `interrupt_on`                          |
 
 ## Extend this yourself
 

@@ -15,7 +15,7 @@
 - **`timeout=SHELL_TIMEOUT`** (120s default) — long enough for a test suite, short enough that a
   hung command doesn't freeze the session.
 - **Two views of one directory** (a genuine gotcha, found while building this part): file tools use
-  *virtual* paths rooted at `/`, but `execute` runs in a shell whose cwd is *already* the project
+  _virtual_ paths rooted at `/`, but `execute` runs in a shell whose cwd is _already_ the project
   root and reports **real** absolute paths from `pwd`. A model that copies a path out of `pwd`
   output will create a nested duplicate directory. The system prompt now spells the rule out.
 
@@ -23,7 +23,7 @@
 
 1. The moment it becomes a coding agent: write a test, run it, read the failure, fix it.
 2. Read the `LocalShellBackend` warning out loud — `subprocess.run(shell=True)`, no sandbox,
-   irreversible. This part is deliberately the *unsafe* checkpoint.
+   irreversible. This part is deliberately the _unsafe_ checkpoint.
 3. Ask it to run something mildly destructive and note that nothing stops it. That's Part 5.
 4. Show the `pwd`-vs-virtual-path trap and why the prompt has to disambiguate.
 
@@ -44,11 +44,11 @@ care about.
 
 ## Files in this snapshot
 
-| File | Role |
-|---|---|
+| File        | Role                                     |
+| ----------- | ---------------------------------------- |
 | `config.py` | Settings + the shell-aware system prompt |
-| `agent.py` | Swaps in `LocalShellBackend` |
-| `main.py` | Unchanged REPL |
+| `agent.py`  | Swaps in `LocalShellBackend`             |
+| `main.py`   | Unchanged REPL                           |
 
 ## Extend this yourself
 

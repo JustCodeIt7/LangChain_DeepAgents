@@ -40,11 +40,11 @@ The workdir defaults to `./workspace` and is created on start. Override with `DE
 
 ## Files in this snapshot
 
-| File | Role |
-|---|---|
-| `config.py` | All settings, read from env once |
-| `agent.py` | Model, backend routing, and agent assembly |
-| `main.py` | The REPL and one-turn `ask()` helper |
+| File        | Role                                       |
+| ----------- | ------------------------------------------ |
+| `config.py` | All settings, read from env once           |
+| `agent.py`  | Model, backend routing, and agent assembly |
+| `main.py`   | The REPL and one-turn `ask()` helper       |
 
 ## Extend this yourself
 

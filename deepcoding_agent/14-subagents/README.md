@@ -8,15 +8,15 @@ their inner tool calls streamed — indented — into the chat.
 
 - **`subagents=[...]`** — plain dicts: `name`, `description`, `system_prompt`, and optionally
   their own `interrupt_on`. deepagents exposes them through the built-in `task` tool; the
-  *description* is what the main model reads when deciding to delegate.
+  _description_ is what the main model reads when deciding to delegate.
 - **Why subagents at all: context quarantine.** The reviewer reads five files to write five lines
   of findings. Without a subagent, those five files land in the main context forever. With one,
   the main agent sees only the report.
 - **`subgraphs=True`** — every stream chunk becomes a 3-tuple `(namespace, mode, payload)`.
   `()` means the main agent; `("tools:<id>",)` means inside a delegated task. The runner marks
   events `nested=True` and the UI indents them with a `·`.
-- **Subagent tokens are filtered out** — a subagent's *prose* is its scratchwork; only its final
-  report (relayed by the main agent) belongs in the chat. Its *tool calls* are shown so you can
+- **Subagent tokens are filtered out** — a subagent's _prose_ is its scratchwork; only its final
+  report (relayed by the main agent) belongs in the chat. Its _tool calls_ are shown so you can
   watch it work.
 - **`test-runner` keeps its own `interrupt_on`** — gates follow the tool, even one subagent deep.
 
@@ -40,11 +40,11 @@ Try: `Use the task tool with subagent_type='code-reviewer' to review mathy.py, t
 
 ## Files in this snapshot
 
-| File | Role |
-|---|---|
-| `agent.py` | Defines the two subagents |
+| File        | Role                                               |
+| ----------- | -------------------------------------------------- |
+| `agent.py`  | Defines the two subagents                          |
 | `runner.py` | `subgraphs=True`, 3-tuple unpacking, `nested` flag |
-| `tui.py` | Indented nested tool lines; `task →` labels |
+| `tui.py`    | Indented nested tool lines; `task →` labels        |
 
 ## Extend this yourself
 

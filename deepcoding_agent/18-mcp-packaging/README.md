@@ -56,11 +56,11 @@ For MCP: `cp mcp.json.example mcp.json` (needs `pip install langchain-mcp-adapte
 
 ## Files in this snapshot
 
-| File | Role |
-|---|---|
-| `mcp_tools.py` | Loads MCP servers; bridges async tools to sync |
+| File                    | Role                                                 |
+| ----------------------- | ---------------------------------------------------- |
+| `mcp_tools.py`          | Loads MCP servers; bridges async tools to sync       |
 | `example_mcp_server.py` | A 15-line demo server so you can try MCP immediately |
-| `pyproject.toml` | Dependencies + the `deepcoder` entry point |
+| `pyproject.toml`        | Dependencies + the `deepcoder` entry point           |
 
 ## Where to take it next
 

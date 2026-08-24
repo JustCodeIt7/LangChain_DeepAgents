@@ -18,14 +18,14 @@ consumes the same events.
     common streaming bug** — it's a tuple, not a plain chunk.
 - **`usage_metadata`** — token counts ride along on the final assistant chunk.
 - **A sync generator, deliberately.** It works in a `for` loop now and inside a Textual thread
-  worker in Part 8 *without changing shape*. That decision is why `runner.py` never needs a rewrite.
+  worker in Part 8 _without changing shape_. That decision is why `runner.py` never needs a rewrite.
 
 ## The bug this part taught me
 
 The first version announced `write_file` **three times** for one action: once when the model
 requested it, again at the approval prompt, again on resume. Resuming replays the message that
 requested the tool, so the same call is seen more than once. The fix is to dedupe on each tool
-call's stable `id`, with the `seen` set living in the *caller* so it survives across the pause.
+call's stable `id`, with the `seen` set living in the _caller_ so it survives across the pause.
 
 ## Talking points
 
@@ -46,12 +46,12 @@ Try: `Write fizzbuzz.py, then run it.` — watch tool lines and tokens interleav
 
 ## Files in this snapshot
 
-| File | Role |
-|---|---|
+| File        | Role                                                               |
+| ----------- | ------------------------------------------------------------------ |
 | `runner.py` | Event definitions and `run_turn()` — the layer every later UI uses |
-| `main.py` | Renders events by printing them |
-| `agent.py` | Drops `interrupt_on` for this part only |
-| `config.py` | Unchanged |
+| `main.py`   | Renders events by printing them                                    |
+| `agent.py`  | Drops `interrupt_on` for this part only                            |
+| `config.py` | Unchanged                                                          |
 
 ## Extend this yourself
 

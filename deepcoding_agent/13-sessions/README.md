@@ -10,9 +10,9 @@
 - **`SqliteSaver`** replaces `InMemorySaver` — one line in `agent.py`, and every checkpoint now
   lands in `<workdir>/.deepcoder/sessions.db`. `check_same_thread=False` because the agent runs in
   a worker thread while Textual owns the main one.
-- **`threads.json`, our own index** — a checkpointer can *replay* a thread but can't *list* them
+- **`threads.json`, our own index** — a checkpointer can _replay_ a thread but can't _list_ them
   nicely. A resume picker needs titles, so `sessions.remember()` records `thread_id → first
-  message + timestamp` on every submit.
+message + timestamp` on every submit.
 - **`sessions.history()`** — `agent.get_state(config)` returns the latest checkpoint; its
   `messages` list is the whole conversation, which is all the chat log needs to redraw itself.
 - **`ResumeScreen`** — an `OptionList` modal. Picking a row swaps `thread_id` and replays the
@@ -40,17 +40,17 @@ Chat a little, `ctrl+c`, run it again, `/resume`, pick the conversation.
 
 ## Files in this snapshot
 
-| File | Role |
-|---|---|
+| File          | Role                                               |
+| ------------- | -------------------------------------------------- |
 | `sessions.py` | Checkpointer factory, thread index, history replay |
-| `widgets.py` | Adds `ResumeScreen` |
-| `tui.py` | `pick_thread()` + remembers threads on submit |
-| `commands.py` | Adds `/resume` |
-| `agent.py` | Swaps in the SQLite checkpointer |
+| `widgets.py`  | Adds `ResumeScreen`                                |
+| `tui.py`      | `pick_thread()` + remembers threads on submit      |
+| `commands.py` | Adds `/resume`                                     |
+| `agent.py`    | Swaps in the SQLite checkpointer                   |
 
 ## Extend this yourself
 
-1. Ask the agent to *summarize* the conversation and store that as the thread title instead of the
+1. Ask the agent to _summarize_ the conversation and store that as the thread title instead of the
    first message.
 2. Add `/delete-thread` that removes a thread from both the index and the checkpointer.
 3. Show relative timestamps ("2h ago") in the picker.

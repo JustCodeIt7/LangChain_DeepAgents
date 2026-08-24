@@ -12,13 +12,13 @@ which the model never sees.
   are free and instant; no tokens, no thread, no model.
 - **`SuggestFromList`** — pass a `suggester` to `Input` and Textual ghost-completes `/comm…` as you
   type (accept with →).
-- **`/model`** — swaps the model *mid-session* by rebuilding the agent. The checkpointer keeps the
+- **`/model`** — swaps the model _mid-session_ by rebuilding the agent. The checkpointer keeps the
   thread, so the new model inherits the old conversation. `/new` also clears the allowlist —
   trust shouldn't outlive the conversation that granted it.
 
 ## Talking points
 
-1. The dividing line: slash = instruction to the *app*, plain text = message to the *model*.
+1. The dividing line: slash = instruction to the _app_, plain text = message to the _model_.
 2. Build a command live on camera — `cmd_workdir` is a good one (show the current workdir).
 3. Switch `/model ollama:qwen3.5:4b` mid-chat and ask the same question again; compare.
 4. Why introspection beats an if/elif chain: `/help` can never drift out of date.
@@ -34,10 +34,10 @@ Type `/` and watch the ghost completion. Try `/model` with no argument, then wit
 
 ## Files in this snapshot
 
-| File | Role |
-|---|---|
+| File          | Role                                                      |
+| ------------- | --------------------------------------------------------- |
 | `commands.py` | The registry: five commands + dispatch + completion names |
-| `tui.py` | Short-circuits `/` input; wires the suggester |
+| `tui.py`      | Short-circuits `/` input; wires the suggester             |
 
 ## Extend this yourself
 

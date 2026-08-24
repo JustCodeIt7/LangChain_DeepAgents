@@ -17,7 +17,7 @@
 ## Talking points
 
 1. Demo the amnesia first: run Part 1 twice with a follow-up question, then show Part 2 remembering.
-2. Checkpointer vs. thread: one stores state, the other selects *which* state. Both are needed.
+2. Checkpointer vs. thread: one stores state, the other selects _which_ state. Both are needed.
 3. `InMemorySaver` dies with the process — flag that Part 13 swaps in SQLite for real sessions.
 4. Why `/`-prefixed commands now: it establishes the convention the TUI expands on in Part 12.
 
@@ -32,8 +32,8 @@ Try: `My favorite language is Rust.` then `What is my favorite language?` — th
 
 ## Files in this snapshot
 
-| File | Role |
-|---|---|
+| File      | Role                                                              |
+| --------- | ----------------------------------------------------------------- |
 | `main.py` | Config, agent construction, the `ask()` turn helper, and the REPL |
 
 ## Extend this yourself

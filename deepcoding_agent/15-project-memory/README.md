@@ -11,7 +11,7 @@ one for you by exploring the project.
   is skipped silently — a brand-new project doesn't crash.
 - **The path is backend-relative** — `/AGENTS.md` resolves through the same `CompositeBackend` as
   the file tools, so it means `<workdir>/AGENTS.md`. One mental model for all paths.
-- **`/init`** — a command that *sends a prompt* instead of printing text. `submit()` grew a
+- **`/init`** — a command that _sends a prompt_ instead of printing text. `submit()` grew a
   `send()` entry point so commands can start agent turns; `/init` asks the agent to explore with
   `ls`/`read_file` and write the guide. The write is gated like any other — you approve it.
 - **Self-editing memory** — the agent can `edit_file` its own AGENTS.md. Tell it "always run tests
@@ -20,12 +20,12 @@ one for you by exploring the project.
 ## Talking points
 
 1. Put a silly rule in AGENTS.md ("end every reply with BANANA") and show it obeyed with zero
-   prompting. Then show the trap this build hit: a user prompt that *conflicts* with the rule
+   prompting. Then show the trap this build hit: a user prompt that _conflicts_ with the rule
    ("reply in exactly two words") wins — standing instructions are context, not law.
 2. Run `/init` on a real project and read what it wrote. (Live here, it even documented
    `.deepcoder/` as "do not modify manually".)
 3. AGENTS.md is an emerging convention (agents.md) — same file works across coding agents.
-4. Difference from Part 13: sessions remember *conversations*; memory remembers *rules*.
+4. Difference from Part 13: sessions remember _conversations_; memory remembers _rules_.
 
 ## Run it
 
@@ -38,11 +38,11 @@ Try `/init`, approve the write, then `cat workspace/AGENTS.md`.
 
 ## Files in this snapshot
 
-| File | Role |
-|---|---|
-| `agent.py` | Adds `memory=["/AGENTS.md"]` |
-| `commands.py` | Adds `/init` |
-| `tui.py` | Extracts `send()` so commands can start turns |
+| File          | Role                                          |
+| ------------- | --------------------------------------------- |
+| `agent.py`    | Adds `memory=["/AGENTS.md"]`                  |
+| `commands.py` | Adds `/init`                                  |
+| `tui.py`      | Extracts `send()` so commands can start turns |
 
 ## Extend this yourself
 

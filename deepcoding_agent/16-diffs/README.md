@@ -5,7 +5,7 @@
 
 ## What's new
 
-- **`diff_for(action)`** — computes the *after* text exactly the way the tool will, then hands both
+- **`diff_for(action)`** — computes the _after_ text exactly the way the tool will, then hands both
   versions to `difflib.unified_diff`:
   - `write_file` → `content` replaces the whole file
   - `edit_file` → `old_string` → `new_string`, once (or everywhere with `replace_all`)
@@ -18,16 +18,16 @@
 
 ## Why this part matters most
 
-Part 5 gave you a veto. But approving `edit_file: /calc.py` tells you *nothing* about what changes
+Part 5 gave you a veto. But approving `edit_file: /calc.py` tells you _nothing_ about what changes
 — you were clicking yes on faith. Now you approve the actual change. This is the difference between
-a safety prompt and a safety *feature*, and it's the closest DeepCoder gets to how Claude Code and
+a safety prompt and a safety _feature_, and it's the closest DeepCoder gets to how Claude Code and
 opencode feel.
 
 ## Talking points
 
 1. Plant `return a - b` in a file, ask for a fix, and read the `-`/`+` lines in the dialog before
    pressing `y`. (That exact flow was used to verify this part.)
-2. Show a *new* file: the diff is all `+` lines, because "before" is empty.
+2. Show a _new_ file: the diff is all `+` lines, because "before" is empty.
 3. Explain why the app recomputes the after-text rather than asking the tool: the tool hasn't run
    yet — that's the whole point.
 4. Note the tradeoff: this reimplements the tool's edit semantics, so it must stay in sync with them.
@@ -43,10 +43,10 @@ Try: put a bug in `workspace/calc.py`, then `calc.py subtracts but should add �
 
 ## Files in this snapshot
 
-| File | Role |
-|---|---|
+| File         | Role                                                         |
+| ------------ | ------------------------------------------------------------ |
 | `widgets.py` | `_current_text()`, `diff_for()`, diff rendering in the modal |
-| `app.tcss` | `.diff` styling (scrolls past 12 lines) |
+| `app.tcss`   | `.diff` styling (scrolls past 12 lines)                      |
 
 ## Extend this yourself
 

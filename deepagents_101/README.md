@@ -41,28 +41,28 @@ step, try a larger model before assuming the code is wrong.
 
 ## Episodes
 
-| # | Episode | What you learn |
-|---|---------|----------------|
-| 01 | `01-deepagent_intro` | `create_deep_agent()`, and the tools every agent gets for free |
-| 02 | `02-models_and_prompts` | Model strings vs. instances, `system_prompt`, `debug=True` |
-| 03 | `03-custom_tools` | Plain functions and `@tool`; custom tools are additive |
-| 04 | `04-planning_todos` | `TodoListMiddleware` and `write_todos` (opt-in in 0.7) |
-| 05 | `05-virtual_filesystem` | `StateBackend`: seed files in, read them back out |
-| 06 | `06-real_filesystem` | `FilesystemBackend`: editing real files safely |
-| 07 | `07-shell_execute` | `LocalShellBackend` and the `execute` tool |
-| 08 | `08-composite_backend` | `CompositeBackend`: route paths to different backends |
-| 09 | `09-subagents_basics` | The `task` tool and context isolation |
-| 10 | `10-custom_subagents` | Per-subagent tools/models; `CompiledSubAgent` |
-| 11 | `11-structured_output` | `response_format` and `structured_response` |
-| 12 | `12-checkpointer_threads` | Checkpointers, `thread_id`, multi-turn memory |
-| 13 | `13-human_in_the_loop` | `interrupt_on`, approve/reject/edit/respond |
-| 14 | `14-permissions` | `FilesystemPermission`: allow, deny, interrupt |
-| 15 | `15-long_term_memory` | `StoreBackend` + `memory=` across conversations |
-| 16 | `16-skills` | `SKILL.md` packages and progressive disclosure |
-| 17 | `17-streaming` | `stream_mode="updates"` vs `"messages"` |
-| 18 | `18-context_management` | Automatic summarization of long conversations |
-| 19 | `19-capstone_research` | Everything combined: a research agent |
-| 20 | `20-mcp_tools` | MCP tools via `MultiServerMCPClient` (async) |
+| #   | Episode                   | What you learn                                                 |
+| --- | ------------------------- | -------------------------------------------------------------- |
+| 01  | `01-deepagent_intro`      | `create_deep_agent()`, and the tools every agent gets for free |
+| 02  | `02-models_and_prompts`   | Model strings vs. instances, `system_prompt`, `debug=True`     |
+| 03  | `03-custom_tools`         | Plain functions and `@tool`; custom tools are additive         |
+| 04  | `04-planning_todos`       | `TodoListMiddleware` and `write_todos` (opt-in in 0.7)         |
+| 05  | `05-virtual_filesystem`   | `StateBackend`: seed files in, read them back out              |
+| 06  | `06-real_filesystem`      | `FilesystemBackend`: editing real files safely                 |
+| 07  | `07-shell_execute`        | `LocalShellBackend` and the `execute` tool                     |
+| 08  | `08-composite_backend`    | `CompositeBackend`: route paths to different backends          |
+| 09  | `09-subagents_basics`     | The `task` tool and context isolation                          |
+| 10  | `10-custom_subagents`     | Per-subagent tools/models; `CompiledSubAgent`                  |
+| 11  | `11-structured_output`    | `response_format` and `structured_response`                    |
+| 12  | `12-checkpointer_threads` | Checkpointers, `thread_id`, multi-turn memory                  |
+| 13  | `13-human_in_the_loop`    | `interrupt_on`, approve/reject/edit/respond                    |
+| 14  | `14-permissions`          | `FilesystemPermission`: allow, deny, interrupt                 |
+| 15  | `15-long_term_memory`     | `StoreBackend` + `memory=` across conversations                |
+| 16  | `16-skills`               | `SKILL.md` packages and progressive disclosure                 |
+| 17  | `17-streaming`            | `stream_mode="updates"` vs `"messages"`                        |
+| 18  | `18-context_management`   | Automatic summarization of long conversations                  |
+| 19  | `19-capstone_research`    | Everything combined: a research agent                          |
+| 20  | `20-mcp_tools`            | MCP tools via `MultiServerMCPClient` (async)                   |
 
 ## Notes
 

@@ -6,12 +6,12 @@ YouTube tutorial repo for LangChain's [`deepagents`](https://github.com/langchai
 
 Three active tutorial series, plus a legacy research track:
 
-| Series | Location | Shape | deepagents |
-|---|---|---|---|
-| **CodeIt** — build a coding agent in 15 episodes | `episodes/` | one `NN-name.py` per episode | 0.6.x |
-| **Deep Agents 101** — framework fundamentals, 20 episodes | `deepagents_101/` | one `NN-name.py` per episode, `# %%` cells | 0.7.x |
-| **DeepCoder** — Textual TUI coding agent, 14 episodes | `deepcoding_agent/` | multi-module app per episode | 0.7.x |
-| Legacy research agents (Tavily search, Streamlit UI) | `01-Intro/`, `DeepResearch/`, `utils.py` | standalone scripts | 0.6.x |
+| Series                                                    | Location                                 | Shape                                      | deepagents |
+| --------------------------------------------------------- | ---------------------------------------- | ------------------------------------------ | ---------- |
+| **CodeIt** — build a coding agent in 15 episodes          | `episodes/`                              | one `NN-name.py` per episode               | 0.6.x      |
+| **Deep Agents 101** — framework fundamentals, 20 episodes | `deepagents_101/`                        | one `NN-name.py` per episode, `# %%` cells | 0.7.x      |
+| **DeepCoder** — Textual TUI coding agent, 14 episodes     | `deepcoding_agent/`                      | multi-module app per episode               | 0.7.x      |
+| Legacy research agents (Tavily search, Streamlit UI)      | `01-Intro/`, `DeepResearch/`, `utils.py` | standalone scripts                         | 0.6.x      |
 
 ## Architecture & Data Flow
 
@@ -75,14 +75,14 @@ cd DeepResearch && streamlit run app.py
 ## Code Conventions & Common Patterns
 
 - **Env vars**: `load_dotenv()` before any `os.getenv`; secrets only in `.env` (never commit; copy from `.env.example`). Each series has its own prefix: `CODEIT_*` (episodes), `DEEPCODER_*` (deepcoding_agent), `DEEPAGENTS_MODEL` (101). `.env.example` documents only the CodeIt vars — the others are defined in each series' `config.py`/scripts.
-- **Model configuration**: CodeIt builds a model *instance* via `init_chat_model` (owns the error messages, e.g. "OPENAI_API_KEY is required"); 101 and DeepCoder pass a provider *string* (`"ollama:qwen3.5:9b"`) straight to `create_deep_agent`.
+- **Model configuration**: CodeIt builds a model _instance_ via `init_chat_model` (owns the error messages, e.g. "OPENAI_API_KEY is required"); 101 and DeepCoder pass a provider _string_ (`"ollama:qwen3.5:9b"`) straight to `create_deep_agent`.
 - **`text_of()` helper**: Ollama returns `content` as a string; OpenAI returns a list of content blocks. Every series carries a small `text_of(message)` normalizer — copy the pattern, don't re-derive it.
 - **Console output**: `from rich import print` for color tags; DeepCoder renders answers through `rich.markdown.Markdown`.
 - **Cell markers**: `# %%` comments make 101, DeepCoder, and 01-Intro scripts runnable cell-by-cell in VS Code's interactive window. Match the style when editing those series.
 - **Annotated imports**: CodeIt episodes annotate every import with WHY it's needed — match that style in `episodes/`.
 - **Tool docstrings are prompts**: they tell the model WHEN to use the tool and WHAT each arg is. Write them for the model, not just for humans.
 - **System prompts**: role + available tools + output format, kept under ~10 lines.
-- **Ollama tuning**: set `num_ctx` explicitly (Ollama's small default truncates *silently*, making the agent seem to "forget"); raise `keep_alive` for long interactive sessions (DeepCoder uses 8192 / 30m).
+- **Ollama tuning**: set `num_ctx` explicitly (Ollama's small default truncates _silently_, making the agent seem to "forget"); raise `keep_alive` for long interactive sessions (DeepCoder uses 8192 / 30m).
 - **Graceful degradation**: optional integrations (MCP) return empty results instead of raising when unconfigured.
 - **DeepCoder imports are bare** (`import config`, `from tui import DeepCoderApp`) — run from inside the episode folder.
 - **Size limits**: 101 episodes stay under 150 lines (per its README); CodeIt episodes grow as features accumulate (up to ~480 lines, heavily commented). New episodes must be self-contained and runnable end-to-end.
