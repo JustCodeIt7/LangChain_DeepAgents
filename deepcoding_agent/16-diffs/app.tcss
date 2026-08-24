@@ -87,3 +87,9 @@ ApprovalScreen {
     color: $text-muted;
     margin-left: 4;   /* indent subagent work under its task line */
 }
+
+.diff {
+    margin: 0 0 1 1;
+    max-height: 12;
+    border: solid $primary 40%;
+}

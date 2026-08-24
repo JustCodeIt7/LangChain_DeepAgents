@@ -50,7 +50,7 @@ class GatedAgent:
     """Pauses once with two actions, then answers after being resumed."""
 
     ACTIONS = [
-        {"name": "write_file", "args": {"file_path": "/a.txt"}},
+        {"name": "write_file", "args": {"file_path": "/a.txt", "content": "hello"}},
         {"name": "execute", "args": {"command": "echo hi"}},
     ]
 
@@ -189,3 +189,19 @@ async def test_init_command_starts_an_agent_turn() -> None:
             await pilot.pause()
         # The synthetic prompt shows up as a user message mentioning AGENTS.md.
         assert any("AGENTS.md" in line for line in rendered(app))
+
+
+@pytest.mark.anyio
+async def test_modal_shows_a_diff_for_writes() -> None:
+    """write_file actions come with a rendered unified diff."""
+    app = DeepCoderApp(agent=GatedAgent())
+    async with app.run_test() as pilot:
+        await pilot.press(*"go")
+        await pilot.press("enter")
+        for _ in range(60):
+            await pilot.pause()
+            if app.screen.__class__.__name__ == "ApprovalScreen":
+                break
+
+        diffs = app.screen.query(".diff")
+        assert len(diffs) == 1  # write_file gets one; execute does not

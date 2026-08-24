@@ -5,6 +5,10 @@ One modal per pause. It lists EVERY pending action, because a single pause
 can carry several tool calls, and returns one decision per action in order.
 """
 
+import difflib
+
+import config
+from rich.syntax import Syntax
 from textual.app import ComposeResult
 from textual.containers import Horizontal, VerticalScroll
 from textual.screen import ModalScreen
@@ -19,6 +23,44 @@ def summarize(action: dict) -> str:
         return f"$ {args.get('command', '')}"
     path = args.get("file_path") or args.get("path") or ""
     return f"{name}  {path}" if path else f"{name}({args})"
+
+
+def _current_text(file_path: str) -> str:
+    """What the file on disk says right now ("" if it does not exist yet).
+
+    File tools use virtual paths rooted at "/", and the default backend roots
+    them at WORKDIR -- so the real location is WORKDIR / path-without-slash.
+    """
+    real = config.WORKDIR / file_path.lstrip("/")
+    try:
+        return real.read_text()
+    except (FileNotFoundError, UnicodeDecodeError, OSError):
+        return ""
+
+
+def diff_for(action: dict) -> str | None:
+    """A unified diff of what this action would do to the file, or None.
+
+    Only write_file and edit_file change file contents, so only they get a
+    diff. We compute the AFTER text the same way the tool will:
+      write_file  -> replaces the whole file with `content`
+      edit_file   -> replaces old_string with new_string (once, or all)
+    """
+    name, args = action.get("name"), action.get("args", {}) or {}
+    if name not in ("write_file", "edit_file"):
+        return None
+    path = args.get("file_path", "")
+    before = _current_text(path)
+    if name == "write_file":
+        after = args.get("content", "")
+    else:
+        count = -1 if args.get("replace_all") else 1
+        after = before.replace(args.get("old_string", ""), args.get("new_string", ""), count)
+    lines = difflib.unified_diff(
+        before.splitlines(), after.splitlines(),
+        fromfile=f"a{path}", tofile=f"b{path}", lineterm="",
+    )
+    return "\n".join(lines)
 
 
 class ApprovalScreen(ModalScreen[list[dict]]):
@@ -47,6 +89,11 @@ class ApprovalScreen(ModalScreen[list[dict]]):
             yield Label(f"DeepCoder wants to run {count} {plural}:", id="approval-title")
             for action in self.actions:
                 yield Static(summarize(action), classes="action")
+                diff = diff_for(action)
+                if diff:
+                    # Rich renderables drop straight into a Static; the "diff"
+                    # lexer colors +/- lines for free.
+                    yield Static(Syntax(diff, "diff", word_wrap=True), classes="diff")
             with Horizontal(id="approval-buttons"):
                 yield Button("Approve  (y)", variant="success", id="approve")
                 yield Button("Reject  (n)", variant="error", id="reject")
