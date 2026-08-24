@@ -17,7 +17,7 @@ from langchain.chat_models import init_chat_model  # builds a model from a strin
 from rich import print
 
 load_dotenv()
-MODEL = os.getenv("DEEPAGENTS_MODEL", "ollama:qwen3.5:9b")
+MODEL = os.getenv("DEEPAGENTS_MODEL", "ollama:qwen3.5:2b")
 
 
 def text_of(message) -> str:
