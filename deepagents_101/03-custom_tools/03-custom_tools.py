@@ -20,14 +20,6 @@ load_dotenv()
 MODEL = os.getenv("DEEPAGENTS_MODEL", "ollama:qwen3.5:2b")
 
 
-def text_of(message) -> str:
-    """Normalize message content across providers (str vs content blocks)."""
-    content = message.content
-    if isinstance(content, str):
-        return content
-    return "".join(block.get("text", "") for block in content if isinstance(block, dict))
-
-
 # %% Step 2: A tool can be a plain Python function
 # deepagents inspects the signature and docstring to build the tool schema.
 # Keep parameter types simple (str/int/bool) — smaller models coerce them better.
@@ -72,6 +64,8 @@ task = (
 result = agent.invoke({"messages": [{"role": "user", "content": task}]})
 
 # %% Step 6: Inspect which tools the agent actually called
+# `.text` is provider-agnostic: it extracts the text from a message whether
+# the provider returned a plain string or a list of content blocks.
 print("[bold cyan]Tool calls made:[/bold cyan]")
 for message in result["messages"]:
     for call in getattr(message, "tool_calls", []) or []:
@@ -80,8 +74,8 @@ for message in result["messages"]:
 print("\n[bold cyan]Tool results:[/bold cyan]")
 for message in result["messages"]:
     if message.__class__.__name__ == "ToolMessage":
-        print(f"  [yellow]{message.name}[/yellow] -> {text_of(message)}")
+        print(f"  [yellow]{message.name}[/yellow] -> {message.text}")
 
-print(f"\n[bold green]Final answer:[/bold green] {text_of(result['messages'][-1])}")
+print(f"\n[bold green]Final answer:[/bold green] {result['messages'][-1].text}")
 
 # %%
