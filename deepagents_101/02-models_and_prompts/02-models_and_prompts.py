@@ -9,7 +9,7 @@ Run:  python 02-models_and_prompts.py
 """
 
 # %% Step 1: Imports and setup
-################################ Imports & Environment ################################
+################################ Step 1: Imports & Environment ##########################
 
 import os
 
