@@ -1,9 +1,9 @@
 sequenceDiagram
     participant U as You
-    participant G as LangGraph (debug=True)
+    participant G as LangGraph (stream)
     participant M as Model node
     participant T as Tool node
-    U->>G: invoke({"messages": [...]})
+    U->>G: stream({"messages": [...]}, stream_mode="updates")
     G->>M: model step — printed
     M-->>G: tool call
     G->>T: tool step — printed

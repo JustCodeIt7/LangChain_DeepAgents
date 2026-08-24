@@ -33,6 +33,6 @@ agent = create_deep_agent(model=llm)
 
 - `system_prompt` is placed **FIRST** — the framework's tool guidance is **appended after it**
 - Your prompt steers **personality and behavior**; tool knowledge comes from the framework
-- `debug=True` prints **every graph step** — verbose by design, keep the question tiny
+- `stream_mode="updates"` prints **every graph step** in a readable trace — keep the question tiny
 
 **Next (ep. 03):** the agent only has built-in tools — add your own. A tool is just a Python function with a docstring.

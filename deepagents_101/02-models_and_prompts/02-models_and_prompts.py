@@ -3,7 +3,7 @@
 ==============================
 - Two ways to specify a model: a "provider:model" string or a model instance
 - How `system_prompt` steers the agent (and where it lands in the final prompt)
-- `debug=True` for seeing every graph step
+- Tracing every graph step with stream_mode="updates"
 
 Run:  python 02-models_and_prompts.py
 """
@@ -36,6 +36,34 @@ def ask(agent, question: str) -> str:
     return result["messages"][-1].text.strip()
 
 
+def trace(agent, question: str) -> str:
+    """Run the agent, printing a readable trace of every graph step."""
+    last_ai = ""
+    for step, update in enumerate(
+        agent.stream({"messages": [{"role": "user", "content": question}]}, stream_mode="updates"),
+        start=1,
+    ):
+        for node, state in update.items():
+            print(f"\n[bold magenta]step {step}[/bold magenta] [yellow]· {node}[/yellow]")
+            for msg in (state or {}).get("messages", []):
+                label = {"human": "👤 user", "ai": "🤖 model", "tool": "🔧 tool"}.get(msg.type, msg.type)
+                text = msg.text.strip()
+                if len(text) > 100:
+                    text = text[:100] + "…"
+                if text:
+                    print(f"  {label}: {text}")
+                for call in msg.tool_calls:
+                    print(f"  🔧 calls {call['name']}({call['args']})")
+                if msg.usage_metadata:
+                    u = msg.usage_metadata
+                    print(f"  [dim]tokens: {u['input_tokens']} in / {u['output_tokens']} out[/dim]")
+                if msg.type == "ai" and text:
+                    last_ai = text
+            if not (state or {}).get("messages"):
+                print("  [dim](no new messages)[/dim]")
+    return last_ai
+
+
 # Reuse one prompt across every demo so differences come only from configuration
 QUESTION = "In one short sentence, what is LangChain? Do not use tools."
 
@@ -57,10 +85,10 @@ print(f"{ask(string_agent, QUESTION)}\n")
 
 ################################ B. Model as an Instance ################################
 
-llm = init_chat_model(MODEL, temperature=0)  # temperature=0 for deterministic demos
+llm = init_chat_model(MODEL, temperature=0, max_tokens=100, timeout=30)  # temperature=0 for deterministic demos
 instance_agent = create_deep_agent(model=llm)
 print("[bold cyan]B. model as an instance[/bold cyan]")
-print(f"  class: [yellow]{type(llm).__name__}[/yellow] (temperature=0)")
+print(f"  class: [yellow]{type(llm).__name__}[/yellow] (temperature=0, max_tokens=100, timeout=30)")
 print(f"  {ask(instance_agent, QUESTION)}\n")
 
 # %% Step 4: The system prompt steers behavior
@@ -78,15 +106,16 @@ pirate_agent = create_deep_agent(
 print("[bold cyan]C. custom system_prompt[/bold cyan]")
 print(f"  {ask(pirate_agent, QUESTION)}\n")
 
-# %% Step 5: debug=True prints every graph step
-# Verbose! Use it while developing to see the model/tool nodes as they execute.
-# Keep the question tiny — the trace is long.
+# %% Step 5: Tracing the graph
+# `debug=True` on create_deep_agent() dumps every raw state update — a wall of
+# message objects. Cleaner: stream the graph yourself with stream_mode="updates"
+# and format each step (see trace() above).
 
-################################ D. Debug Tracing ################################
+################################ D. Tracing the Graph ################################
 
-print("[bold cyan]D. debug=True (expect a verbose LangGraph trace below)[/bold cyan]")
-debug_agent = create_deep_agent(model=MODEL, debug=True)  # stream every graph node
-answer = ask(debug_agent, "Say the word 'ready' and nothing else.")  # minimal trace
+print("[bold cyan]D. tracing the graph (stream_mode='updates')[/bold cyan]")
+traced_agent = create_deep_agent(model=MODEL)
+answer = trace(traced_agent, "Say the word 'ready' and nothing else.")  # minimal trace
 print(f"\n[bold green]Final answer:[/bold green] {answer}")
 
 # %%
