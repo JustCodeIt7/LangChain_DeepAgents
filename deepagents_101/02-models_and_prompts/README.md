@@ -39,6 +39,11 @@
 
 **Bridge to ep. 03:** "So far the agent only has built-in tools. Next: add your own — a tool is just a Python function with a docstring."
 
+## Slides & Diagrams
+
+- `slides.md` — 3-slide Marp deck overview of the episode. Preview with the Marp VS Code extension or `npx @marp-team/marp-cli slides.md`
+- `diagrams/` — Mermaid sources (`.mmd`) with rendered `.svg`/`.png`: model options, prompt composition, debug trace, provider profiles
+
 ## Run Instructions
 
 ```bash

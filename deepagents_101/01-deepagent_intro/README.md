@@ -42,7 +42,7 @@
 
 ## Slides & Diagrams
 
-- `slides.md` — 14-slide Marp deck covering the framework overview. Preview with the Marp VS Code extension or `npx @marp-team/marp-cli slides.md`
+- `slides.md` — 3-slide Marp deck overview of the episode. Preview with the Marp VS Code extension or `npx @marp-team/marp-cli slides.md`
 - `diagrams/` — Mermaid sources (`.mmd`) with rendered `.svg`/`.png`: architecture, virtual filesystem, context management, delegation, human-in-the-loop
 
 ## Run Instructions
