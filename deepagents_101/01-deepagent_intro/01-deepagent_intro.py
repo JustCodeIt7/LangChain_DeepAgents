@@ -17,6 +17,7 @@ from dotenv import load_dotenv  # loads OPENAI_API_KEY / OLLAMA_BASE_URL from .e
 from rich import print  # colorized console output
 
 load_dotenv()
+# if you want to use openai, set DEEPAGENTS_MODEL=openai:gpt-4.1-mini in your .env
 MODEL = os.getenv("DEEPAGENTS_MODEL", "ollama:qwen3.5:2b")
 print(f"Using model: {MODEL}")
 
