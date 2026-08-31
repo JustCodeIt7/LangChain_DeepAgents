@@ -31,9 +31,9 @@ load_dotenv()
 MODEL = "openai:gpt-4.1-nano"  # gpt-4.1-nano
 # ollama
 OLLANMA_BASE_URL = os.getenv("OLLAMA_BASE_URL", "http://localhost:11434")
-# llama3.2 qwen3.5:2b lfm2.5:8b granite4:1b
+# llama3.2 qwen3.5:2b lfm2.5:8b granite4:1b ministral-3:3b granite4.1:3b
 # Reassign MODEL to the local chat model; temperature=0 keeps tool calls deterministic
-MODEL = ChatOllama(model="granite4:1b", base_url=OLLANMA_BASE_URL, temperature=0)
+MODEL = ChatOllama(model="granite4.1:3b", base_url=OLLANMA_BASE_URL, temperature=0)
 
 # Sandbox directory that every tool call is confined to
 WORKSPACE = Path(__file__).parent / "workspace"
@@ -55,8 +55,6 @@ BUILT_INS = (
 
 
 ############################### Workspace Seeding ###############################
-
-
 # %% Step 2: Create safe, repeatable data for the agent to explore
 def seed_workspace() -> None:
     """Reset only this tutorial's sample files before each run."""
@@ -73,8 +71,6 @@ def seed_workspace() -> None:
 
 
 ################################ Agent Construction ################################
-
-
 # %% Step 3: Build an agent with every available harness tool
 def build_agent():
     """LocalShellBackend adds execute; middleware adds write_todos."""
@@ -94,7 +90,6 @@ def build_agent():
 
 
 ############################ Prompt Script & Tool Tracking ###########################
-
 # %% Step 4: Short prompts that explicitly cover every tool
 # Each prompt names the tools it should trigger, spreading coverage across turns
 PROMPTS = [
@@ -138,8 +133,6 @@ def tool_names(messages: list) -> set[str]:
 
 
 ############################ Conversation Loop & Coverage Report ###########################
-
-
 # %% Step 5: Run the guided conversation and report actual coverage
 def main() -> None:
     """Invoke each prompt, preserving messages so the agent can continue its plan."""
