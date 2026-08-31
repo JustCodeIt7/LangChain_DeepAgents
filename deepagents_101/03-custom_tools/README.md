@@ -2,7 +2,7 @@
 
 ## Overview
 
-**Goal:** Add custom tools to a deep agent — as a plain function or with the `@tool` decorator — and watch the agent call them.
+**Goal:** Add custom tools to a deep agent — as a plain function or with the `@tool` decorator — and watch the agent call them. Then push further: tools that return structured data, run async, or short-circuit with `return_direct`.
 
 ## What You'll Learn
 
@@ -10,12 +10,17 @@
 - **`@tool` decorator**: same result, but explicit control (custom name, args schema, `return_direct`) and a real `BaseTool` object
 - **Additive tools**: `tools=` ADDS to the built-in suite — it never removes `ls`/`read_file`/`task`/etc.
 - **Inspecting the run**: reading `tool_calls` off AI messages and `ToolMessage` results from the final state
+- **Structured returns**: a tool can return a `dict` (serialized to JSON) so the model reads specific fields
+- **Async tools**: `async def` tools for I/O-bound work — the framework awaits them
+- **`return_direct`**: a tool whose output is returned as the final answer with no extra LLM call
 
 ## Key Concepts
 
 1. **The docstring IS the tool description the model reads** — write it for the model (what it does, what each arg is)
 2. Keep parameter types simple (`str`/`int`/`bool`) — smaller models coerce them better
 3. Tool results come back as `ToolMessage` objects in `result["messages"]`
+4. A tool's return value is serialized into the `ToolMessage` — return a `dict` for structured data the model can read field-by-field
+5. Tools can be `async def` (for I/O) and can set `return_direct=True` to skip the model's final turn
 
 ## Teaching Notes
 
@@ -28,14 +33,21 @@
 - **Step 4 — Hand both to the agent:** `tools=` is ADDITIVE — it never removes the built-ins. The system prompt says "do not use filesystem tools" to keep the demo focused.
 - **Step 5 — A task needing BOTH tools:** Forces two separate tool calls.
 - **Step 6 — Inspect:** Show the `tool_calls` on the AI messages, then the `ToolMessage` results.
+- **Step 7 — Structured return:** `lookup_product` returns a `dict`; the model reads the fields (price, in_stock, category).
+- **Step 8 — Async tool:** `fetch_quote` is `async def`; the framework awaits it, so the model calls it like any sync tool.
+- **Step 9 — return_direct:** `get_order_status` has `return_direct=True`; its output becomes the final answer with no extra LLM call.
+- **Step 10 — Second agent:** a fresh agent with the three new tools, plus a `show_tool_calls` helper to inspect each run.
+- **Steps 11–13 — One task per tool:** each task is worded to trigger exactly one tool; the "Try also" comments give extra test tasks to run on camera.
 
 **On camera:**
 
 - The "Tool calls made" section is the payoff — show `reverse_text` then `word_count` firing in sequence.
+- For Task 3, the "Final answer" is byte-for-byte the tool's output — no model rephrasing. That's the `return_direct` payoff; point at it.
 
 **If it goes wrong:**
 
 - A small model may answer without calling the tools (count the words in its head). The prompt says "use your tools for both steps." If it skips, that's a teaching moment about model size vs. instruction-following.
+- With three tools in one agent, a small model might pick the wrong one. The domains are deliberately distinct (product / stock / order) to keep it unambiguous. If it misfires, tighten the task wording or the system prompt.
 
 **Bridge to ep. 04:** "Tools are great, but multi-step work needs a plan. Next: the agent's to-do list."
 
