@@ -18,6 +18,7 @@ from deepagents.backends import LocalShellBackend
 from dotenv import load_dotenv
 from langchain.agents.middleware import TodoListMiddleware
 from rich import print
+from langchain_ollama import ChatOllama
 
 ################################ Environment & Model Configuration ################################
 
@@ -25,8 +26,14 @@ from rich import print
 load_dotenv()
 
 # Allow the model to be swapped without editing code; fall back to a small local Ollama model
-MODEL = os.getenv("DEEPAGENTS_MODEL", "ollama:qwen3.5:0.8b")
+# openai
 MODEL = "openai:gpt-4.1-nano"  # gpt-4.1-nano
+# ollama
+OLLANMA_BASE_URL = os.getenv("OLLAMA_BASE_URL", "http://localhost:11434")
+MODEL = ChatOllama(
+    model="qwen3.5:2b",
+    base_url=OLLANMA_BASE_URL,
+)
 
 # Sandbox directory that every tool call is confined to
 WORKSPACE = Path(__file__).parent / "workspace"
@@ -44,7 +51,7 @@ BUILT_INS = (
     "task",
     "delete",
 )
-print(MODEL)
+# print(MODEL)
 
 # %% Step 2: Create safe, repeatable data for the agent to explore
 def seed_workspace() -> None:
@@ -69,8 +76,8 @@ def build_agent():
         middleware=[TodoListMiddleware()],  # Opt in to the write_todos planning tool
         # Force explicit tool usage so the demo can prove each tool works
         system_prompt="""You are demonstrating Deep Agents tools in a throwaway workspace.
-For every requested operation, call the named tool exactly; never replace a
-filesystem operation with execute. Use relative paths. Keep final answers brief.""",
+            For every requested operation, call the named tool exactly; never replace a
+            filesystem operation with execute. Use relative paths. Keep final answers brief.""",
     )
 
 
@@ -78,19 +85,19 @@ filesystem operation with execute. Use relative paths. Keep final answers brief.
 # Each prompt names the tools it should trigger, spreading coverage across turns
 PROMPTS = [
     (
-        "Use write_todos to plan these two items, then use ls on data and "
+        "1. Use write_todos to plan these two items, then use ls on data and "
         "read_file on data/fruits.txt and tell me what fruits are listed."
     ),
     (
-        "Use write_file to create data/veggies.txt containing carrot, pepper, and basil on separate lines."
+        "2. Use write_file to create data/veggies.txt containing carrot, pepper, and basil on separate lines."
         "Then use edit_file to change 'draft' to 'final' in notes.md."
     ),
     (
-        "Use glob to find every .txt file. Use grep to find the file containing 'blue'. "
+        "3. Use glob to find every .txt file. Use grep to find the file containing 'blue'. "
         "Use execute to run exactly: wc -l data/*.txt"
     ),
     (
-        "Use task to delegate counting all lines in data/*.txt to a subagent. Then use delete to remove "
+        "4. Use task to delegate counting all lines in data/*.txt to a subagent. Then use delete to remove "
         "data/veggies.txt, complete the todos, and summarize the results."
     ),
 ]
@@ -130,7 +137,7 @@ def main() -> None:
         called.update(new_calls)
         print("tools:", ", ".join(sorted(new_calls)) or "none")
         print("  answer: \n")
-        print(messages[-1].content)
+        print(messages[-1])
 
     # Score the run against the expected built-in tool list
     print("\n[bold cyan]Built-in tool coverage[/bold cyan]")
