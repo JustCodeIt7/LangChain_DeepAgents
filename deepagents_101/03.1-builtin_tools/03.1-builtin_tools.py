@@ -103,6 +103,10 @@ PROMPTS = [
         "4. Use task to delegate counting all lines in data/*.txt to a subagent. Then use delete to remove "
         "data/veggies.txt, complete the todos, and summarize the results."
     ),
+    (
+        "5. List all of the built-in tools available for me to use with deepagents and a brief description of each."
+        "Write the tools and description to tools.md file as simple table"
+    ),
 ]
 
 
@@ -132,6 +136,7 @@ def main() -> None:
         print(f"\n[bold magenta]--- Turn {turn} ---[/bold magenta]")
         # Invoke the agent with the current prompt and the accumulated message history
         result = agent.invoke({"messages": messages + [{"role": "user", "content": prompt}]})
+        print("Got results finding new tool calls...")
         # Update the message history and determine which tools were newly called this turn
         messages = result["messages"]
         # Determine which tools were newly called this turn
