@@ -51,6 +51,7 @@ BUILT_INS = (
 )
 # print(MODEL)
 
+
 # %% Step 2: Create safe, repeatable data for the agent to explore
 def seed_workspace() -> None:
     """Reset only this tutorial's sample files before each run."""
@@ -101,7 +102,7 @@ PROMPTS = [
         "4. Use task to delegate counting all lines in data/*.txt to a subagent."
         "Then use the delete tool to remove data/veggies.txt, complete the todos, and summarize the results."
     ),  # delete
-    ("5. use delete tool to remove a file from the workspace"),
+    ("5. use delete tool to remove a file from the workspace and tell me the file you removed"),
     (
         "6. List all built-in tools available to you in deepagents with a brief description of each, and write each "
         "tool's name and description to a markdown file named todo.md in the workspace directory using the write_file "
@@ -136,7 +137,7 @@ def main() -> None:
         print(f"\n[bold magenta]--- Turn {turn} ---[/bold magenta]")
         # Invoke the agent with the current prompt and the accumulated message history
         result = agent.invoke({"messages": messages + [{"role": "user", "content": prompt}]})
-        print("Got results finding new tool calls...")
+        # print("Got results finding new tool calls...")
         # Update the message history and determine which tools were newly called this turn
         messages = result["messages"]
         tools_used = tool_names(messages)
@@ -144,9 +145,10 @@ def main() -> None:
         new_calls = tools_used - called  # Report only tools first seen this turn
 
         called.update(new_calls)
-        print("tools used:", ", ".join(sorted(tools_used)) or "none")
-        print("  answer: \n")
-        print(messages[-1])
+        print("\nTools Used:", ", ".join(sorted(tools_used)) or "none")
+        print("\nAnswer: \n")
+        print(messages[-1].content)
+        # print(messages[-1])
 
     # Score the run against the expected built-in tool list
     print("\n[bold cyan]Built-in tool coverage[/bold cyan]")
@@ -154,7 +156,7 @@ def main() -> None:
         # Check if the current built-in tool was called during the conversation
         marker = "[green]yes[/green]" if name in called else "[red]no[/red]"
         print(f"  {name:11} {marker}")  # Pad names so the yes/no column lines up
-    print(f"\n[bold green]Final answer:[/bold green] {messages[-1].text}")
+    # print(f"\n[bold green]Final answer:[/bold green] {messages[-1].text}")
 
 
 # Run the demo only when executed directly, not on import
