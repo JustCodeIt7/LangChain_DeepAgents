@@ -31,7 +31,7 @@ MODEL = "openai:gpt-4.1-nano"  # gpt-4.1-nano
 # ollama
 OLLANMA_BASE_URL = os.getenv("OLLAMA_BASE_URL", "http://localhost:11434")
 # llama3.2 granite4:1b qwen3.5:2b
-MODEL = ChatOllama(model="llama3.2", base_url=OLLANMA_BASE_URL, temperature=0)
+MODEL = ChatOllama(model="llama3.2", base_url=OLLANMA_BASE_URL, temperature=0, max_tokens=3024)
 
 # Sandbox directory that every tool call is confined to
 WORKSPACE = Path(__file__).parent / "workspace"
@@ -78,7 +78,8 @@ def build_agent():
         # Force explicit tool usage so the demo can prove each tool works
         system_prompt="""You are demonstrating Deep Agents tools in a throwaway workspace.
             For every requested operation, call the named tool exactly; never replace a
-            filesystem operation with execute. Use relative paths. Keep final answers brief.""",
+            filesystem operation with execute. Use relative paths. Keep final answers brief.
+            workspace path is: ./ all file operations should be relative to this path.""",
     )
 
 
@@ -99,12 +100,11 @@ PROMPTS = [
     ),
     (  # tools: task, delete, write_todos
         "4. Use task to delegate counting all lines in data/*.txt to a subagent."
-        "Then use delete to remove data/veggies.txt, complete the todos, and summarize the results."
+        "Then use the delete tool to remove data/veggies.txt, complete the todos, and summarize the results."
     ),
     (  # tools: write_file
         "5. List all of the built-in tools available for me to use with deepagents and a brief description of each."
-        "Write the tools and description to notes.md file as simple table"
-        "find and delete data/colors.txt file from the workspace."
+        "Write the tool name and description to a markdown file named 'todo.md' in the workspace directory using the write_file tool."
     ),
 ]
 

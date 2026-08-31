@@ -1,5 +1,0 @@
-data/colors.txt: 3 lines
-data/fruits.txt: 3 lines
-data/vegetables.txt: 3 lines
-data/veggies.txt: 3 lines
-Total: 12 lines
