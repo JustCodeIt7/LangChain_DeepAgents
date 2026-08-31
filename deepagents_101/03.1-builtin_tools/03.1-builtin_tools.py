@@ -105,7 +105,7 @@ PROMPTS = [
     ),
     (  # tools: write_file
         "5. List all of the built-in tools available for me to use with deepagents and a brief description of each."
-        "use write_file to write the tools and description to tools.md file as simple table"
+        "Write the tools and description to tools.md file as simple table"
     ),
 ]
 
@@ -144,7 +144,7 @@ def main() -> None:
         new_calls = tools_used - called  # Report only tools first seen this turn
 
         called.update(new_calls)
-        print("tools:", ", ".join(sorted(tools_used)) or "none")
+        print("tools used:", ", ".join(sorted(tools_used)) or "none")
         print("  answer: \n")
         print(messages[-1])
 
