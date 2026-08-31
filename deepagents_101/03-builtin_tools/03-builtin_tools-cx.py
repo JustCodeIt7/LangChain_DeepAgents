@@ -20,7 +20,9 @@ from langchain.agents.middleware import TodoListMiddleware
 from rich import print
 
 load_dotenv()
-MODEL = os.getenv("DEEPAGENTS_MODEL", "ollama:qwen3.5:2b")
+MODEL = os.getenv("DEEPAGENTS_MODEL", "ollama:qwen3.5:0.8b")
+OLLAMA_BASE_URL = os.getenv("OLLAMA_BASE_URL", "http://localhost:11434")
+
 WORKSPACE = Path(__file__).parent / "workspace"
 BUILT_INS = (
     "write_todos",
@@ -34,7 +36,7 @@ BUILT_INS = (
     "task",
     "delete",
 )
-
+print(MODEL, OLLAMA_BASE_URL)
 
 # %% Step 2: Create safe, repeatable data for the agent to explore
 def seed_workspace() -> None:
