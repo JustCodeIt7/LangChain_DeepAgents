@@ -8,6 +8,9 @@
 - Demo: ONE prompt that exercises every built-in tool, then a coverage check
 
 Run:  python 03-builtin_tools.py
+# This is a 10-step task; small models (<=4B) often drop steps. For full
+# coverage use a stronger model:
+#   DEEPAGENTS_MODEL=ollama:qwen3.8:27b-mlx python 03-builtin_tools.py
 """
 
 # %% Step 1: Imports and setup
