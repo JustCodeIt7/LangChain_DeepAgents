@@ -5,12 +5,12 @@
 - Filesystem tools: ls, read_file, write_file, edit_file, delete, glob, grep
 - `execute` is only offered with a shell-capable backend (LocalShellBackend)
 - `task` spawns a subagent (on by default); `write_todos` is opt-in middleware
-- Demo: ONE prompt that exercises every built-in tool, then a coverage check
+- Demo: four short prompts that together exercise EVERY built-in tool, then a
+  coverage check (small local models follow short, scoped prompts much better
+  than one giant step list)
 
 Run:  python 03-builtin_tools.py
-# This is a 10-step task; small models (<=4B) often drop steps. For full
-# coverage use a stronger model:
-#   DEEPAGENTS_MODEL=ollama:qwen3.8:27b-mlx python 03-builtin_tools.py
+Model override:  DEEPAGENTS_MODEL=openai:gpt-4.1-mini python 03-builtin_tools.py
 """
 
 # %% Step 1: Imports and setup
@@ -53,24 +53,47 @@ agent = create_deep_agent(
     ),
 )
 
-# %% Step 4: One prompt that exercises every built-in tool
+# %% Step 4: Four prompts that together exercise every built-in tool
 # All paths are relative to the workspace root: the filesystem tools normalize
 # them under the backend root, and the `execute` shell runs with cwd = root.
-task = (
-    "Work in your workspace. Complete these steps IN ORDER, using the named tool for each:\n"
-    "1. write_todos — plan the steps below as todos.\n"
-    "2. ls — list the files in the data folder.\n"
-    "3. read_file — read data/fruits.txt.\n"
-    "4. write_file — create data/veggies.txt with: carrot, pepper, basil (one per line).\n"
-    "5. edit_file — in notes.md replace the word 'draft' with 'final'.\n"
-    "6. glob — find every .txt file.\n"
-    "7. grep — search all files for the word 'blue'.\n"
-    "8. execute — run this shell command exactly: wc -l data/*.txt\n"
-    "9. task — spawn a subagent to count the total lines across all .txt files in data.\n"
-    "10. delete — delete data/veggies.txt.\n"
-    "Finish with a one-paragraph summary of what you did."
-)
-result = agent.invoke({"messages": [{"role": "user", "content": task}]})
+# We keep the conversation going by appending each result's messages to the
+# next invoke — the workspace files persist on disk either way.
+PROMPTS = [
+    (
+        "Plan this work with write_todos (one todo per item), then do each item: "
+        "1) Use ls to list the files in the data folder. "
+        "2) Use read_file to read data/fruits.txt."
+    ),
+    (
+        "Continue your todo list. 3) Use write_file to create data/veggies.txt with: "
+        "carrot, pepper, basil (one per line). "
+        "4) Use edit_file to replace the word 'draft' with 'final' in notes.md."
+    ),
+    (
+        "Continue your todo list. 5) Use glob to find every .txt file. "
+        "6) Use grep to find which file contains the word 'blue'. "
+        "7) Use execute to run exactly: wc -l data/*.txt"
+    ),
+    (
+        "Continue your todo list. 8) Use task to spawn a subagent that counts the "
+        "total lines across all .txt files in data. "
+        "9) Use delete to delete data/veggies.txt. "
+        "Then finish your todo list and give a one-paragraph summary."
+    ),
+]
+
+messages: list = []
+for number, prompt in enumerate(PROMPTS, start=1):
+    print(f"\n[bold magenta]--- Turn {number} ---[/bold magenta]")
+    result = agent.invoke({"messages": messages + [{"role": "user", "content": prompt}]})
+
+    # Show the tool calls this turn made, named tool first
+    for message in result["messages"]:
+        for call in getattr(message, "tool_calls", []) or []:
+            print(f"  [green]{call['name']}[/green]({call['args']})")
+
+    # Carry the full conversation into the next turn so context survives
+    messages = result["messages"]
 
 # %% Step 5: Coverage check — which built-in tools actually fired?
 BUILT_IN = ["write_todos", "ls", "read_file", "write_file", "edit_file",
@@ -80,17 +103,12 @@ called = {
     for message in result["messages"]
     for call in (getattr(message, "tool_calls", []) or [])
 }
-print("[bold cyan]Built-in tool coverage:[/bold cyan]")
+print(f"\n[bold cyan]Built-in tool coverage ({len(called)}/{len(BUILT_IN)}):[/bold cyan]")
 for name in BUILT_IN:
     mark = "[green]✓[/green]" if name in called else "[red]✗[/red]"
     print(f"  {mark} [yellow]{name}[/yellow]")
 
-# %% Step 6: Full tool-call trace
-print("\n[bold cyan]Tool calls made:[/bold cyan]")
-for message in result["messages"]:
-    for call in getattr(message, "tool_calls", []) or []:
-        print(f"  [green]{call['name']}[/green]({call['args']})")
-
+# %% Step 6: Final answer
 print(f"\n[bold green]Final answer:[/bold green] {result['messages'][-1].text}")
 
 # %%
