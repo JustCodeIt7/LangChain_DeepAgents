@@ -11,6 +11,7 @@ Override: DEEPAGENTS_MODEL=openai:gpt-4.1-mini python 03-builtin_tools-cx.py
 
 # %% Step 1: Imports and model configuration
 import os
+import time
 from pathlib import Path
 
 from deepagents import create_deep_agent
@@ -20,7 +21,7 @@ from langchain.agents.middleware import TodoListMiddleware
 from langchain_ollama import ChatOllama
 from rich import print
 
-################################ Environment & Model Configuration ################################
+############################ Environment & Model Configuration ###########################
 
 # Pull API keys and model overrides from a local .env file
 load_dotenv()
@@ -30,7 +31,8 @@ load_dotenv()
 MODEL = "openai:gpt-4.1-nano"  # gpt-4.1-nano
 # ollama
 OLLANMA_BASE_URL = os.getenv("OLLAMA_BASE_URL", "http://localhost:11434")
-# llama3.2 granite4:1b qwen3.5:2b
+# llama3.2 qwen3.5:2b lfm2.5:8b granite4:1b
+# Reassign MODEL to the local chat model; temperature=0 keeps tool calls deterministic
 MODEL = ChatOllama(model="granite4:1b", base_url=OLLANMA_BASE_URL, temperature=0)
 
 # Sandbox directory that every tool call is confined to
@@ -52,6 +54,9 @@ BUILT_INS = (
 # print(MODEL)
 
 
+############################### Workspace Seeding ###############################
+
+
 # %% Step 2: Create safe, repeatable data for the agent to explore
 def seed_workspace() -> None:
     """Reset only this tutorial's sample files before each run."""
@@ -67,6 +72,9 @@ def seed_workspace() -> None:
     (data / "veggies.txt").unlink(missing_ok=True)  # Clear the file the agent is asked to create
 
 
+################################ Agent Construction ################################
+
+
 # %% Step 3: Build an agent with every available harness tool
 def build_agent():
     """LocalShellBackend adds execute; middleware adds write_todos."""
@@ -78,11 +86,14 @@ def build_agent():
         middleware=[TodoListMiddleware()],  # Opt in to the write_todos planning tool
         # Force explicit tool usage so the demo can prove each tool works
         system_prompt="""You are demonstrating Deep Agents tools in a throwaway workspace.
-            For every requested operation, call the named tool exactly; never replace a filesystem operation with execute.
-            Use relative paths. Keep final answers brief. workspace path is: ./ all file operations should be relative
+            For every requested operation, call the named tool exactly; never replace a filesystem 
+            operation with execute.Use relative paths. Keep final answers brief. workspace 
+            path is: ./ all file operations should be relative
             to this path.""",
     )
 
+
+############################ Prompt Script & Tool Tracking ###########################
 
 # %% Step 4: Short prompts that explicitly cover every tool
 # Each prompt names the tools it should trigger, spreading coverage across turns
@@ -92,8 +103,8 @@ PROMPTS = [
         "read_file on data/fruits.txt and tell me what fruits are listed."
     ),
     (  # tools: edit_file, write_file
-        "2. Use write_file to create data/veggies.txt containing carrot, pepper, and basil on separate lines."
-        "Then use edit_file to change 'draft' to 'final' in notes.md."
+        "2. Use write_file to create data/veggies.txt containing carrot, pepper, and basil on "
+        "separate lines. Then use edit_file to change 'draft' to 'final' in notes.md."
     ),
     (  # tools: glob, grep, execute
         "3. Use glob to find every .txt file. Use grep to find the file containing 'blue'. "
@@ -101,13 +112,14 @@ PROMPTS = [
     ),
     (  # tools: task, delete, write_todos
         "4. Use task to delegate counting all lines in data/*.txt to a subagent."
-        "Then use the delete tool to remove data/veggies.txt, complete the todos, and summarize the results."
+        "Then use the delete tool to remove data/veggies.txt, complete the "
+        "todos, and summarize the results."
     ),  # delete
     ("5. use delete tool to remove a file from the workspace and tell me the file you removed"),
     (
-        "6. List all built-in tools available to you in deepagents with a brief description of each, and write each "
-        "tool's name and description to a markdown file named todo.md in the workspace directory using the write_file "
-        "or edit_file tool."
+        "6. List all built-in tools available to you in deepagents with a brief description of "
+        "each, and write each tool's name and description to a markdown file named todo.md  "
+        "or edit_file tool. in the workspace directory using the write_file"
     ),
 ]
 
@@ -125,9 +137,13 @@ def tool_names(messages: list) -> set[str]:
     return tool_names
 
 
+############################ Conversation Loop & Coverage Report ###########################
+
+
 # %% Step 5: Run the guided conversation and report actual coverage
 def main() -> None:
     """Invoke each prompt, preserving messages so the agent can continue its plan."""
+    start = time.time()  # Track wall-clock cost of the whole multi-turn run
     seed_workspace()
     # Initialize the agent, message history, and set of called tools
     agent, messages, called = build_agent(), [], set()
@@ -145,10 +161,10 @@ def main() -> None:
         # Determine which tools were newly called this turn
         new_calls = tools_used - called  # Report only tools first seen this turn
 
-        called.update(new_calls)
+        called.update(new_calls)  # Accumulate coverage across every turn
         print("\nTools Used:", ", ".join(sorted(tools_used)) or "none")
         print("\nAnswer: \n")
-        print(messages[-1].content)
+        print(messages[-1].content)  # Show only the agent's latest reply
         # print(messages[-1])
 
     # Score the run against the expected built-in tool list
@@ -158,7 +174,8 @@ def main() -> None:
         marker = "[green]yes[/green]" if name in called else "[red]no[/red]"
         print(f"  {name:11} {marker}")  # Pad names so the yes/no column lines up
     # print(f"\n[bold green]Final answer:[/bold green] {messages[-1].text}")
-
+    end = time.time()
+    print(f"\n[bold yellow]Total execution time: {end - start:.2f} seconds[/bold yellow]")
 
 # Run the demo only when executed directly, not on import
 if __name__ == "__main__":
