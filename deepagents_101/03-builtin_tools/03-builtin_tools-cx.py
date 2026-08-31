@@ -22,6 +22,7 @@ from rich import print
 load_dotenv()
 MODEL = os.getenv("DEEPAGENTS_MODEL", "ollama:qwen3.5:0.8b")
 OLLAMA_BASE_URL = os.getenv("OLLAMA_BASE_URL", "http://localhost:11434")
+MODEL = "openai:gpt-4.1-mini"
 
 WORKSPACE = Path(__file__).parent / "workspace"
 BUILT_INS = (
@@ -66,9 +67,8 @@ filesystem operation with execute. Use relative paths. Keep final answers brief.
 # %% Step 4: Short prompts that explicitly cover every tool
 PROMPTS = [
     "Use write_todos to plan these two items, then use ls on data and "
-    "read_file on data/fruits.txt.",
-    "Use write_file to create data/veggies.txt containing carrot, pepper, "
-    "and basil on separate lines. "
+    "read_file on data/fruits.txt and tell me what fruits are listed.",
+    "Use write_file to create data/veggies.txt containing carrot, pepper, and basil on separate lines."
     "Then use edit_file to change 'draft' to 'final' in notes.md.",
     "Use glob to find every .txt file. Use grep to find the file containing 'blue'. "
     "Use execute to run exactly: wc -l data/*.txt",

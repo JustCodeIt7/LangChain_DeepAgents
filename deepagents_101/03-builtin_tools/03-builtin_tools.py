@@ -25,7 +25,7 @@ from rich import print
 
 load_dotenv()
 MODEL = os.getenv("DEEPAGENTS_MODEL", "ollama:qwen3.5:2b")
-
+MODEL = "openai:gpt-4.1-mini"
 
 # %% Step 2: Seed a scratch workspace with real files
 # LocalShellBackend works on the REAL disk under root_dir, so we create a few

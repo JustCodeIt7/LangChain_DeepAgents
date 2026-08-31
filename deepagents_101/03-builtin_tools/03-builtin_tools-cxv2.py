@@ -2,7 +2,6 @@
 03 - Built-in Tools: A Complete Deep Agent Workspace
 =====================================================
 - LocalShellBackend is real host shell access: this demo is scoped to ./workspace.
-
 Run:  python 03-builtin_tools-cxv2.py
 """
 # %% Step 1: Imports and a tightly scoped workspace
@@ -18,6 +17,8 @@ from rich import print
 
 load_dotenv()
 MODEL = os.getenv("DEEPAGENTS_MODEL", "ollama:qwen3.5:0.8b")
+MODEL = "openai:gpt-4.1-mini"
+
 OLLAMA_BASE_URL = os.getenv("OLLAMA_BASE_URL", "http://localhost:11434")
 model = ChatOllama(
     model=MODEL.removeprefix("ollama:"), base_url=OLLAMA_BASE_URL
@@ -97,5 +98,4 @@ for number, (title, prompt) in enumerate(PROMPTS, start=1):
 missing = EXPECTED - used_tools
 status = "all built-in tools exercised" if not missing else f"missing: {', '.join(sorted(missing))}"
 print(f"\n[bold cyan]Coverage:[/bold cyan] [yellow]{status}[/yellow]")
-
 # %%
