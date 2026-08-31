@@ -22,7 +22,7 @@ load_dotenv()
 MODEL = os.getenv("DEEPAGENTS_MODEL", "ollama:qwen3.5:2b")
 WORKSPACE = Path(__file__).parent / "workspace"
 WORKSPACE.mkdir(exist_ok=True)
-
+print(MODEL, WORKSPACE)
 # LocalShellBackend exposes every filesystem tool plus execute. The agent sees
 # only this directory, and subprocesses receive no inherited environment secrets.
 backend = LocalShellBackend(root_dir=str(WORKSPACE), timeout=30, inherit_env=False)
