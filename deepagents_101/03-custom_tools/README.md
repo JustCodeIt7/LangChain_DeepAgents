@@ -34,9 +34,9 @@
 - **Step 5 — A task needing BOTH tools:** Forces two separate tool calls.
 - **Step 6 — Inspect:** Show the `tool_calls` on the AI messages, then the `ToolMessage` results.
 - **Step 7 — Structured return:** `lookup_product` returns a `dict`; the model reads the fields (price, in_stock, category).
-- **Step 8 — Async tool:** `fetch_quote` is `async def`; the framework awaits it, so the model calls it like any sync tool.
+- **Step 8 — Async tool:** `fetch_quote` is `async def`; the model calls it like any sync tool, but the agent must run on the async path (`.ainvoke`) — an async-only tool raises on sync `.invoke()`.
 - **Step 9 — return_direct:** `get_order_status` has `return_direct=True`; its output becomes the final answer with no extra LLM call.
-- **Step 10 — Second agent:** a fresh agent with the three new tools, plus a `show_tool_calls` helper to inspect each run.
+- **Step 10 — Second agent:** a fresh agent with the three new tools, plus two helpers: `show_tool_calls` (inspect a run) and `run_task` (run a task on the async path, reusing one event loop — the Ollama async client binds its connection pool to a single loop, so `asyncio.run()` per task breaks it).
 - **Steps 11–13 — One task per tool:** each task is worded to trigger exactly one tool; the "Try also" comments give extra test tasks to run on camera.
 
 **On camera:**
@@ -48,6 +48,7 @@
 
 - A small model may answer without calling the tools (count the words in its head). The prompt says "use your tools for both steps." If it skips, that's a teaching moment about model size vs. instruction-following.
 - With three tools in one agent, a small model might pick the wrong one. The domains are deliberately distinct (product / stock / order) to keep it unambiguous. If it misfires, tighten the task wording or the system prompt.
+- If you see `Event loop is closed` from the Ollama client, you're calling `asyncio.run()` once per task. Use the shared-loop `run_task` helper (one loop for all tasks) instead.
 
 **Bridge to ep. 04:** "Tools are great, but multi-step work needs a plan. Next: the agent's to-do list."
 
