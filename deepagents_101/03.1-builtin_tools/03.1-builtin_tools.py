@@ -78,8 +78,7 @@ def build_agent():
         middleware=[TodoListMiddleware()],  # Opt in to the write_todos planning tool
         # Force explicit tool usage so the demo can prove each tool works
         system_prompt="""You are demonstrating Deep Agents tools in a throwaway workspace.
-            For every requested operation, call the named tool exactly; never replace a            filesystem operation with execute. Use relative paths. Keep final answers brief.
-            workspace path is: ./ all file operations should be relative to this path.""",
+            For every requested operation, call the named tool exactly; never replace a filesystem operation with execute. Use relative paths. Keep final answers brief. workspace path is: ./ all file operations should be relative to this path.""",
     )
 
 
