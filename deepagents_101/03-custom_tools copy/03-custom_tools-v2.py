@@ -179,9 +179,7 @@ def run_task(agent, task):
     if _AGENT_LOOP is None or _AGENT_LOOP.is_closed():
         _AGENT_LOOP = asyncio.new_event_loop()
         asyncio.set_event_loop(_AGENT_LOOP)
-    return _AGENT_LOOP.run_until_complete(
-        agent.ainvoke({"messages": [{"role": "user", "content": task}]})
-    )
+    return _AGENT_LOOP.run_until_complete(agent.ainvoke({"messages": [{"role": "user", "content": task}]}))
 
 
 # %% Step 11: Task 1 — structured return

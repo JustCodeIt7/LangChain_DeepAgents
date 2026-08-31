@@ -36,7 +36,7 @@ agent = create_deep_agent(
 # Three distinct steps is the sweet spot — enough to justify planning,
 # small enough to stay fast.
 task = (
-    "Do these three things: 1) compute 12 * 12, 2) reverse the word 'agents', "
+    "plan and Do these three things: 1) compute 12 * 12, 2) reverse the word 'agents', "
     "3) give me both results in one final sentence."
 )
 
