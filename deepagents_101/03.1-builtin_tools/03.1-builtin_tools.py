@@ -113,7 +113,7 @@ PROMPTS = [
     ("5. use delete tool to remove a file from the workspace and tell me the file you removed"),
     (
         "6. List all built-in tools available to you in deepagents with a brief description of "
-        "each, and write each tool's name and description to a markdown file named todo.md  "
+        "each, and write each tool's name and description to a markdown file named tools.md  "
         "or edit_file tool. in the workspace directory using the write_file"
     ),
 ]
