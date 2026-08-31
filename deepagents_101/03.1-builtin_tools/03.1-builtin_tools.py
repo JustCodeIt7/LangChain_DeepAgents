@@ -31,7 +31,7 @@ MODEL = "openai:gpt-4.1-nano"  # gpt-4.1-nano
 # ollama
 OLLANMA_BASE_URL = os.getenv("OLLAMA_BASE_URL", "http://localhost:11434")
 # llama3.2 granite4:1b qwen3.5:2b
-MODEL = ChatOllama(model="llama3.2", base_url=OLLANMA_BASE_URL, temperature=0, max_tokens=3024)
+MODEL = ChatOllama(model="llama3.2", base_url=OLLANMA_BASE_URL, temperature=0, max_tokens=2048)
 
 # Sandbox directory that every tool call is confined to
 WORKSPACE = Path(__file__).parent / "workspace"
@@ -103,8 +103,7 @@ PROMPTS = [
         "Then use the delete tool to remove data/veggies.txt, complete the todos, and summarize the results."
     ),
     (  # tools: write_file
-        "5. List all of the built-in tools available for me to use with deepagents and a brief description of each."
-        "Write the tool name and description to a markdown file named 'todo.md' in the workspace directory using the write_file tool."
+        "5. List all built-in tools available to you in deepagents with a brief description of each, and write each tool's name and description to a markdown file named todo.md in the workspace directory using the write_file or edit_file tool."
     ),
 ]
 
