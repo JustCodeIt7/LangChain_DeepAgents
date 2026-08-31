@@ -17,8 +17,8 @@ from deepagents import create_deep_agent
 from deepagents.backends import LocalShellBackend
 from dotenv import load_dotenv
 from langchain.agents.middleware import TodoListMiddleware
-from rich import print
 from langchain_ollama import ChatOllama
+from rich import print
 
 ################################ Environment & Model Configuration ################################
 
@@ -59,9 +59,12 @@ def seed_workspace() -> None:
     # Recreate the data folder so reruns always start from a known state
     data = WORKSPACE / "data"
     data.mkdir(parents=True, exist_ok=True)
+    # Create initial sample files for the agent to interact with
     (data / "fruits.txt").write_text("apple\nbanana\ncherry\n")
     (data / "colors.txt").write_text("red\nblue\ngreen\n")
+    # Create a notes file for the agent to edit
     (WORKSPACE / "notes.md").write_text("# Notes\n- status: draft\n")
+    # Ensure the veggies file is initially absent so the agent can create it
     (data / "veggies.txt").unlink(missing_ok=True)  # Clear the file the agent is asked to create
 
 
@@ -84,19 +87,19 @@ def build_agent():
 # %% Step 4: Short prompts that explicitly cover every tool
 # Each prompt names the tools it should trigger, spreading coverage across turns
 PROMPTS = [
-    (
+    (  # tools: ls, read_file, write_todos
         "1. Use write_todos to plan these two items, then use ls on data and "
         "read_file on data/fruits.txt and tell me what fruits are listed."
     ),
-    (
+    (  # tools: edit_file, write_file
         "2. Use write_file to create data/veggies.txt containing carrot, pepper, and basil on separate lines."
         "Then use edit_file to change 'draft' to 'final' in notes.md."
     ),
-    (
+    (  # tools: glob, grep, execute
         "3. Use glob to find every .txt file. Use grep to find the file containing 'blue'. "
         "Use execute to run exactly: wc -l data/*.txt"
     ),
-    (
+    (  # tools: task, delete, write_todos
         "4. Use task to delegate counting all lines in data/*.txt to a subagent. Then use delete to remove "
         "data/veggies.txt, complete the todos, and summarize the results."
     ),
