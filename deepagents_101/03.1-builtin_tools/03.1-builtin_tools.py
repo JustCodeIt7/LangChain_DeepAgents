@@ -31,7 +31,7 @@ MODEL = "openai:gpt-4.1-nano"  # gpt-4.1-nano
 # ollama
 OLLANMA_BASE_URL = os.getenv("OLLAMA_BASE_URL", "http://localhost:11434")
 # llama3.2 granite4:1b qwen3.5:2b
-MODEL = ChatOllama(model="llama3.2", base_url=OLLANMA_BASE_URL, temperature=0, max_tokens=2048)
+MODEL = ChatOllama(model="granite4:1b", base_url=OLLANMA_BASE_URL, temperature=0)
 
 # Sandbox directory that every tool call is confined to
 WORKSPACE = Path(__file__).parent / "workspace"
@@ -77,8 +77,7 @@ def build_agent():
         middleware=[TodoListMiddleware()],  # Opt in to the write_todos planning tool
         # Force explicit tool usage so the demo can prove each tool works
         system_prompt="""You are demonstrating Deep Agents tools in a throwaway workspace.
-            For every requested operation, call the named tool exactly; never replace a
-            filesystem operation with execute. Use relative paths. Keep final answers brief.
+            For every requested operation, call the named tool exactly; never replace a            filesystem operation with execute. Use relative paths. Keep final answers brief.
             workspace path is: ./ all file operations should be relative to this path.""",
     )
 
@@ -101,9 +100,12 @@ PROMPTS = [
     (  # tools: task, delete, write_todos
         "4. Use task to delegate counting all lines in data/*.txt to a subagent."
         "Then use the delete tool to remove data/veggies.txt, complete the todos, and summarize the results."
-    ),
-    (  # tools: write_file
-        "5. List all built-in tools available to you in deepagents with a brief description of each, and write each tool's name and description to a markdown file named todo.md in the workspace directory using the write_file or edit_file tool."
+    ),  # delete
+    ("5. use delete tool to remove a file from the workspace"),
+    (
+        "6. List all built-in tools available to you in deepagents with a brief description of each, and write each "
+        "tool's name and description to a markdown file named todo.md in the workspace directory using the write_file "
+        "or edit_file tool."
     ),
 ]
 
