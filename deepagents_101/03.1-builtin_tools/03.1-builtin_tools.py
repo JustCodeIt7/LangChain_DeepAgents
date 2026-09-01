@@ -33,7 +33,7 @@ MODEL = "openai:gpt-4.1-nano"  # gpt-4.1-nano
 OLLANMA_BASE_URL = os.getenv("OLLAMA_BASE_URL", "http://localhost:11434")
 # llama3.2 qwen3.5:2b lfm2.5:8b granite4:1b ministral-3:3b granite4.1:3b
 # Reassign MODEL to the local chat model; temperature=0 keeps tool calls deterministic
-MODEL = ChatOllama(model="granite4.1:3b", base_url=OLLANMA_BASE_URL, temperature=0)
+MODEL = ChatOllama(model="llama3.2", base_url=OLLANMA_BASE_URL, temperature=0)
 
 # Sandbox directory that every tool call is confined to
 WORKSPACE = Path(__file__).parent / "workspace"
@@ -67,7 +67,7 @@ def seed_workspace() -> None:
     # Create a notes file for the agent to edit
     (WORKSPACE / "notes.md").write_text("# Notes\n- status: draft\n")
     # Ensure the veggies file is initially absent so the agent can create it
-    (data / "veggies.txt").unlink(missing_ok=True)  # Clear the file the agent is asked to create
+    (data / "veggies.txt").unlink(missing_ok=True)
 
 
 ################################ Agent Construction ################################
@@ -125,7 +125,7 @@ def tool_names(messages: list) -> set[str]:
     tool_names = set()
     # Iterate over all messages and collect the names of tools that were called
     for message in messages:
-        # Skip messages that have no tool calls (i.e., "tool_calls" attribute is missing or empty)
+        # Skip messages with no tool calls (i.e., "tool_calls" attribute is missing or empty)
         for call in getattr(message, "tool_calls", []) or []:
             tool_names.add(call["name"])
     # Return the collected set of tool names
@@ -145,6 +145,7 @@ def main() -> None:
     # Replay the full history each turn so the agent keeps its todo list context
     for turn, prompt in enumerate(PROMPTS, start=1):
         print(f"\n[bold magenta]--- Turn {turn} ---[/bold magenta]")
+        print(f"Prompt: {prompt}")
         # Invoke the agent with the current prompt and the accumulated message history
         result = agent.invoke({"messages": messages + [{"role": "user", "content": prompt}]})
         # print("Got results finding new tool calls...")
@@ -157,8 +158,8 @@ def main() -> None:
         called.update(new_calls)  # Accumulate coverage across every turn
         print("\nTools Used:", ", ".join(sorted(tools_used)) or "none")
         print("\nAnswer: \n")
-        print(messages[-1].content)  # Show only the agent's latest reply
-        # print(messages[-1])
+        # print(messages[-1].content)  # Show only the agent's latest reply
+        print(messages[-1])
 
     # Score the run against the expected built-in tool list
     print("\n[bold cyan]Built-in tool coverage[/bold cyan]")
@@ -170,6 +171,5 @@ def main() -> None:
     end = time.time()
     print(f"\n[bold yellow]Total execution time: {end - start:.2f} seconds[/bold yellow]")
 
-# Run the demo only when executed directly, not on import
 if __name__ == "__main__":
     main()
