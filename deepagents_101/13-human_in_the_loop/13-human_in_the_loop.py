@@ -18,9 +18,25 @@ from langgraph.checkpoint.memory import InMemorySaver
 from langgraph.types import Command  # carries the human's decision back in
 from rich import print
 
+from langchain_ollama import ChatOllama
+from langchain_openrouter import ChatOpenRouter
 load_dotenv()
-MODEL = os.getenv("DEEPAGENTS_MODEL", "ollama:qwen3.5:2b")
 
+
+# Choose your LLM provider by commenting/uncommenting:
+#
+# Option 1: Ollama (local)
+# Make sure Ollama is running and you have pulled the model (e.g., ollama pull qwen3.5:2b)
+model = ChatOllama(
+    model=os.getenv("OLLAMA_MODEL", "qwen3.5:2b"),
+    base_url=os.getenv("OLLAMA_BASE_URL", "http://localhost:11434")
+)
+#
+# Option 2: OpenRouter
+# model = ChatOpenRouter(
+#     model="meta/muse-spark-1.3-contributor",
+#     temperature=0
+# )
 
 def text_of(message) -> str:
     """Normalize message content across providers (str vs content blocks)."""
@@ -45,7 +61,7 @@ def send_email(to: str, body: str) -> str:
 # interrupt_on maps tool name -> True (all four decision types allowed) or an
 # InterruptOnConfig dict such as {"allowed_decisions": ["approve", "reject"]}.
 agent = create_deep_agent(
-    model=MODEL,
+    model=model,
     tools=[send_email],
     interrupt_on={"send_email": True},
     checkpointer=InMemorySaver(),  # REQUIRED: the pause must be persisted

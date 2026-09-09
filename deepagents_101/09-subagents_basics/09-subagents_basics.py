@@ -15,9 +15,25 @@ from deepagents import create_deep_agent
 from dotenv import load_dotenv
 from rich import print
 
+from langchain_ollama import ChatOllama
+from langchain_openrouter import ChatOpenRouter
 load_dotenv()
-MODEL = os.getenv("DEEPAGENTS_MODEL", "ollama:qwen3.5:2b")
 
+
+# Choose your LLM provider by commenting/uncommenting:
+#
+# Option 1: Ollama (local)
+# Make sure Ollama is running and you have pulled the model (e.g., ollama pull qwen3.5:2b)
+model = ChatOllama(
+    model=os.getenv("OLLAMA_MODEL", "qwen3.5:2b"),
+    base_url=os.getenv("OLLAMA_BASE_URL", "http://localhost:11434")
+)
+#
+# Option 2: OpenRouter
+# model = ChatOpenRouter(
+#     model="meta/muse-spark-1.3-contributor",
+#     temperature=0
+# )
 
 def text_of(message) -> str:
     """Normalize message content across providers (str vs content blocks)."""
@@ -47,7 +63,7 @@ critic_subagent = {
 # Every deep agent also gets a built-in "general-purpose" subagent for free;
 # yours are added alongside it.
 agent = create_deep_agent(
-    model=MODEL,
+    model=model,
     subagents=[critic_subagent],
     system_prompt=(
         "You are an editor. When the user asks for a critique, you MUST "

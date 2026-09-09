@@ -19,9 +19,25 @@ from langchain_core.tools import tool  # decorator form for tools
 from rich import print
 import asyncio
 
+from langchain_ollama import ChatOllama
+from langchain_openrouter import ChatOpenRouter
 load_dotenv()
-MODEL = os.getenv("DEEPAGENTS_MODEL", "ollama:qwen3.5:2b")
 
+
+# Choose your LLM provider by commenting/uncommenting:
+#
+# Option 1: Ollama (local)
+# Make sure Ollama is running and you have pulled the model (e.g., ollama pull qwen3.5:2b)
+model = ChatOllama(
+    model=os.getenv("OLLAMA_MODEL", "qwen3.5:2b"),
+    base_url=os.getenv("OLLAMA_BASE_URL", "http://localhost:11434")
+)
+#
+# Option 2: OpenRouter
+# model = ChatOpenRouter(
+#     model="meta/muse-spark-1.3-contributor",
+#     temperature=0
+# )
 
 # %% Step 2: A tool can be a plain Python function
 # deepagents inspects the signature and docstring to build the tool schema.
@@ -51,7 +67,7 @@ def reverse_text(text: str) -> str:
 # %% Step 4: Hand both tools to the agent
 # `tools=` ADDS to the built-in suite — it never removes ls/read_file/task/etc.
 agent = create_deep_agent(
-    model=MODEL,
+    model=model,
     tools=[word_count, reverse_text],
     system_prompt=(
         "You are a text utility assistant. Use the reverse_text and word_count "
@@ -141,7 +157,7 @@ def get_order_status(order_id: str) -> str:
 
 # %% Step 10: Build an agent with the three new tools
 agent2 = create_deep_agent(
-    model=MODEL,
+    model=model,
     tools=[lookup_product, fetch_quote, get_order_status],
     system_prompt=(
         "You are a helpful assistant with access to a product catalog, a stock "

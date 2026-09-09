@@ -17,9 +17,25 @@ from dotenv import load_dotenv
 from langgraph.store.memory import InMemoryStore  # dev store; swap for Postgres
 from rich import print
 
+from langchain_ollama import ChatOllama
+from langchain_openrouter import ChatOpenRouter
 load_dotenv()
-MODEL = os.getenv("DEEPAGENTS_MODEL", "ollama:qwen3.5:2b")
 
+
+# Choose your LLM provider by commenting/uncommenting:
+#
+# Option 1: Ollama (local)
+# Make sure Ollama is running and you have pulled the model (e.g., ollama pull qwen3.5:2b)
+model = ChatOllama(
+    model=os.getenv("OLLAMA_MODEL", "qwen3.5:2b"),
+    base_url=os.getenv("OLLAMA_BASE_URL", "http://localhost:11434")
+)
+#
+# Option 2: OpenRouter
+# model = ChatOpenRouter(
+#     model="meta/muse-spark-1.3-contributor",
+#     temperature=0
+# )
 
 def text_of(message) -> str:
     """Normalize message content across providers (str vs content blocks)."""
@@ -47,7 +63,7 @@ backend = CompositeBackend(
 MEMORY_FILE = "/memories/preferences.md"
 
 agent = create_deep_agent(
-    model=MODEL,
+    model=model,
     backend=backend,
     memory=[MEMORY_FILE],  # loaded into the system prompt at the start of each run
     system_prompt=(

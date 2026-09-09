@@ -18,9 +18,25 @@ from dotenv import load_dotenv
 from langchain.tools import tool
 from rich import print
 
+from langchain_ollama import ChatOllama
+from langchain_openrouter import ChatOpenRouter
 load_dotenv()
-MODEL = os.getenv("DEEPAGENTS_MODEL", "ollama:qwen3.5:2b")
 
+
+# Choose your LLM provider by commenting/uncommenting:
+#
+# Option 1: Ollama (local)
+# Make sure Ollama is running and you have pulled the model (e.g., ollama pull qwen3.5:2b)
+model = ChatOllama(
+    model=os.getenv("OLLAMA_MODEL", "qwen3.5:2b"),
+    base_url=os.getenv("OLLAMA_BASE_URL", "http://localhost:11434")
+)
+#
+# Option 2: OpenRouter
+# model = ChatOpenRouter(
+#     model="meta/muse-spark-1.3-contributor",
+#     temperature=0
+# )
 
 # %% Step 2: A tool can be a plain Python function
 # deepagents inspects the signature and docstring to build the tool schema.
@@ -92,7 +108,7 @@ async def estimate_delivery(order_id: str) -> str:
 # %% Step 7: Hand every custom tool to the agent
 # `tools=` ADDS to the built-in suite — it never removes ls/read_file/task/etc.
 agent = create_deep_agent(
-    model=MODEL,
+    model=model,
     tools=[
         word_count,
         reverse_text,

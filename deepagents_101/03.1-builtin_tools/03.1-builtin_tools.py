@@ -20,34 +20,29 @@ from dotenv import load_dotenv
 from langchain.agents.middleware import TodoListMiddleware
 from rich import print
 
+from langchain_ollama import ChatOllama
+from langchain_openrouter import ChatOpenRouter
 ############################ Environment & Model Configuration ###########################
 
 # Pull API keys and model overrides from a local .env file
 load_dotenv()
 
-# Allow the model to be swapped without editing code; fall back to a small local model
-MODEL = os.getenv("DEEPAGENTS_MODEL", "ollama:qwen3.5:2b")
 
-# Sandbox directory that every tool call is confined to (next to this script)
-WORKSPACE = Path(__file__).resolve().parent / "workspace"
-
-# Checklist used at the end to verify which built-in tools the agent actually exercised
-BUILT_INS = (
-    "write_todos",
-    "ls",
-    "read_file",
-    "write_file",
-    "edit_file",
-    "glob",
-    "grep",
-    "execute",
-    "task",
-    "delete",
+# Choose your LLM provider by commenting/uncommenting:
+#
+# Option 1: Ollama (local)
+# Make sure Ollama is running and you have pulled the model (e.g., ollama pull qwen3.5:2b)
+model = ChatOllama(
+    model=os.getenv("OLLAMA_MODEL", "qwen3.5:2b"),
+    base_url=os.getenv("OLLAMA_BASE_URL", "http://localhost:11434")
 )
-# print(MODEL)
+#
+# Option 2: OpenRouter
+# model = ChatOpenRouter(
+#     model="meta/muse-spark-1.3-contributor",
+#     temperature=0
+# )
 
-
-############################### Workspace Seeding ###############################
 # %% Step 2: Create safe, repeatable data for the agent to explore
 def seed_workspace() -> None:
     """Reset only this tutorial's sample files before each run."""
@@ -70,7 +65,7 @@ def build_agent():
     # Jail shell + filesystem access to the workspace and cap runaway commands
     backend = LocalShellBackend(root_dir=str(WORKSPACE.resolve()), timeout=30)
     return create_deep_agent(
-        model=MODEL,
+        model=model,
         backend=backend,
         middleware=[TodoListMiddleware()],  # Opt in to the write_todos planning tool
         # Force explicit tool usage so the demo can prove each tool works

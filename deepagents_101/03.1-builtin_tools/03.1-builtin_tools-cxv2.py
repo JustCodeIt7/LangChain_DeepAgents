@@ -14,33 +14,26 @@ from dotenv import load_dotenv
 from langchain.agents.middleware import TodoListMiddleware
 from rich import print
 
+from langchain_ollama import ChatOllama
+from langchain_openrouter import ChatOpenRouter
 load_dotenv()
-MODEL = os.getenv("DEEPAGENTS_MODEL", "ollama:qwen3.5:2b")
 
-model = MODEL  # string spec; deepagents resolves it via init_chat_model
-WORKSPACE = Path(__file__).resolve().parent / "workspace"
-WORKSPACE.mkdir(exist_ok=True)
-print(f"Using model: {MODEL}")
-# LocalShellBackend exposes every filesystem tool plus execute. The agent sees
-# only this directory, and subprocesses receive no inherited environment secrets.
-backend = LocalShellBackend(root_dir=str(WORKSPACE), timeout=30, inherit_env=False)
-agent = create_deep_agent(
-    model=model,
-    backend=backend,
-    middleware=[TodoListMiddleware()],  # opt in to the write_todos tool
-    subagents=[
-        {
-            "name": "reporter",
-            "description": "Returns a fixed confirmation for delegation demos.",
-            "system_prompt": "Reply exactly: delegated task complete.",
-        }
-    ],
-    system_prompt=(
-        "You are a precise tutorial agent. Follow every requested tool sequence exactly. "
-        "Only work inside the workspace. For execute, run only the exact safe command "
-        "provided by the user. Keep final answers to one sentence."
-    ),
+
+# Choose your LLM provider by commenting/uncommenting:
+#
+# Option 1: Ollama (local)
+# Make sure Ollama is running and you have pulled the model (e.g., ollama pull qwen3.5:2b)
+model = ChatOllama(
+    model=os.getenv("OLLAMA_MODEL", "qwen3.5:2b"),
+    base_url=os.getenv("OLLAMA_BASE_URL", "http://localhost:11434")
 )
+#
+# Option 2: OpenRouter
+# model = ChatOpenRouter(
+#     model="meta/muse-spark-1.3-contributor",
+#     temperature=0
+# )
+
 # %% Step 2: Prompts that exercise the full built-in tool suite
 PROMPTS = [
     (
