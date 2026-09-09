@@ -49,7 +49,7 @@ print(f"  execute tool calls: [red]{len(attempted)}[/red]")
 print(f"  agent: [dim]{text_of(denied['messages'][-1]).strip()[:100]}...[/dim]")
 
 # %% Step 3: Prepare a scratch workspace
-WORKSPACE = Path(__file__).parent / "workspace"
+WORKSPACE = Path.cwd() / "workspace"
 WORKSPACE.mkdir(exist_ok=True)
 
 # %% Step 4: Build a shell-capable backend

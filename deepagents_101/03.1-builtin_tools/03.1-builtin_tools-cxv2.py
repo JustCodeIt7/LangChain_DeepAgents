@@ -23,7 +23,7 @@ OLLAMA_BASE_URL = os.getenv("OLLAMA_BASE_URL", "http://localhost:11434")
 model = ChatOllama(
     model=MODEL.removeprefix("ollama:"), base_url=OLLAMA_BASE_URL
 )
-WORKSPACE = Path(__file__).parent / "workspace"
+WORKSPACE = Path.cwd() / "workspace"
 WORKSPACE.mkdir(exist_ok=True)
 print(MODEL, OLLAMA_BASE_URL)
 # LocalShellBackend exposes every filesystem tool plus execute. The agent sees

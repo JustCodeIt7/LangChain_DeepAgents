@@ -27,7 +27,7 @@ MODEL = os.getenv("DEEPAGENTS_MODEL", "ollama:qwen3.5:2b")
 # mcp_server.py sits next to this file and exposes one tool: check_stock.
 # We use an absolute path and the CURRENT interpreter (sys.executable) so the
 # subprocess starts correctly no matter which directory you run this from.
-SERVER_SCRIPT = Path(__file__).parent / "mcp_server.py"
+SERVER_SCRIPT = Path.cwd() / "mcp_server.py"
 
 server_config = {
     "inventory": {

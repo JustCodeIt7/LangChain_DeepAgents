@@ -32,7 +32,7 @@ def text_of(message) -> str:
 # %% Step 2: Prepare a scratch workspace next to this script
 # Always scope a real filesystem agent to a directory you are happy for it to
 # modify. Here we use ./workspace inside the episode folder.
-WORKSPACE = Path(__file__).parent / "workspace"
+WORKSPACE = Path.cwd() / "workspace"
 WORKSPACE.mkdir(exist_ok=True)
 (WORKSPACE / "shopping.md").write_text("# Shopping\n- milk\n")
 

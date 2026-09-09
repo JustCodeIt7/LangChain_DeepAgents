@@ -34,7 +34,7 @@ def text_of(message) -> str:
 #   skills/
 #     release-notes/
 #       SKILL.md      <- frontmatter (name, description) + instructions
-EPISODE_DIR = Path(__file__).parent
+EPISODE_DIR = Path.cwd()
 skill_file = EPISODE_DIR / "skills" / "release-notes" / "SKILL.md"
 
 print("[bold cyan]Skill package:[/bold cyan]")

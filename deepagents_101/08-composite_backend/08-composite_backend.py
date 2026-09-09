@@ -30,7 +30,7 @@ def text_of(message) -> str:
 
 
 # %% Step 2: Prepare the real directory that /disk/ will map to
-WORKSPACE = Path(__file__).parent / "workspace"
+WORKSPACE = Path.cwd() / "workspace"
 WORKSPACE.mkdir(exist_ok=True)
 for stale in WORKSPACE.iterdir():
     stale.unlink()
