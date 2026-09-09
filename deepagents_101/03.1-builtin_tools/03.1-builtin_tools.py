@@ -30,13 +30,13 @@ load_dotenv()
 # openai
 MODEL = "openai:gpt-4.1-nano"  # gpt-4.1-nano
 # ollama
-OLLANMA_BASE_URL = os.getenv("OLLAMA_BASE_URL", "http://localhost:11434")
+OLLAMA_BASE_URL = os.getenv("OLLAMA_BASE_URL", "http://localhost:11434")
 # llama3.2 qwen3.5:2b lfm2.5:8b granite4:1b ministral-3:3b granite4.1:3b
 # Reassign MODEL to the local chat model; temperature=0 keeps tool calls deterministic
-MODEL = ChatOllama(model="llama3.2", base_url=OLLANMA_BASE_URL, temperature=0)
+MODEL = ChatOllama(model="llama3.2", base_url=OLLAMA_BASE_URL, temperature=0)
 
 # Sandbox directory that every tool call is confined to
-WORKSPACE = Path(__file__).parent / "workspace"
+WORKSPACE = Path.cwd() / "workspace"
 
 # Checklist used at the end to verify which built-in tools the agent actually exercised
 BUILT_INS = (
