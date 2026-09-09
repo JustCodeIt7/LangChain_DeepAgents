@@ -1,0 +1,9 @@
+flowchart TB
+    subgraph a["A — declarative dict"]
+        a1["name · description · system_prompt"] --> a2["tools=[...] replaces the inherited set"] --> a3["model= overrides the orchestrator's model"]
+    end
+    subgraph b["B — CompiledSubAgent"]
+        b1["create_agent(...) or any LangGraph runnable"] --> b2["runnable= key instead of system_prompt"]
+    end
+    a3 --> reg["subagents=[converter, poet]"]
+    b2 --> reg

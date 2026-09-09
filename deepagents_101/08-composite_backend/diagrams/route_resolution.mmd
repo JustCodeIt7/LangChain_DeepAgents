@@ -1,0 +1,7 @@
+flowchart TB
+    p["Incoming path"] --> m{"Match against routes<br/>LONGEST prefix wins"}
+    m -->|"/disk/note.md"| r1["route '/disk/'"]
+    m -->|"/scratch/note.md"| d["no route matched<br/>fall through to default="]
+    m -->|"/report.md"| d
+    r1 --> out1["real file: ./workspace/note.md"]
+    d --> out2["virtual file in state"]

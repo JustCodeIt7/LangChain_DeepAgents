@@ -1,0 +1,7 @@
+flowchart LR
+    subgraph off["Default — no middleware"]
+        a1["create_deep_agent(model=...)"] --> a2["no write_todos tool<br/>lean agent"]
+    end
+    subgraph on["Opt in"]
+        b1["middleware=[TodoListMiddleware()]"] --> b2["write_todos tool attached<br/>todos key added to state"]
+    end

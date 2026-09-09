@@ -1,0 +1,109 @@
+"""
+Agent construction for DeepCoder.
+=================================
+Keeping this out of main.py means the REPL stays about talking to the user,
+and this file stays about what the agent can DO.
+"""
+
+import config
+import sessions
+from deepagents import create_deep_agent
+from deepagents.backends import CompositeBackend, LocalShellBackend, StateBackend
+from langchain.agents.middleware import TodoListMiddleware
+from langchain.chat_models import init_chat_model
+
+
+def build_model():
+    """Create the chat model with Ollama-specific tuning applied.
+
+    Passing a model *instance* instead of the "ollama:..." string is what lets
+    us set num_ctx and keep_alive. init_chat_model forwards unknown kwargs to
+    the provider class, so these land on ChatOllama.
+    """
+    return init_chat_model(
+        config.MODEL,
+        num_ctx=config.NUM_CTX,
+        keep_alive=config.KEEP_ALIVE,
+    )
+
+
+def build_backend() -> CompositeBackend:
+    """Route file paths to real disk, except a scratch area kept in memory.
+
+    CompositeBackend picks a backend per path prefix, longest match wins:
+      /scratch/...  -> StateBackend, in-memory, vanishes with the process
+      everything else -> LocalShellBackend, real files under WORKDIR
+
+    The scratch route matters more than it looks: deepagents writes its own
+    internal bookkeeping (large tool results, conversation history) through
+    this same backend. Without the route, that machinery would litter your
+    project directory with files you never asked for.
+
+    LocalShellBackend is FilesystemBackend plus an `execute` tool. That single
+    addition is what turns a file editor into a coding agent: it can now run
+    the tests it just wrote.
+
+    inherit_env=True is not optional in practice. The default env is EMPTY,
+    which means no PATH -- so `python`, `git` and `npm` are all "command not
+    found" and the failure looks like a broken agent rather than a config
+    choice. The tradeoff is that your real environment (including secrets in
+    env vars) is visible to whatever the model decides to run.
+    """
+    config.WORKDIR.mkdir(parents=True, exist_ok=True)
+    return CompositeBackend(
+        default=LocalShellBackend(
+            root_dir=str(config.WORKDIR),
+            inherit_env=True,
+            timeout=config.SHELL_TIMEOUT,
+        ),
+        routes={"/scratch/": StateBackend()},
+    )
+
+
+# Subagents get their own context window: the main agent sees only the final
+# report, not the dozens of tool calls that produced it. deepagents exposes
+# them through the built-in `task` tool.
+SUBAGENTS = [
+    {
+        "name": "code-reviewer",
+        "description": "Reviews code in the project and reports issues. "
+        "Give it file paths; it returns a short prioritized review.",
+        "system_prompt": "You are a strict code reviewer. Read the files you are "
+        "asked about with read_file. Report at most 5 issues, worst first, each "
+        "as one line: severity, file, problem. Do not modify anything.",
+    },
+    {
+        "name": "test-runner",
+        "description": "Runs the project's tests or a shell command and reports "
+        "the outcome. Give it the command to run.",
+        "system_prompt": "You run commands with the execute tool and report the "
+        "result in two lines: PASS or FAIL, then the key output line.",
+        "interrupt_on": {"execute": True},  # gated even inside the subagent
+    },
+]
+
+
+def build_agent(extra_tools: list | None = None):
+    """Assemble the agent: model + shell + memory + approval gates.
+
+    interrupt_on is back now that the UI has somewhere to ask the question.
+    TodoListMiddleware adds the write_todos tool so the agent can plan.
+    """
+    return create_deep_agent(
+        model=build_model(),
+        tools=extra_tools or [],  # MCP tools join the built-in toolbox
+        system_prompt=config.SYSTEM_PROMPT,
+        backend=build_backend(),
+        # SQLite instead of RAM: close the app, come back tomorrow,
+        # /resume the thread and the agent remembers everything.
+        checkpointer=sessions.open_checkpointer(),
+        interrupt_on={tool: True for tool in config.GATED_TOOLS},
+        # write_todos is opt-in in deepagents 0.7: without this middleware the
+        # tool does not exist and the agent cannot show you its plan.
+        middleware=[TodoListMiddleware()],
+        subagents=SUBAGENTS,
+        # Files listed here are read into the system prompt at the START of
+        # every run. /AGENTS.md is the project's standing instructions -- the
+        # agent obeys it without being asked, and can update it with edit_file.
+        memory=["/AGENTS.md"],
+    )

@@ -1,0 +1,13 @@
+sequenceDiagram
+    participant Y as You
+    participant A as Deep agent
+    participant S as State (virtual FS)
+    Y->>S: seed /notes/todo.md via files=
+    Y->>A: "list files, read todo.md, append a line"
+    A->>S: ls
+    S-->>A: /notes/todo.md, /notes/ideas.md
+    A->>S: read_file /notes/todo.md
+    S-->>A: contents
+    A->>S: edit_file — append the new line
+    A-->>Y: one-sentence confirmation
+    S-->>Y: result["files"] with the updated content

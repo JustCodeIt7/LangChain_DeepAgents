@@ -1,0 +1,7 @@
+flowchart LR
+    t1["Turn 1<br/>invoke(messages=[...], config)"] --> g["LangGraph run"]
+    g --> cp[("Checkpointer<br/>state saved after every step")]
+    t2["Turn 2<br/>invoke(NEW message only)"] --> load["Load history for this thread_id"]
+    cp --> load
+    load --> g2["Run continues with full context"]
+    g2 --> cp

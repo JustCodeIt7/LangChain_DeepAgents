@@ -1,0 +1,13 @@
+flowchart TB
+    subgraph lead["Research lead (orchestrator)"]
+        p["TodoListMiddleware — planning"]
+        s["StateBackend — the /corpus/ files"]
+        st["stream_mode='values' — live progress + final files"]
+    end
+    lead -->|task| a1["analyst: /corpus/solar.md"]
+    lead -->|task| a2["analyst: /corpus/wind.md"]
+    lead -->|task| a3["analyst: /corpus/storage.md"]
+    a1 -->|"2-3 bullets only"| lead
+    a2 -->|"2-3 bullets only"| lead
+    a3 -->|"2-3 bullets only"| lead
+    lead --> rep["/report.md"]

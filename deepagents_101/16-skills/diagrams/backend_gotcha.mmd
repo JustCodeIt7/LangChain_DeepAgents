@@ -1,0 +1,4 @@
+flowchart TB
+    s["skills=['/skills']"] --> be{"Which backend?"}
+    be -->|"StateBackend (default)"| fail["Virtual FS — cannot see your disk<br/>skills silently never load"]
+    be -->|"FilesystemBackend(root_dir=EPISODE_DIR)"| ok["Reads the real skills/ folder<br/>path given as the BACKEND sees it: /skills"]

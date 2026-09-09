@@ -1,0 +1,6 @@
+flowchart LR
+    tools["write_file · read_file"] --> comp["CompositeBackend"]
+    comp -->|"/memories/"| sb["StoreBackend<br/>namespace=('demo-user',)"]
+    comp -->|default| st["StateBackend — discarded after the run"]
+    sb --> store[("InMemoryStore<br/>swap for Postgres in production")]
+    store --> load["memory=['/memories/preferences.md']<br/>injected into the system prompt each run"]

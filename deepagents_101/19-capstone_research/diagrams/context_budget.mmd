@@ -1,0 +1,8 @@
+flowchart LR
+    subgraph naive["If the lead read every file itself"]
+        n["Full text of solar + wind + storage<br/>sits in the orchestrator's history forever"]
+    end
+    subgraph delegated["With the analyst subagent"]
+        d["Each file is read inside an ISOLATED context<br/>only 2-3 bullets cross back"]
+    end
+    delegated --> win["Orchestrator stays small enough to synthesize well"]

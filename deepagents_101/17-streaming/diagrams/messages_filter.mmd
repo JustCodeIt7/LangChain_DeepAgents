@@ -1,0 +1,7 @@
+flowchart LR
+    raw["Every chunk from stream_mode='messages'"] --> f1{"metadata['lc_source']<br/>== 'summarization'?"}
+    f1 -->|yes| drop1["Skip — internal machinery"]
+    f1 -->|no| f2{"AIMessageChunk?"}
+    f2 -->|"no (ToolMessage etc.)"| drop2["Skip"]
+    f2 -->|yes| f3["Content may be a str OR content blocks<br/>join block['text'] for OpenAI-style"]
+    f3 --> out["Print to the user"]

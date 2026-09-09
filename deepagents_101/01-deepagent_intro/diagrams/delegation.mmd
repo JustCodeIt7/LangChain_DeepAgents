@@ -1,0 +1,10 @@
+sequenceDiagram
+    participant U as User
+    participant A as Main agent
+    participant S as Subagent
+    U->>A: large task
+    A->>A: break down with structured task planning
+    A->>S: offload heavy subtask
+    Note over S: fresh, independent context
+    S-->>A: final result
+    A-->>U: answer

@@ -1,0 +1,8 @@
+flowchart TB
+    subgraph without["Without summarization"]
+        w["2 -> 4 -> 6 -> 8 -> 10 messages<br/>climbs until the context window breaks"]
+    end
+    subgraph with["With SummarizationMiddleware"]
+        s["2 -> 4 -> compressed -> 4 -> compressed<br/>plateaus as old turns fold into a summary"]
+    end
+    with --> proof["Ask about an early turn afterwards:<br/>it still answers correctly"]

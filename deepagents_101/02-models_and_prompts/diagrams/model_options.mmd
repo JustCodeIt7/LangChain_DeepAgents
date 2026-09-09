@@ -1,0 +1,9 @@
+flowchart LR
+    subgraph a["Option A — model as a string"]
+        s["'ollama:qwen3.5:2b'<br/>provider:model"] --> icm["init_chat_model<br/>default parameters"]
+    end
+    subgraph b["Option B — model as an instance"]
+        inst["init_chat_model(MODEL, temperature=0)<br/>or a provider class directly"]
+    end
+    icm --> cda["create_deep_agent(model=...)"]
+    inst --> cda

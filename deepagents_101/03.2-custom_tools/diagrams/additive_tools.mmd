@@ -1,0 +1,8 @@
+flowchart TB
+    subgraph agent["create_deep_agent(tools=[word_count, reverse_text])"]
+        direction LR
+        builtin["Built-in suite<br/>ls · read_file · write_file · edit_file<br/>delete · glob · grep · execute · task"]
+        custom["Your tools<br/>word_count · reverse_text"]
+    end
+    builtin --> all["One combined tool set<br/>tools= ADDS, it never replaces"]
+    custom --> all

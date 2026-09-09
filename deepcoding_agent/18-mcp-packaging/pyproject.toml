@@ -1,0 +1,34 @@
+# Packaging: `pip install -e .` then just run `deepcoder`.
+# Modules are flat, so py-modules lists them instead of package discovery.
+[project]
+name = "deepcoder"
+version = "0.1.0"
+description = "A terminal coding agent built with deepagents, LangGraph and Textual"
+requires-python = ">=3.11"
+dependencies = [
+    "deepagents>=0.7.8,<0.8",
+    "langchain>=1.3,<2.0",
+    "langchain-core>=1.6,<2.0",
+    "langgraph>=1.2,<2.0",
+    "langchain-ollama>=0.3.10,<0.4",
+    "langgraph-checkpoint-sqlite>=3.1,<4.0",
+    "textual>=8.2,<9.0",
+    "rich>=14.0",
+    "python-dotenv>=1.0",
+]
+
+[project.optional-dependencies]
+mcp = ["langchain-mcp-adapters>=0.3.2,<0.4"]
+dev = ["pytest>=8.0", "anyio>=4.0", "ruff>=0.6"]
+[project.scripts]
+deepcoder = "main:main"
+
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools]
+py-modules = [
+    "main", "tui", "agent", "config", "runner",
+    "widgets", "commands", "sessions", "health", "mcp_tools",
+]

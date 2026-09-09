@@ -1,0 +1,4 @@
+flowchart LR
+    i["interrupt_on={'send_email': True}"] --> need["Needs a checkpointer<br/>the paused run must be stored somewhere"]
+    need --> thread["Each new interrupt needs a FRESH thread_id"]
+    thread --> warn["Reusing a thread_id resumes the already-resolved run<br/>instead of triggering a new pause"]

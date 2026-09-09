@@ -1,0 +1,10 @@
+flowchart TB
+    task["Long-running task"] --> ctx
+    subgraph ctx["Context management — stay within token limits"]
+        direction LR
+        mem["Memory<br/>persistent user preferences"]
+        skills["Skill loading<br/>SKILL.md · AGENTS.md"]
+        cache["Prompt caching<br/>reduces latency and cost"]
+        sum["Automatic summarization<br/>prevents context window saturation"]
+    end
+    ctx --> out["Efficient agent<br/>critical information retained"]

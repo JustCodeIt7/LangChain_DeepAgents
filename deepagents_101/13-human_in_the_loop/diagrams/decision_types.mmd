@@ -1,0 +1,6 @@
+flowchart TB
+    pause["Paused before send_email(to, body)"] --> d{"Human decision"}
+    d -->|approve| ap["Tool runs with the ORIGINAL args"]
+    d -->|reject| rj["Tool skipped<br/>your message goes back to the model"]
+    d -->|edit| ed["Tool runs with YOUR args<br/>edited_action={name, args}"]
+    d -->|respond| rs["Tool skipped<br/>your text becomes the tool result"]

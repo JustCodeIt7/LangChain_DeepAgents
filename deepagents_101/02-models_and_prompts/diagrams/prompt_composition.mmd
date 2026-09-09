@@ -1,0 +1,4 @@
+flowchart LR
+    sp["Your system_prompt<br/>personality and behavior"] --> asm["Prompt assembly"]
+    fw["Framework base prompt<br/>tool guidance for the built-in tools"] --> asm
+    asm --> final["Final system message<br/>your prompt first, tool guidance appended"]

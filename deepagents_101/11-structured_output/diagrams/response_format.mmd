@@ -1,0 +1,5 @@
+flowchart LR
+    pm["Pydantic model<br/>BookReview: title · rating · one_liner"] --> rf["response_format=BookReview"]
+    rf --> agent["create_deep_agent(...)"]
+    agent --> schema["Schema sent to the model<br/>Field descriptions act as instructions"]
+    schema --> resp["result['structured_response']<br/>a validated BookReview instance"]

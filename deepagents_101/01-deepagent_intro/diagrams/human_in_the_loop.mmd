@@ -1,0 +1,8 @@
+sequenceDiagram
+    participant A as Agent
+    participant L as LangGraph runtime
+    participant H as Human
+    A->>L: sensitive tool call
+    L->>H: real-time interrupt
+    H-->>L: approve / reject
+    L-->>A: resume execution

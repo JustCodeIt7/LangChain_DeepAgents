@@ -1,0 +1,5 @@
+flowchart LR
+    rule["FilesystemPermission(operations, paths, mode)"] --> m{"mode"}
+    m -->|allow| a["Explicitly permit<br/>useful to carve an exception before a broader deny"]
+    m -->|deny| d["Refuse the call outright"]
+    m -->|interrupt| i["Pause and ask a human<br/>same flow as ep. 13"]

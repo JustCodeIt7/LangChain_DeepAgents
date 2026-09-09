@@ -1,0 +1,12 @@
+sequenceDiagram
+    participant U as User
+    participant O as Coordinator
+    participant C as converter (dict + own tool)
+    participant P as poet (compiled graph)
+    U->>O: "convert 25C, and write a winter haiku"
+    O->>C: task(subagent_type="converter")
+    C->>C: celsius_to_fahrenheit(25)
+    C-->>O: "25C is 77F"
+    O->>P: task(subagent_type="poet")
+    P-->>O: three-line haiku
+    O-->>U: both results in one sentence

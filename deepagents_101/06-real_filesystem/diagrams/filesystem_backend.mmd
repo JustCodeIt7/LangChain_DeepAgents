@@ -1,0 +1,5 @@
+flowchart LR
+    agent["Deep agent"] --> tools["read_file · write_file · edit_file · ls"]
+    tools --> be["FilesystemBackend<br/>root_dir=./workspace<br/>virtual_mode=True"]
+    be --> disk["Real files on disk<br/>./workspace/shopping.md<br/>./workspace/greeting.txt"]
+    disk --> after["Still there after the run<br/>open them with plain Python"]

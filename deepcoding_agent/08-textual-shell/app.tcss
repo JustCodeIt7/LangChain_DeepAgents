@@ -1,0 +1,33 @@
+/* DeepCoder styling. Textual CSS: selectors, then properties. */
+
+#chat {
+    height: 1fr;          /* take all the space the other widgets do not */
+    padding: 1 2;
+    background: $surface;
+}
+
+#chat Markdown {
+    margin: 0 0 1 0;
+}
+
+.user {
+    color: $success;
+}
+
+.assistant {
+    color: $text;
+}
+
+/* Docked widgets stack in the order they are docked, so the status line is
+   declared after the input in compose() and ends up just above the footer. */
+#prompt {
+    height: 3;
+    margin: 0 1;
+}
+
+#status {
+    height: 1;
+    padding: 0 2;
+    color: $text-muted;
+    background: $panel;
+}

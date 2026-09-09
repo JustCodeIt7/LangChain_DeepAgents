@@ -1,0 +1,10 @@
+flowchart LR
+    subgraph a["Option A — plain function"]
+        f["def word_count(text: str) -> int<br/>docstring describes it"]
+    end
+    subgraph b["Option B — @tool decorator"]
+        d["@tool<br/>def reverse_text(text: str) -> str<br/>becomes a BaseTool object"]
+    end
+    f --> schema["Tool schema<br/>name · args · description"]
+    d --> schema
+    schema --> model["The model reads this<br/>to decide when to call it"]

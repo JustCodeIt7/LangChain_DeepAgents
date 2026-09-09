@@ -1,0 +1,10 @@
+sequenceDiagram
+    participant U as You
+    participant M as Model
+    participant T as reverse_text / word_count
+    U->>M: "reverse this, then count the words"
+    M->>T: tool_call reverse_text(text=...)
+    T-->>M: ToolMessage "nuf era stnega peed"
+    M->>T: tool_call word_count(text=...)
+    T-->>M: ToolMessage "4"
+    M-->>U: final answer using both results

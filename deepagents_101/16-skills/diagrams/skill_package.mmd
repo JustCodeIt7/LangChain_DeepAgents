@@ -1,0 +1,5 @@
+flowchart LR
+    dir["skills/release-notes/SKILL.md"] --> fm["YAML frontmatter<br/>name · description"]
+    dir --> body["Markdown body<br/>the full instructions"]
+    fm --> prompt["Injected into the system prompt<br/>cheap — a couple of lines"]
+    body --> disk["Stays on disk until needed<br/>read_file pulls it in on demand"]

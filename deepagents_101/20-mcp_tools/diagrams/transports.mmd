@@ -1,0 +1,4 @@
+flowchart TB
+    t{"transport"} -->|stdio| s["Launch the server as a SUBPROCESS<br/>command=sys.executable<br/>args=[absolute path to mcp_server.py]"]
+    t -->|http| h["Talk to a remote server<br/>url='https://example.com/mcp'"]
+    s --> why["sys.executable + absolute path<br/>= starts correctly from any working directory"]

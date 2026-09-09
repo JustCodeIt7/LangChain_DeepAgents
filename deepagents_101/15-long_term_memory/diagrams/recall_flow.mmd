@@ -1,0 +1,11 @@
+sequenceDiagram
+    participant U as User
+    participant A as Agent
+    participant S as Store
+    U->>A: "I'm vegetarian — remember that" (thread monday)
+    A->>S: write_file /memories/preferences.md
+    A-->>U: "Saved."
+    Note over U,A: new conversation, thread friday — no shared history
+    U->>A: "Suggest a dinner for me."
+    S-->>A: preferences.md loaded into the system prompt
+    A-->>U: a vegetarian suggestion

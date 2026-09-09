@@ -1,0 +1,6 @@
+flowchart LR
+    cfg["server_config<br/>transport · command · args"] --> client["MultiServerMCPClient"]
+    client -->|get_tools| srv["mcp_server.py subprocess<br/>exposes check_stock"]
+    srv -->|tool descriptions| tools["Ordinary LangChain tools"]
+    tools --> agent["create_deep_agent(tools=tools)"]
+    agent --> note["Indistinguishable from ep. 03's hand-written tools"]

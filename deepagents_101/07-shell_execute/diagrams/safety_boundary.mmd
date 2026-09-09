@@ -1,0 +1,8 @@
+flowchart LR
+    subgraph controls["What you control"]
+        r["root_dir<br/>working directory"]
+        t["timeout<br/>caps one command"]
+        e["inherit_env=False<br/>no secrets in the subprocess"]
+    end
+    controls --> warn["Still NOT a sandbox"]
+    warn --> rule["Commands run with your user's permissions<br/>never feed this agent untrusted input"]
