@@ -1,3 +1,0 @@
-- added dark mode toggle
-- fixed crash when opening empty projects
-- renamed the 'Sync' button to 'Refresh'

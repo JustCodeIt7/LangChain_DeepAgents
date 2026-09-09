@@ -1,1 +1,0 @@
-ideas for episode 8

@@ -1,8 +1,0 @@
-{
-  "mcpServers": {
-    "demo": {
-      "command": "python",
-      "args": ["example_mcp_server.py"]
-    }
-  }
-}
