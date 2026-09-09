@@ -39,12 +39,6 @@ model = ChatOllama(
 #     temperature=0
 # )
 
-# if you want to use openai, set DEEPAGENTS_MODEL=openai:gpt-4.1-mini in your .env
-MODEL = os.getenv("DEEPAGENTS_MODEL", "ollama:qwen3.5:2b")  # fall back to a small local model
-print(f"Using model: {MODEL}")
-
-
-################################ Message Text Helper ################################
 # %%
 
 
