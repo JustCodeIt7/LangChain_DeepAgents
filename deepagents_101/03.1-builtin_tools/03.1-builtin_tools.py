@@ -5,8 +5,8 @@ Deep Agents supplies filesystem tools and a `task` subagent tool automatically.
 `LocalShellBackend` also exposes `execute`; TodoListMiddleware opts into
 `write_todos`. This demo makes every tool act in a disposable lesson workspace.
 
-Run: python 03-builtin_tools-cx.py
-Override: DEEPAGENTS_MODEL=openai:gpt-4.1-mini python 03-builtin_tools-cx.py
+Run: python 03.1-builtin_tools.py
+Override: DEEPAGENTS_MODEL=openai:gpt-4.1-mini python 03.1-builtin_tools.py
 """
 
 # %% Step 1: Imports and model configuration
@@ -18,7 +18,6 @@ from deepagents import create_deep_agent
 from deepagents.backends import LocalShellBackend
 from dotenv import load_dotenv
 from langchain.agents.middleware import TodoListMiddleware
-from langchain_ollama import ChatOllama
 from rich import print
 
 ############################ Environment & Model Configuration ###########################
@@ -26,17 +25,11 @@ from rich import print
 # Pull API keys and model overrides from a local .env file
 load_dotenv()
 
-# Allow the model to be swapped without editing code; fall back to a small local Ollama model
-# openai
-MODEL = "openai:gpt-4.1-nano"  # gpt-4.1-nano
-# ollama
-OLLAMA_BASE_URL = os.getenv("OLLAMA_BASE_URL", "http://localhost:11434")
-# llama3.2 qwen3.5:2b lfm2.5:8b granite4:1b ministral-3:3b granite4.1:3b
-# Reassign MODEL to the local chat model; temperature=0 keeps tool calls deterministic
-MODEL = ChatOllama(model="llama3.2", base_url=OLLAMA_BASE_URL, temperature=0)
+# Allow the model to be swapped without editing code; fall back to a small local model
+MODEL = os.getenv("DEEPAGENTS_MODEL", "ollama:qwen3.5:2b")
 
-# Sandbox directory that every tool call is confined to
-WORKSPACE = Path.cwd() / "workspace"
+# Sandbox directory that every tool call is confined to (next to this script)
+WORKSPACE = Path(__file__).resolve().parent / "workspace"
 
 # Checklist used at the end to verify which built-in tools the agent actually exercised
 BUILT_INS = (

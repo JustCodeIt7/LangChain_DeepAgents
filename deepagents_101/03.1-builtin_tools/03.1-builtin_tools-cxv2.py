@@ -12,20 +12,15 @@ from deepagents import create_deep_agent
 from deepagents.backends import LocalShellBackend
 from dotenv import load_dotenv
 from langchain.agents.middleware import TodoListMiddleware
-from langchain_ollama import ChatOllama
 from rich import print
 
 load_dotenv()
-MODEL = os.getenv("DEEPAGENTS_MODEL", "ollama:qwen3.5:0.8b")
-MODEL = "openai:gpt-4.1-mini"
+MODEL = os.getenv("DEEPAGENTS_MODEL", "ollama:qwen3.5:2b")
 
-OLLAMA_BASE_URL = os.getenv("OLLAMA_BASE_URL", "http://localhost:11434")
-model = ChatOllama(
-    model=MODEL.removeprefix("ollama:"), base_url=OLLAMA_BASE_URL
-)
-WORKSPACE = Path.cwd() / "workspace"
+model = MODEL  # string spec; deepagents resolves it via init_chat_model
+WORKSPACE = Path(__file__).resolve().parent / "workspace"
 WORKSPACE.mkdir(exist_ok=True)
-print(MODEL, OLLAMA_BASE_URL)
+print(f"Using model: {MODEL}")
 # LocalShellBackend exposes every filesystem tool plus execute. The agent sees
 # only this directory, and subprocesses receive no inherited environment secrets.
 backend = LocalShellBackend(root_dir=str(WORKSPACE), timeout=30, inherit_env=False)

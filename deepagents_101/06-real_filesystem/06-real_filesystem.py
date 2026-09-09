@@ -16,10 +16,11 @@ from deepagents import create_deep_agent
 from deepagents.backends import FilesystemBackend  # reads/writes actual files
 from dotenv import load_dotenv
 from rich import print
+from langchain_openrouter import ChatOpenRouter
 
 load_dotenv()
 MODEL = os.getenv("DEEPAGENTS_MODEL", "ollama:qwen3.5:2b")
-
+MODEL = ChatOpenRouter(model="meta/muse-spark-1.3-contributor", temperature=0)
 
 def text_of(message) -> str:
     """Normalize message content across providers (str vs content blocks)."""
@@ -35,6 +36,8 @@ def text_of(message) -> str:
 WORKSPACE = Path(__file__).resolve().parent / "workspace"
 WORKSPACE.mkdir(exist_ok=True)
 (WORKSPACE / "shopping.md").write_text("# Shopping\n- milk\n")
+# Remove any leftover from a prior run so Step 5 proves THIS run created the file.
+(WORKSPACE / "greeting.txt").unlink(missing_ok=True)
 
 print(f"[bold cyan]Workspace:[/bold cyan] [yellow]{WORKSPACE}[/yellow]")
 print(f"  seeded: {[p.name for p in WORKSPACE.iterdir()]}")
