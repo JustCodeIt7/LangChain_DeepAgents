@@ -50,7 +50,8 @@ def text_of(message) -> str:
 #   skills/
 #     release-notes/
 #       SKILL.md      <- frontmatter (name, description) + instructions
-EPISODE_DIR = Path(__file__).resolve().parent
+# Notebooks have no __file__; they run from the episode folder.
+EPISODE_DIR = Path(__file__).resolve().parent if "__file__" in globals() else Path.cwd()
 skill_file = EPISODE_DIR / "skills" / "release-notes" / "SKILL.md"
 
 print("[bold cyan]Skill package:[/bold cyan]")

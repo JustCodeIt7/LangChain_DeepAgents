@@ -44,7 +44,9 @@ model = ChatOllama(
 # mcp_server.py sits next to this file and exposes one tool: check_stock.
 # We use an absolute path and the CURRENT interpreter (sys.executable) so the
 # subprocess starts correctly no matter which directory you run this from.
-SERVER_SCRIPT = Path(__file__).resolve().parent / "mcp_server.py"
+# Notebooks have no __file__; they run from the episode folder.
+HERE = Path(__file__).resolve().parent if "__file__" in globals() else Path.cwd()
+SERVER_SCRIPT = HERE / "mcp_server.py"
 
 server_config = {
     "inventory": {

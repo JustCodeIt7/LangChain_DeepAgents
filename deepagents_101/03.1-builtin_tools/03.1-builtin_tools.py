@@ -41,7 +41,9 @@ model = ChatOllama(
 
 # %% Step 2: A throwaway workspace the agent is allowed to change
 # Rebuilt on every run, so each take of the demo starts from the same files.
-WORKSPACE = Path(__file__).resolve().parent / "workspace"
+# Notebooks have no __file__; they run from the episode folder.
+HERE = Path(__file__).resolve().parent if "__file__" in globals() else Path.cwd()
+WORKSPACE = HERE / "workspace"
 shutil.rmtree(WORKSPACE, ignore_errors=True)
 (WORKSPACE / "data").mkdir(parents=True)
 (WORKSPACE / "data" / "fruits.txt").write_text("apple\nbanana\ncherry\n")

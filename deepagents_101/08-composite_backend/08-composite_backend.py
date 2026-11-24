@@ -47,7 +47,9 @@ def text_of(message) -> str:
 
 
 # %% Step 2: Prepare the real directory that /disk/ will map to
-WORKSPACE = Path(__file__).resolve().parent / "workspace"
+# Notebooks have no __file__; they run from the episode folder.
+HERE = Path(__file__).resolve().parent if "__file__" in globals() else Path.cwd()
+WORKSPACE = HERE / "workspace"
 WORKSPACE.mkdir(exist_ok=True)
 for stale in WORKSPACE.iterdir():
     shutil.rmtree(stale) if stale.is_dir() and not stale.is_symlink() else stale.unlink()

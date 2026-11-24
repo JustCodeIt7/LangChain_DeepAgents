@@ -58,7 +58,9 @@ print("[bold cyan]1. StateBackend (virtual, no shell):[/bold cyan]")
 print(f"  agent: [dim]{text_of(denied['messages'][-1]).strip()[:110]}...[/dim]")
 
 # %% Step 3: Prepare a scratch workspace
-WORKSPACE = Path(__file__).resolve().parent / "workspace"
+# Notebooks have no __file__; they run from the episode folder.
+HERE = Path(__file__).resolve().parent if "__file__" in globals() else Path.cwd()
+WORKSPACE = HERE / "workspace"
 WORKSPACE.mkdir(exist_ok=True)
 
 # %% Step 4: Build a shell-capable backend
