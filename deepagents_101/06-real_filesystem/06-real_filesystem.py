@@ -38,6 +38,7 @@ model = ChatOllama(
 # from langchain_openrouter import ChatOpenRouter
 # model = ChatOpenRouter(model="meta/muse-spark-1.3-contributor", temperature=0)
 
+
 def text_of(message) -> str:
     """Normalize message content across providers (str vs content blocks)."""
     content = message.content
@@ -49,7 +50,9 @@ def text_of(message) -> str:
 # %% Step 2: Prepare a scratch workspace next to this script
 # Always scope a real filesystem agent to a directory you are happy for it to
 # modify. Here we use ./workspace inside the episode folder.
-WORKSPACE = Path(__file__).resolve().parent / "workspace"
+# Notebooks / interactive windows have no __file__; they run from the episode folder.
+HERE = Path(__file__).resolve().parent if "__file__" in globals() else Path.cwd()
+WORKSPACE = HERE / "workspace"
 # Rebuild it on every run so Step 5 proves THIS run made the changes.
 shutil.rmtree(WORKSPACE, ignore_errors=True)
 WORKSPACE.mkdir()
@@ -76,10 +79,7 @@ agent = create_deep_agent(
 # %% Step 4: Ask it to touch real files
 # Note the path style: "/shopping.md", NOT "workspace/shopping.md" — root_dir
 # already scopes it. Using the folder name again would create workspace/workspace/.
-task = (
-    "Add the line '- eggs' to /shopping.md, then create /greeting.txt "
-    "containing exactly: Hello from deepagents"
-)
+task = "Add the line '- eggs' to /shopping.md, then create /greeting.txt containing exactly: Hello from deepagents"
 result = agent.invoke({"messages": [{"role": "user", "content": task}]})
 
 print(f"\n[bold green]Agent says:[/bold green] {text_of(result['messages'][-1])}")
@@ -91,3 +91,5 @@ for path in sorted(WORKSPACE.iterdir()):
     print(f"\n[yellow]{path.name}[/yellow]")
     print(path.read_text())
 
+
+# %%

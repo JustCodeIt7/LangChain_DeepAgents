@@ -1,3 +1,2 @@
 # Shopping
 - eggs
-- milk
