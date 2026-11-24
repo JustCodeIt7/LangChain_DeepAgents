@@ -20,14 +20,31 @@ from dotenv import load_dotenv
 from langchain_mcp_adapters.client import MultiServerMCPClient
 from rich import print
 
+from langchain_ollama import ChatOllama
+from langchain_openrouter import ChatOpenRouter
 load_dotenv()
-MODEL = os.getenv("DEEPAGENTS_MODEL", "ollama:qwen3.5:2b")
+
+
+# Choose your LLM provider by commenting/uncommenting:
+#
+# Option 1: Ollama (local)
+# Make sure Ollama is running and you have pulled the model (e.g., ollama pull qwen3.5:2b)
+model = ChatOllama(
+    model=os.getenv("OLLAMA_MODEL", "qwen3.5:2b"),
+    base_url=os.getenv("OLLAMA_BASE_URL", "http://localhost:11434")
+)
+#
+# Option 2: OpenRouter
+# model = ChatOpenRouter(
+#     model="meta/muse-spark-1.3-contributor",
+#     temperature=0
+# )
 
 # %% Step 2: Point at the MCP server
 # mcp_server.py sits next to this file and exposes one tool: check_stock.
 # We use an absolute path and the CURRENT interpreter (sys.executable) so the
 # subprocess starts correctly no matter which directory you run this from.
-SERVER_SCRIPT = Path(__file__).parent / "mcp_server.py"
+SERVER_SCRIPT = Path(__file__).resolve().parent / "mcp_server.py"
 
 server_config = {
     "inventory": {
@@ -64,7 +81,7 @@ async def main() -> None:
     # %% Step 4: Same create_deep_agent call as always
     # MCP tools go in `tools=` exactly like the hand-written ones from ep. 03.
     agent = create_deep_agent(
-        model=MODEL,
+        model=model,
         tools=tools,
         system_prompt=(
             "You are an inventory assistant. Use the check_stock tool to answer "

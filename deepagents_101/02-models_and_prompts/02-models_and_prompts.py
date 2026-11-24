@@ -18,11 +18,26 @@ from dotenv import load_dotenv
 from langchain.chat_models import init_chat_model  # builds a model from a string spec
 from rich import print
 
+from langchain_ollama import ChatOllama
+from langchain_openrouter import ChatOpenRouter
 # Pull provider credentials / model overrides from a local .env file
 load_dotenv()
 
-# Allow the model to be swapped without editing code; fall back to a small local model
-MODEL = os.getenv("DEEPAGENTS_MODEL", "ollama:qwen3.5:2b")
+
+# Choose your LLM provider by commenting/uncommenting:
+#
+# Option 1: Ollama (local)
+# Make sure Ollama is running and you have pulled the model (e.g., ollama pull qwen3.5:2b)
+model = ChatOllama(
+    model=os.getenv("OLLAMA_MODEL", "qwen3.5:2b"),
+    base_url=os.getenv("OLLAMA_BASE_URL", "http://localhost:11434")
+)
+#
+# Option 2: OpenRouter
+# model = ChatOpenRouter(
+#     model="meta/muse-spark-1.3-contributor",
+#     temperature=0
+# )
 
 # %%
 ################################ Helper: Ask an Agent ################################
@@ -43,7 +58,7 @@ QUESTION = "In one short sentence, what is LangChain? Do not use tools."
 
 # deepagents hands the string to init_chat_model, so any provider LangChain
 # supports works: "ollama:...", "openai:...", "anthropic:...", "google_genai:..."
-string_agent = create_deep_agent(model=MODEL)
+string_agent = create_deep_agent(model=model)
 print("[bold cyan]A. model as a string[/bold cyan]")
 print(f"spec: [yellow]{MODEL}[/yellow]")
 print(f"{ask(string_agent, QUESTION)}\n")
@@ -66,7 +81,7 @@ print(f"  {ask(instance_agent, QUESTION)}\n")
 # It is placed FIRST, and the framework's own tool guidance is appended after it.
 # That is why the agent still knows how to use write_file, task, etc.
 pirate_agent = create_deep_agent(
-    model=MODEL,
+    model=model,
     system_prompt="You are a pirate. Answer every question in pirate speak, briefly.",  # Persona layered on top of built-in instructions
 )
 print("[bold cyan]C. custom system_prompt[/bold cyan]")
@@ -78,7 +93,7 @@ print(f"  {ask(pirate_agent, QUESTION)}\n")
 # Verbose! Use it while developing to see the model/tool nodes as they execute.
 # Keep the question tiny — the trace is long.
 print("[bold cyan]D. debug=True (expect a verbose LangGraph trace below)[/bold cyan]")
-debug_agent = create_deep_agent(model=MODEL, debug=True)  # Stream every LangGraph node to stdout
+debug_agent = create_deep_agent(model=model, debug=True)  # Stream every LangGraph node to stdout
 answer = ask(debug_agent, "Say the word 'ready' and nothing else.")  # Minimal prompt keeps the trace readable
 print(f"\n[bold green]Final answer:[/bold green] {answer}")
 

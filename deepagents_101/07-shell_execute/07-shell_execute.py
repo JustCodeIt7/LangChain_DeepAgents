@@ -17,9 +17,25 @@ from deepagents.backends import LocalShellBackend, StateBackend
 from dotenv import load_dotenv
 from rich import print
 
+from langchain_ollama import ChatOllama
+from langchain_openrouter import ChatOpenRouter
 load_dotenv()
-MODEL = os.getenv("DEEPAGENTS_MODEL", "ollama:qwen3.5:2b")
 
+
+# Choose your LLM provider by commenting/uncommenting:
+#
+# Option 1: Ollama (local)
+# Make sure Ollama is running and you have pulled the model (e.g., ollama pull qwen3.5:2b)
+model = ChatOllama(
+    model=os.getenv("OLLAMA_MODEL", "qwen3.5:2b"),
+    base_url=os.getenv("OLLAMA_BASE_URL", "http://localhost:11434")
+)
+#
+# Option 2: OpenRouter
+# model = ChatOpenRouter(
+#     model="meta/muse-spark-1.3-contributor",
+#     temperature=0
+# )
 
 def text_of(message) -> str:
     """Normalize message content across providers (str vs content blocks)."""
@@ -33,7 +49,7 @@ def text_of(message) -> str:
 # The `execute` tool is only attached when the backend can actually run a
 # shell. On the default StateBackend (a virtual filesystem) the tool is not
 # offered to the model at all — a safe default. Let's confirm that.
-virtual_agent = create_deep_agent(model=MODEL, backend=StateBackend())
+virtual_agent = create_deep_agent(model=model, backend=StateBackend())
 denied = virtual_agent.invoke(
     {"messages": [{"role": "user", "content": "Use the execute tool to run: echo hi"}]}
 )
@@ -49,7 +65,7 @@ print(f"  execute tool calls: [red]{len(attempted)}[/red]")
 print(f"  agent: [dim]{text_of(denied['messages'][-1]).strip()[:100]}...[/dim]")
 
 # %% Step 3: Prepare a scratch workspace
-WORKSPACE = Path(__file__).parent / "workspace"
+WORKSPACE = Path(__file__).resolve().parent / "workspace"
 WORKSPACE.mkdir(exist_ok=True)
 
 # %% Step 4: Build a shell-capable backend
@@ -63,7 +79,7 @@ shell_backend = LocalShellBackend(
 )
 
 agent = create_deep_agent(
-    model=MODEL,
+    model=model,
     backend=shell_backend,
     system_prompt=(
         "You are a shell assistant. Use the execute tool to run the exact "

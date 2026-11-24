@@ -19,8 +19,25 @@ from dotenv import load_dotenv
 from langchain.agents.middleware import TodoListMiddleware
 from rich import print
 
+from langchain_ollama import ChatOllama
+from langchain_openrouter import ChatOpenRouter
 load_dotenv()
-MODEL = os.getenv("DEEPAGENTS_MODEL", "ollama:qwen3.5:2b")
+
+
+# Choose your LLM provider by commenting/uncommenting:
+#
+# Option 1: Ollama (local)
+# Make sure Ollama is running and you have pulled the model (e.g., ollama pull qwen3.5:2b)
+model = ChatOllama(
+    model=os.getenv("OLLAMA_MODEL", "qwen3.5:2b"),
+    base_url=os.getenv("OLLAMA_BASE_URL", "http://localhost:11434")
+)
+#
+# Option 2: OpenRouter
+# model = ChatOpenRouter(
+#     model="meta/muse-spark-1.3-contributor",
+#     temperature=0
+# )
 
 # %% Step 2: The corpus — the agent's "world"
 # In a real research agent these would be web pages or PDFs. Keeping them local
@@ -64,7 +81,7 @@ analyst = {
 
 # %% Step 4: Assemble the full agent
 agent = create_deep_agent(
-    model=MODEL,
+    model=model,
     backend=StateBackend(),
     middleware=[TodoListMiddleware()],  # planning, from ep. 04
     subagents=[analyst],  # delegation, from ep. 09

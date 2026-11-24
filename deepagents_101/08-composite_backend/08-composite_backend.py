@@ -8,8 +8,8 @@
 Run:  python 08-composite_backend.py
 """
 
-# %% Step 1: Imports and setup
 import os
+import shutil
 from pathlib import Path
 
 from deepagents import create_deep_agent
@@ -17,9 +17,25 @@ from deepagents.backends import CompositeBackend, FilesystemBackend, StateBacken
 from dotenv import load_dotenv
 from rich import print
 
+from langchain_ollama import ChatOllama
+from langchain_openrouter import ChatOpenRouter
 load_dotenv()
-MODEL = os.getenv("DEEPAGENTS_MODEL", "ollama:qwen3.5:2b")
 
+
+# Choose your LLM provider by commenting/uncommenting:
+#
+# Option 1: Ollama (local)
+# Make sure Ollama is running and you have pulled the model (e.g., ollama pull qwen3.5:2b)
+model = ChatOllama(
+    model=os.getenv("OLLAMA_MODEL", "qwen3.5:2b"),
+    base_url=os.getenv("OLLAMA_BASE_URL", "http://localhost:11434")
+)
+#
+# Option 2: OpenRouter
+# model = ChatOpenRouter(
+#     model="meta/muse-spark-1.3-contributor",
+#     temperature=0
+# )
 
 def text_of(message) -> str:
     """Normalize message content across providers (str vs content blocks)."""
@@ -30,10 +46,10 @@ def text_of(message) -> str:
 
 
 # %% Step 2: Prepare the real directory that /disk/ will map to
-WORKSPACE = Path(__file__).parent / "workspace"
+WORKSPACE = Path(__file__).resolve().parent / "workspace"
 WORKSPACE.mkdir(exist_ok=True)
 for stale in WORKSPACE.iterdir():
-    stale.unlink()
+    shutil.rmtree(stale) if stale.is_dir() and not stale.is_symlink() else stale.unlink()
 
 # %% Step 3: Build the composite backend
 # Think of `routes` as mount points:
@@ -49,7 +65,7 @@ print("  [yellow]/disk/[/yellow]     -> FilesystemBackend (real ./workspace)")
 print("  [yellow]everything else[/yellow] -> StateBackend (virtual, in-memory)")
 
 agent = create_deep_agent(
-    model=MODEL,
+    model=model,
     backend=backend,
     system_prompt=(
         "You are a file assistant. Follow the user's numbered steps exactly, "

@@ -17,8 +17,25 @@ from langchain.agents.middleware import SummarizationMiddleware
 from langgraph.checkpoint.memory import InMemorySaver
 from rich import print
 
+from langchain_ollama import ChatOllama
+from langchain_openrouter import ChatOpenRouter
 load_dotenv()
-MODEL = os.getenv("DEEPAGENTS_MODEL", "ollama:qwen3.5:2b")
+
+
+# Choose your LLM provider by commenting/uncommenting:
+#
+# Option 1: Ollama (local)
+# Make sure Ollama is running and you have pulled the model (e.g., ollama pull qwen3.5:2b)
+model = ChatOllama(
+    model=os.getenv("OLLAMA_MODEL", "qwen3.5:2b"),
+    base_url=os.getenv("OLLAMA_BASE_URL", "http://localhost:11434")
+)
+#
+# Option 2: OpenRouter
+# model = ChatOpenRouter(
+#     model="meta/muse-spark-1.3-contributor",
+#     temperature=0
+# )
 
 # %% Step 2: Force summarization to trigger early
 # Every deep agent already summarizes automatically, but only near the model's
@@ -30,13 +47,13 @@ MODEL = os.getenv("DEEPAGENTS_MODEL", "ollama:qwen3.5:2b")
 # Because its `.name` matches the built-in ("SummarizationMiddleware"),
 # deepagents REPLACES the default with ours instead of stacking a second one.
 summarizer = SummarizationMiddleware(
-    model=MODEL,
+    model=model,
     trigger=("messages", 4),
     keep=("messages", 2),
 )
 
 agent = create_deep_agent(
-    model=MODEL,
+    model=model,
     middleware=[summarizer],
     checkpointer=InMemorySaver(),  # so all turns share one growing history
     system_prompt="You are a travel assistant. Reply in one short sentence.",

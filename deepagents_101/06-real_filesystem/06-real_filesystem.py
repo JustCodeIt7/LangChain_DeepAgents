@@ -16,10 +16,26 @@ from deepagents import create_deep_agent
 from deepagents.backends import FilesystemBackend  # reads/writes actual files
 from dotenv import load_dotenv
 from rich import print
+from langchain_openrouter import ChatOpenRouter
 
+from langchain_ollama import ChatOllama
 load_dotenv()
-MODEL = os.getenv("DEEPAGENTS_MODEL", "ollama:qwen3.5:2b")
 
+
+# Choose your LLM provider by commenting/uncommenting:
+#
+# Option 1: Ollama (local)
+# Make sure Ollama is running and you have pulled the model (e.g., ollama pull qwen3.5:2b)
+model = ChatOllama(
+    model=os.getenv("OLLAMA_MODEL", "qwen3.5:2b"),
+    base_url=os.getenv("OLLAMA_BASE_URL", "http://localhost:11434")
+)
+#
+# Option 2: OpenRouter
+# model = ChatOpenRouter(
+#     model="meta/muse-spark-1.3-contributor",
+#     temperature=0
+# )
 
 def text_of(message) -> str:
     """Normalize message content across providers (str vs content blocks)."""
@@ -32,9 +48,11 @@ def text_of(message) -> str:
 # %% Step 2: Prepare a scratch workspace next to this script
 # Always scope a real filesystem agent to a directory you are happy for it to
 # modify. Here we use ./workspace inside the episode folder.
-WORKSPACE = Path(__file__).parent / "workspace"
+WORKSPACE = Path(__file__).resolve().parent / "workspace"
 WORKSPACE.mkdir(exist_ok=True)
 (WORKSPACE / "shopping.md").write_text("# Shopping\n- milk\n")
+# Remove any leftover from a prior run so Step 5 proves THIS run created the file.
+(WORKSPACE / "greeting.txt").unlink(missing_ok=True)
 
 print(f"[bold cyan]Workspace:[/bold cyan] [yellow]{WORKSPACE}[/yellow]")
 print(f"  seeded: {[p.name for p in WORKSPACE.iterdir()]}")
@@ -45,7 +63,7 @@ print(f"  seeded: {[p.name for p in WORKSPACE.iterdir()]}")
 backend = FilesystemBackend(root_dir=str(WORKSPACE), virtual_mode=True)
 
 agent = create_deep_agent(
-    model=MODEL,
+    model=model,
     backend=backend,
     system_prompt=(
         "You are a file assistant working in the user's workspace. "

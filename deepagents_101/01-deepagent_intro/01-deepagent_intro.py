@@ -18,15 +18,27 @@ from deepagents import create_deep_agent  # the single entry point of the framew
 from dotenv import load_dotenv  # loads OPENAI_API_KEY / OLLAMA_BASE_URL from .env
 from rich import print  # colorized console output
 
+from langchain_ollama import ChatOllama
+from langchain_openrouter import ChatOpenRouter
 # Pull API keys and model settings out of .env so no secrets live in the script
 load_dotenv()
 
-# if you want to use openai, set DEEPAGENTS_MODEL=openai:gpt-4.1-mini in your .env
-MODEL = os.getenv("DEEPAGENTS_MODEL", "ollama:qwen3.5:2b")  # fall back to a small local model
-print(f"Using model: {MODEL}")
 
+# Choose your LLM provider by commenting/uncommenting:
+#
+# Option 1: Ollama (local)
+# Make sure Ollama is running and you have pulled the model (e.g., ollama pull qwen3.5:2b)
+model = ChatOllama(
+    model=os.getenv("OLLAMA_MODEL", "qwen3.5:2b"),
+    base_url=os.getenv("OLLAMA_BASE_URL", "http://localhost:11434")
+)
+#
+# Option 2: OpenRouter
+# model = ChatOpenRouter(
+#     model="meta/muse-spark-1.3-contributor",
+#     temperature=0
+# )
 
-################################ Message Text Helper ################################
 # %%
 
 
@@ -72,7 +84,7 @@ for name, why in BUILT_IN_TOOLS.items():
 # `model` and `system_prompt` are all you need for a working agent.
 # Note there is NO `tools=` argument here — the built-ins above come for free.
 agent = create_deep_agent(
-    model=MODEL,
+    model=model,
     system_prompt="You are a concise assistant. Answer in one short sentence.",  # keep demo output tight
 )
 
