@@ -94,3 +94,5 @@ for index, snapshot in enumerate(todo_snapshots, start=1):
 if not todo_snapshots:
     print("  [yellow]The model answered without planning — try a longer task.[/yellow]")
 
+
+# %%
