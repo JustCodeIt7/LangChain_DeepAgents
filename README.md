@@ -1,244 +1,329 @@
 # LangChain Deep Agents Tutorials
 
-A YouTube tutorial series on building AI agents with LangChain's [`deepagents`](https://github.com/langchain-ai/deepagents) package. The examples are local-first (Ollama) and cloud-ready (OpenAI), and each one is a self-contained script you can run end-to-end.
+[![Python 3.11+](https://img.shields.io/badge/python-3.11%2B-3776AB?logo=python&logoColor=white)](https://www.python.org/downloads/)
+[![deepagents 0.7.x](https://img.shields.io/badge/deepagents-0.7.x-1C3C3C)](https://github.com/langchain-ai/deepagents)
+[![Local-First: Ollama](https://img.shields.io/badge/local--first-Ollama-000000)](https://ollama.com)
+[![License: Apache 2.0](https://img.shields.io/badge/license-Apache%202.0-blue.svg)](LICENSE)
 
-The repo contains three tutorial series, plus a legacy research track:
+Hands-on YouTube tutorials, notebooks, runnable app snapshots, and study notes for building AI agents with LangChain's [`deepagents`](https://github.com/langchain-ai/deepagents) package — an agent harness built on LangChain and LangGraph that gives a model a filesystem, planning, subagents, and human-in-the-loop oversight out of the box.
 
-| Series                                 | Episodes | What it builds                                                                                        | deepagents |
-| -------------------------------------- | -------- | ----------------------------------------------------------------------------------------------------- | ---------- |
-| [**Deep Agents 101**](deepagents_101/) | 20       | The framework fundamentals — one concept per episode                                                  | 0.7.x      |
-| [**CodeIt**](episodes/)                | 15       | A full coding agent from scratch: model factory → tools → permissions → sub-agents → MCP → a real CLI | 0.6.x      |
-| [**DeepCoder**](deepcoding_agent/)     | 14       | A terminal coding agent with a Textual TUI: chat loop → streaming → approvals → sessions → sub-agents | 0.7.x      |
-| Legacy research agents                 | —        | Research agents with web search (Tavily) and a Streamlit UI                                           | 0.6.x      |
+Every example is **local-first** ([Ollama](https://ollama.com)) and **cloud-ready** (OpenRouter, OpenAI, or any LangChain provider), designed to run end-to-end with zero hidden boilerplate.
 
-New to `deepagents`? Start with [Deep Agents 101](deepagents_101/).
+[Tracks](#tracks) · [Quick Start](#quick-start) · [Deep Agents 101](#deep-agents-101) · [DeepCoder](#deepcoder) · [Study Notes and Tools](#study-notes-and-tools) · [Configuration](#configuration) · [Repository Layout](#repository-layout) · [Testing and Lint](#testing-and-lint) · [Legacy Research Agents](#legacy-research-agents)
 
-## Deep Agents 101: the fundamentals
+---
 
-Each episode in [`deepagents_101/`](deepagents_101/) is one self-contained script (under 150 lines, with `# %%` cell markers so you can run it cell-by-cell in VS Code). Nothing is shared between episodes — jump straight to the topic you care about.
+## Tracks
 
-| #   | Episode                                                         | What you learn                                                 |
-| --- | --------------------------------------------------------------- | -------------------------------------------------------------- |
-| 01  | [deepagent_intro](deepagents_101/01-deepagent_intro/)           | `create_deep_agent()`, and the tools every agent gets for free |
-| 02  | [models_and_prompts](deepagents_101/02-models_and_prompts/)     | Model strings vs. instances, `system_prompt`, `debug=True`     |
-| 03  | [custom_tools](deepagents_101/03-custom_tools/)                 | Plain functions and `@tool`; custom tools are additive         |
-| 04  | [planning_todos](deepagents_101/04-planning_todos/)             | `TodoListMiddleware` and `write_todos` (opt-in in 0.7)         |
-| 05  | [virtual_filesystem](deepagents_101/05-virtual_filesystem/)     | `StateBackend`: seed files in, read them back out              |
-| 06  | [real_filesystem](deepagents_101/06-real_filesystem/)           | `FilesystemBackend`: editing real files safely                 |
-| 07  | [shell_execute](deepagents_101/07-shell_execute/)               | `LocalShellBackend` and the `execute` tool                     |
-| 08  | [composite_backend](deepagents_101/08-composite_backend/)       | `CompositeBackend`: route paths to different backends          |
-| 09  | [subagents_basics](deepagents_101/09-subagents_basics/)         | The `task` tool and context isolation                          |
-| 10  | [custom_subagents](deepagents_101/10-custom_subagents/)         | Per-subagent tools/models; `CompiledSubAgent`                  |
-| 11  | [structured_output](deepagents_101/11-structured_output/)       | `response_format` and `structured_response`                    |
-| 12  | [checkpointer_threads](deepagents_101/12-checkpointer_threads/) | Checkpointers, `thread_id`, multi-turn memory                  |
-| 13  | [human_in_the_loop](deepagents_101/13-human_in_the_loop/)       | `interrupt_on`, approve/reject/edit/respond                    |
-| 14  | [permissions](deepagents_101/14-permissions/)                   | `FilesystemPermission`: allow, deny, interrupt                 |
-| 15  | [long_term_memory](deepagents_101/15-long_term_memory/)         | `StoreBackend` + `memory=` across conversations                |
-| 16  | [skills](deepagents_101/16-skills/)                             | `SKILL.md` packages and progressive disclosure                 |
-| 17  | [streaming](deepagents_101/17-streaming/)                       | `stream_mode="updates"` vs `"messages"`                        |
-| 18  | [context_management](deepagents_101/18-context_management/)     | Automatic summarization of long conversations                  |
-| 19  | [capstone_research](deepagents_101/19-capstone_research/)       | Everything combined: a research agent                          |
-| 20  | [mcp_tools](deepagents_101/20-mcp_tools/)                       | MCP tools via `MultiServerMCPClient` (async)                   |
+| Track | Location | Format | What you get | `deepagents` |
+| --- | --- | --- | --- | --- |
+| [**Deep Agents 101**](deepagents_101/) | `deepagents_101/` | 21 standalone episodes (`.py` + `.ipynb` + slides + diagrams) | Framework fundamentals — one focused concept per episode | `0.7.x` |
+| [**DeepCoder**](deepcoding_agent/) | `deepcoding_agent/` | 18 progressive app snapshots + Textual TUI + smoke tests | Build a local Claude Code / opencode-style terminal coding agent from scratch | `0.7.x` |
+| [**Agentic Design Patterns**](Agentic_Design_Patterns-Notes.md) | Root Markdown & PDF | Study notes + 21-episode series blueprint | Architecture reference covering 21 core agentic patterns with Mermaid diagrams | — |
+| [**Legacy Research Agents**](#legacy-research-agents) | `01-Intro/`, `DeepResearch/` | Standalone script & Streamlit app | Early web-search research agents powered by Tavily and LangGraph | `0.6.x` |
 
-Each episode folder contains the script and a `README.md` with the goal, key concepts, run instructions, and env vars. Episodes 06–08 write to a per-episode `workspace/` folder (git-ignored).
+> [!TIP]
+> **Where to start?** New to `deepagents`? Start with [**Deep Agents 101**](deepagents_101/) to learn the API one building block at a time. Want to assemble a real interactive coding agent with streaming, diffs, approvals, SQLite sessions, subagents, and MCP? Jump into [**DeepCoder**](deepcoding_agent/).
 
-## CodeIt: building a coding agent
+---
 
-Each episode in [`episodes/`](episodes/) is a standalone, heavily-commented Python script that builds on the previous one. Run them in order to follow the full build.
+## Quick Start
 
-| #   | Episode                                           | What you build                                                    |
-| --- | ------------------------------------------------- | ----------------------------------------------------------------- |
-| 1   | [model-factory](episodes/01-model-factory/)       | Provider-agnostic model factory (Ollama/OpenAI) + a minimal agent |
-| 2   | [agentic-loop](episodes/02-agentic-loop/)         | A custom `@tool` + live streaming of the reasoning loop           |
-| 3   | [filesystem-tools](episodes/03-filesystem-tools/) | `FilesystemBackend` for safe code exploration                     |
-| 4   | [write-sandbox](episodes/04-write-sandbox/)       | `write_file` + the workspace sandbox                              |
-| 5   | [shell-tool](episodes/05-shell-tool/)             | A custom shell tool (and why it's dangerous)                      |
-| 6   | [approval-gate](episodes/06-approval-gate/)       | Human-in-the-loop permission gating                               |
-| 7   | [system-prompt](episodes/07-system-prompt/)       | Engineering personality & rules via the system prompt             |
-| 8   | [surgical-edits](episodes/08-surgical-edits/)     | `edit_file` + a fuzzy fallback wrapper                            |
-| 9   | [repo-map](episodes/09-repo-map/)                 | Context management: repo map & token trimming                     |
-| 10  | [todo-planning](episodes/10-todo-planning/)       | TodoList & task decomposition                                     |
-| 11  | [error-recovery](episodes/11-error-recovery/)     | Self-healing error-recovery loops                                 |
-| 12  | [subagents](episodes/12-subagents/)               | Sub-agents: specialists in isolated context                       |
-| 13  | [mcp-skills](episodes/13-mcp-skills/)             | MCP + Skills: the standard protocol                               |
-| 14  | [cli-streaming](episodes/14-cli-streaming/)       | Shipping CodeIt: a real CLI with event streaming                  |
-| 15  | [stretch](episodes/15-stretch/)                   | LangSmith observability appendix                                  |
+### Prerequisites
 
-Each episode folder contains the script (`NN-name.py`) and a `README.md` with the goal, key concepts, run instructions, and env vars.
+- **Python 3.11+**
+- **[Ollama](https://ollama.com)** running locally (`ollama serve`) — or a cloud provider key (OpenRouter / OpenAI)
+- A **[Tavily](https://tavily.com)** API key *(legacy research track only)*
 
-## DeepCoder: a terminal coding agent
+### 1. Create an environment and install dependencies
 
-Each episode in [`deepcoding_agent/`](deepcoding_agent/) is a small multi-module app that builds on the previous one: `main.py` (entry), `config.py` (all env vars in one place), `agent.py` (model + backend + agent), `runner.py` (the event stream), `tui.py` (the Textual UI), plus `commands.py` / `widgets.py` / `sessions.py` as they are introduced, and a `test_smoke.py` that drives the UI with fake agents (no model needed).
-
-| #   | Episode                                                         | What you build                                                |
-| --- | --------------------------------------------------------------- | ------------------------------------------------------------- |
-| 01  | [intro](deepcoding_agent/01-intro/)                             | Your first coding agent: `create_deep_agent()` + one question |
-| 02  | [chat-loop](deepcoding_agent/02-chat-loop/)                     | A multi-turn chat loop                                        |
-| 03  | [project-files](deepcoding_agent/03-project-files/)             | Point the agent at real project files                         |
-| 04  | [shell-execute](deepcoding_agent/04-shell-execute/)             | Shell execution via the `execute` tool                        |
-| 05  | [approvals](deepcoding_agent/05-approvals/)                     | An approval gate for dangerous tools                          |
-| 06  | [streaming](deepcoding_agent/06-streaming/)                     | Stream the agent's events as they happen                      |
-| 07  | [streaming-approvals](deepcoding_agent/07-streaming-approvals/) | Streaming + approvals combined                                |
-| 08  | [textual-shell](deepcoding_agent/08-textual-shell/)             | The Textual TUI shell                                         |
-| 09  | [textual-worker](deepcoding_agent/09-textual-worker/)           | The agent on a worker thread                                  |
-| 10  | [approval-modal](deepcoding_agent/10-approval-modal/)           | An approval modal in the TUI                                  |
-| 11  | [plan-status](deepcoding_agent/11-plan-status/)                 | A plan panel showing the agent's todos                        |
-| 12  | [slash-commands](deepcoding_agent/12-slash-commands/)           | Slash commands (`/help`, `/new`, `/resume`)                   |
-| 13  | [sessions](deepcoding_agent/13-sessions/)                       | Sessions that survive a restart (SqliteSaver + thread index)  |
-| 14  | [subagents](deepcoding_agent/14-subagents/)                     | Sub-agents with nested rendering                              |
-
-## Setup
-
-**Prerequisites**
-
-- Python 3.11+
-- [Ollama](https://ollama.ai) for local models — or an OpenAI API key
-- A [Tavily](https://tavily.com) API key (legacy research track only)
-
-**Install dependencies**
-
-The project is managed with [uv](https://docs.astral.sh/uv/) (see `pyproject.toml` + `uv.lock`):
-
-```bash
-uv sync            # creates .venv and installs all deps
-source .venv/bin/activate
-```
-
-> **Note on deepagents versions.** `pyproject.toml` pins `deepagents==0.6.12`, which matches the CodeIt series. **Deep Agents 101 and DeepCoder are written against deepagents 0.7.x** — for those series, upgrade in your env: `pip install -U "deepagents>=0.7"`. (The 101 series README also documents a plain conda + pip setup: `conda activate py313 && pip install -U deepagents langchain-mcp-adapters python-dotenv rich`.)
-
-Or with plain pip:
+Choose the dependency set for the track you want to run:
 
 ```bash
 python -m venv .venv && source .venv/bin/activate
-pip install deepagents langchain langchain-ollama langchain-openai rich python-dotenv
 ```
 
-**Configure environment**
+**For Deep Agents 101 (`deepagents 0.7.x`):**
+
+```bash
+pip install -U "deepagents>=0.7" langchain-ollama langchain-openrouter python-dotenv rich
+pip install langchain-mcp-adapters mcp   # only needed for episode 20 (MCP)
+```
+
+**For DeepCoder (`deepagents 0.7.x` + Textual TUI):**
+
+Part 18 includes a complete [`pyproject.toml`](deepcoding_agent/18-mcp-packaging/pyproject.toml) that installs every dependency (plus the `deepcoder` CLI command):
+
+```bash
+cd deepcoding_agent/18-mcp-packaging
+pip install -e ".[mcp,dev]"   # omit [mcp,dev] if you don't need MCP or pytest/ruff
+```
+
+> [!NOTE]
+> **About the repo-root `pyproject.toml`:** The root [`pyproject.toml`](pyproject.toml) still pins `deepagents==0.6.12` from an earlier archived track. Both active series (**Deep Agents 101** and **DeepCoder**) target **`deepagents 0.7.x`** (`deepagents.backends`, `TodoListMiddleware`, `FilesystemPermission`, opt-in `write_todos`). Use the `0.7.x` install commands above rather than bare `uv sync` at the repo root.
+
+### 2. Pull a local model & configure `.env`
+
+```bash
+ollama serve                  # start Ollama if it isn't already running
+ollama pull qwen3.5:2b        # Deep Agents 101 default (fast, lightweight)
+ollama pull qwen3.5:9b        # DeepCoder default (better tool-calling reliability)
+```
+
+Copy the template if you want to set provider keys, model overrides, or optional LangSmith tracing in one place (every script calls `load_dotenv()`):
 
 ```bash
 cp .env.example .env
-# edit .env — set LLM_PROVIDER, LLM_MODEL, and any API keys
 ```
 
-**Pull a model**
+### 3. Run your first agent
 
 ```bash
-ollama pull qwen3.5:9b        # Deep Agents 101 + DeepCoder default
-ollama pull qwen2.5-coder:7b  # CodeIt default (LLM_MODEL)
-ollama pull gpt-oss:20b       # legacy research track
-```
-
-## Running an episode
-
-**Deep Agents 101** — one env var controls the model (any LangChain provider string):
-
-```bash
+# Deep Agents 101 — run a script (or open the matching .ipynb notebook)
 cd deepagents_101/01-deepagent_intro
 python 01-deepagent_intro.py
-DEEPAGENTS_MODEL=openai:gpt-4.1-mini python 01-deepagent_intro.py
-```
 
-**CodeIt** — pass a prompt as the first argument:
-
-```bash
-cd episodes/01-model-factory
-LLM_PROVIDER=ollama python 01-model-factory.py "Say hello in one sentence."
-
-# Cloud OpenAI
-LLM_PROVIDER=openai OPENAI_API_KEY=your-key LLM_MODEL=gpt-4o-mini \
-    python 01-model-factory.py "Hello"
-
-# Later episodes that touch the filesystem take a working directory:
-CODEIT_WORKDIR=./workspace python 05-shell-tool.py "List the files in the workspace."
-```
-
-**DeepCoder** — a Textual TUI (ctrl+c to quit):
-
-```bash
-cd deepcoding_agent/14-subagents
+# DeepCoder — launch the finished Textual TUI (ctrl+c to quit)
+cd deepcoding_agent/18-mcp-packaging
 python main.py
-
-# Point it at a real project and skip approval prompts (demos only):
-DEEPCODER_WORKDIR=/path/to/project DEEPCODER_AUTO_APPROVE=1 python main.py
+# Or, if installed via `pip install -e .`:
+deepcoder
 ```
 
-## Environment variables
+---
 
-**Deep Agents 101**
+## Deep Agents 101
 
-| Variable           | Default             | Description                                              |
-| ------------------ | ------------------- | -------------------------------------------------------- |
-| `DEEPAGENTS_MODEL` | `ollama:qwen3.5:9b` | Any LangChain provider string (`openai:gpt-4.1-mini`, …) |
+[`deepagents_101/`](deepagents_101/) teaches the `deepagents 0.7.x` framework one concept at a time. Nothing is shared between episodes, so you can jump straight to any topic.
 
-**CodeIt** (documented in `.env.example`)
+Every episode folder includes:
 
-| Variable              | Default                  | Description                                                     |
-| --------------------- | ------------------------ | --------------------------------------------------------------- |
-| `LLM_PROVIDER`        | `ollama`                 | Provider selector: `ollama` or `openai`                         |
-| `LLM_MODEL`           | `qwen2.5-coder:7b`       | Model name (e.g. `gpt-4o-mini` for OpenAI)                      |
-| `OLLAMA_BASE_URL`     | `http://localhost:11434` | Ollama API base URL                                             |
-| `OPENAI_API_KEY`      | _(empty)_                | Required when `LLM_PROVIDER=openai`                             |
-| `OPENAI_BASE_URL`     | _(empty)_                | Optional override for OpenAI-compatible endpoints               |
-| `CODEIT_WORKDIR`      | `./workspace`            | Working directory the agent's file/shell tools operate in       |
-| `CODEIT_AUTO_APPROVE` | `false`                  | Skip the approval gate (the `--yolo` flag sets this at runtime) |
-| `CODEIT_MAX_ITERS`    | `25`                     | Recursion-limit guard for the agent loop                        |
+- A self-contained **Python script** (`.py`, with `# %%` cell markers for VS Code's Interactive Window)
+- A matching **Jupyter notebook** (`.ipynb`)
+- A **README**, **3-slide Marp deck** (`slides.md` / `slides.html`), and **Mermaid diagrams** (`diagrams/*.mmd`, `.svg`, `.png`) *(included on episodes `01`–`02` and `03.2`–`20`)*
 
-**DeepCoder**
+| # | Episode | What you learn |
+| --- | --- | --- |
+| 01 | [01-deepagent_intro](deepagents_101/01-deepagent_intro/) | `create_deep_agent()`, state shape, and the tools every agent gets for free |
+| 02 | [02-models_and_prompts](deepagents_101/02-models_and_prompts/) | Model strings vs. instances, `system_prompt`, `debug=True` |
+| 03.1 | [03.1-builtin_tools](deepagents_101/03.1-builtin_tools/) | Exercising built-in filesystem, `LocalShellBackend` (`execute`), `task`, and `write_todos` tools in a disposable workspace |
+| 03.2 | [03.2-custom_tools](deepagents_101/03.2-custom_tools/) | Plain functions & `@tool`, additive tools, structured `dict` returns, `async` tools, and `return_direct` |
+| 04.2 | [04.2-planning_todos](deepagents_101/04.2-planning_todos/) | `TodoListMiddleware` and `write_todos` (opt-in in `deepagents 0.7`) |
+| 05 | [05-virtual_filesystem](deepagents_101/05-virtual_filesystem/) | `StateBackend`: seed virtual files in, read agent-created files back out |
+| 06 | [06-real_filesystem](deepagents_101/06-real_filesystem/) | `FilesystemBackend`: reading and editing real disk files safely |
+| 07 | [07-shell_execute](deepagents_101/07-shell_execute/) | `LocalShellBackend` and the `execute` tool |
+| 08 | [08-composite_backend](deepagents_101/08-composite_backend/) | `CompositeBackend`: route path prefixes to different backends |
+| 09 | [09-subagents_basics](deepagents_101/09-subagents_basics/) | The `task` tool and context isolation |
+| 10 | [10-custom_subagents](deepagents_101/10-custom_subagents/) | Per-subagent tools/models and `CompiledSubAgent` |
+| 11 | [11-structured_output](deepagents_101/11-structured_output/) | `response_format` and `structured_response` with Pydantic |
+| 12 | [12-checkpointer_threads](deepagents_101/12-checkpointer_threads/) | Checkpointers, `thread_id`, and multi-turn conversation memory |
+| 13 | [13-human_in_the_loop](deepagents_101/13-human_in_the_loop/) | `interrupt_on`, `Command(resume=...)`, approve / reject / edit / respond |
+| 14 | [14-permissions](deepagents_101/14-permissions/) | `FilesystemPermission`: allow, deny, and interrupt rules |
+| 15 | [15-long_term_memory](deepagents_101/15-long_term_memory/) | `StoreBackend` + `memory=` across separate conversations |
+| 16 | [16-skills](deepagents_101/16-skills/) | `SKILL.md` packages and progressive disclosure |
+| 17 | [17-streaming](deepagents_101/17-streaming/) | `stream_mode="updates"` vs. `stream_mode="messages"` |
+| 18 | [18-context_management](deepagents_101/18-context_management/) | `SummarizationMiddleware` for automatic compression of long histories |
+| 19 | [19-capstone_research](deepagents_101/19-capstone_research/) | Everything combined: local-corpus research agent with planning, subagents, and streaming |
+| 20 | [20-mcp_tools](deepagents_101/20-mcp_tools/) | Async MCP tools via `MultiServerMCPClient` and a bundled local stdio server |
 
-| Variable                  | Default             | Description                                                                              |
-| ------------------------- | ------------------- | ---------------------------------------------------------------------------------------- |
-| `DEEPCODER_MODEL`         | `ollama:qwen3.5:9b` | Any LangChain provider string                                                            |
-| `DEEPCODER_WORKDIR`       | `./workspace`       | Directory the agent is allowed to read and write                                         |
-| `DEEPCODER_KEEP_ALIVE`    | `30m`               | How long Ollama keeps the model loaded between turns                                     |
-| `DEEPCODER_NUM_CTX`       | `8192`              | Context window (Ollama's small default truncates silently)                               |
-| `DEEPCODER_SHELL_TIMEOUT` | `120`               | Max seconds a single shell command may run                                               |
-| `DEEPCODER_AUTO_APPROVE`  | _(empty)_           | `1` skips every approval prompt — handy for demos, a bad idea near a repo you care about |
+**Switching models in Deep Agents 101:** Scripts default to local Ollama via `OLLAMA_MODEL` (default `qwen3.5:2b`) and `OLLAMA_BASE_URL` (default `http://localhost:11434`). Each script also includes a commented `ChatOpenRouter` block if you prefer a hosted model. Smaller local models occasionally skip multi-tool steps — override with a larger model (`OLLAMA_MODEL=qwen3.5:9b python ...`) if an agent misses a tool call.
 
-Provider keys (`OPENAI_API_KEY`, …) go in the repo-root `.env` — every script calls `load_dotenv()`.
+See [`deepagents_101/README.md`](deepagents_101/README.md) for series notes.
 
-## Project structure
+---
 
+## DeepCoder
+
+[`deepcoding_agent/`](deepcoding_agent/) builds a complete, local-first terminal coding agent (in the spirit of Claude Code and opencode) in **18 incremental parts** using `deepagents 0.7.x`, Ollama, and [Textual](https://textual.textualize.io).
+
+- **≤150 lines of new code per part** — enforced across all 18 parts by [`deepcoding_agent/_tools/diff_lines.py`](deepcoding_agent/_tools/diff_lines.py).
+- **Every part is a complete, runnable snapshot** — `cd` into any part folder and run `python main.py`.
+- **Offline headless tests** — Parts 08–18 each ship a `test_smoke.py` that drives the real Textual app through `Pilot` with stub agents (no model or Ollama required).
+
+| # | Part | What you build | New deps |
+| --- | --- | --- | --- |
+| 01 | [01-intro](deepcoding_agent/01-intro/) | First coding agent: `create_deep_agent`, model strings, built-in toolbox | — |
+| 02 | [02-chat-loop](deepcoding_agent/02-chat-loop/) | Multi-turn chat loop with checkpointers and `thread_id` | — |
+| 03 | [03-project-files](deepcoding_agent/03-project-files/) | `CompositeBackend`, real project files, and the Ollama `num_ctx` trap | — |
+| 04 | [04-shell-execute](deepcoding_agent/04-shell-execute/) | Shell execution via `LocalShellBackend`, `execute`, and `inherit_env` | — |
+| 05 | [05-approvals](deepcoding_agent/05-approvals/) | `interrupt_on` approval gate and batched `decisions` list | — |
+| 06 | [06-streaming](deepcoding_agent/06-streaming/) | UI-agnostic `runner.py` event layer with dual `stream_mode` | — |
+| 07 | [07-streaming-approvals](deepcoding_agent/07-streaming-approvals/) | Pauses as typed events and resuming mid-stream | — |
+| 08 | [08-textual-shell](deepcoding_agent/08-textual-shell/) | First Textual TUI shell (intentionally demonstrating UI blocking) | `textual` |
+| 09 | [09-textual-worker](deepcoding_agent/09-textual-worker/) | Background thread workers, `post_message`, buffered Markdown updates | — |
+| 10 | [10-approval-modal](deepcoding_agent/10-approval-modal/) | Interactive `ModalScreen`, `call_from_thread`, batched approvals | — |
+| 11 | [11-plan-status](deepcoding_agent/11-plan-status/) | `TodoListMiddleware`, live plan sidebar, and token counts | — |
+| 12 | [12-slash-commands](deepcoding_agent/12-slash-commands/) | Slash command registry (`/help`, `/new`, `/clear`, `/model`, `/quit`) with autocomplete | — |
+| 13 | [13-sessions](deepcoding_agent/13-sessions/) | Persistent SQLite sessions (`SqliteSaver`) + `/resume` picker | `langgraph-checkpoint-sqlite` |
+| 14 | [14-subagents](deepcoding_agent/14-subagents/) | Subagent delegation, context quarantine, and `subgraphs=True` rendering | — |
+| 15 | [15-project-memory](deepcoding_agent/15-project-memory/) | Project memory (`AGENTS.md` via `memory=`) and `/init` command | — |
+| 16 | [16-diffs](deepcoding_agent/16-diffs/) | Syntax-highlighted unified diffs inside the approval modal | — |
+| 17 | [17-health-polish](deepcoding_agent/17-health-polish/) | Actionable startup health checks (`health.py`) and keybindings | — |
+| 18 | [18-mcp-packaging](deepcoding_agent/18-mcp-packaging/) | Optional MCP servers (`mcp.json`), async-to-sync bridge, `deepcoder` CLI packaging | `langchain-mcp-adapters` |
+
+### Final Architecture (Part 18)
+
+```text
+18-mcp-packaging/
+├── main.py                # Entry point: load optional MCP tools, start Textual
+├── tui.py                 # Textual App: layout, worker thread, message handlers
+├── runner.py              # UI-agnostic event stream wrapper over agent.stream()
+├── agent.py               # Model, CompositeBackend, subagents, approval gates, memory
+├── config.py              # All DEEPCODER_* settings read once from environment
+├── widgets.py             # Approval modal (with diffs), resume picker, plan sidebar
+├── commands.py            # /help /new /clear /model /init /resume /quit
+├── sessions.py            # SQLite checkpointer, thread index, and history replay
+├── health.py              # Startup environment & Ollama checks
+├── mcp_tools.py           # Optional mcp.json loader + sync bridge for async MCP tools
+├── example_mcp_server.py  # Minimal local MCP demo server (pair with mcp.json.example)
+├── app.tcss               # Textual CSS styling
+├── pyproject.toml         # Dependencies + `deepcoder` console script entry point
+└── test_smoke.py          # Headless Pilot UI tests with stub agents
 ```
+
+**Running DeepCoder against a real project:**
+
+```bash
+cd deepcoding_agent/18-mcp-packaging
+
+# Optional: enable the bundled demo MCP server
+cp mcp.json.example mcp.json
+
+# Point DeepCoder at any project folder (omit DEEPCODER_AUTO_APPROVE for normal safety!)
+DEEPCODER_WORKDIR=/path/to/your/project python main.py
+
+# Or switch to any LangChain cloud model
+DEEPCODER_MODEL=openai:gpt-4.1-mini DEEPCODER_WORKDIR=/path/to/your/project python main.py
+```
+
+See [`deepcoding_agent/README.md`](deepcoding_agent/README.md) for the full series walkthrough — including the three real-world traps encountered during the build (batched approval `decisions`, `Markdown.update()` races, and bridging async-only MCP tools).
+
+---
+
+## Study Notes and Tools
+
+### Agentic Design Patterns Study Notes
+
+Comprehensive study notes and a 21-episode YouTube curriculum blueprint synthesizing Antonio Gulli's *Agentic Design Patterns: A Hands-On Guide to Building Intelligent Systems*:
+
+- [`Agentic_Design_Patterns-Notes.md`](Agentic_Design_Patterns-Notes.md) — full Markdown notes covering all 21 patterns in chapter order, complete with Mermaid architecture diagrams, trade-offs, variations, and demo ideas.
+- [`Agentic_Design_Patterns-Notes.pdf`](Agentic_Design_Patterns-Notes.pdf) — formatted PDF edition of the notes.
+- [`Agentic Design Patterns - Study Notes.md`](Agentic%20Design%20Patterns%20-%20Study%20Notes.md) — companion synthesis with PDF page references and video timestamps.
+
+### LLM Inference Benchmark (`benchmark_llm.py`)
+
+[`benchmark_llm.py`](benchmark_llm.py) is a standalone CLI (only dependency: `requests`) for benchmarking any OpenAI-compatible inference server (Ollama, LM Studio, vLLM, `llama.cpp` server). It measures sequential TTFT, latency, and tokens/sec, plus concurrent throughput scaling to simulate parallel subagent workloads:
+
+```bash
+# Benchmark a local Ollama server
+python benchmark_llm.py --base-url http://localhost:11434/v1 --model qwen3.5:9b
+
+# Simulate subagent concurrency (8 parallel requests, 32 total)
+python benchmark_llm.py --base-url http://localhost:11434/v1 --model qwen3.5:9b \
+    --concurrency 8 --concurrent-requests 32
+
+# Sweep concurrency levels and export JSON metrics
+python benchmark_llm.py --base-url http://localhost:11434/v1 --model qwen3.5:9b \
+    --sweep 1,2,4,8 --json results.json
+```
+
+---
+
+## Configuration
+
+Every script calls `load_dotenv()`, so you can place API keys and overrides in a repo-root `.env` file (git-ignored).
+
+### Deep Agents 101
+
+| Variable | Default | Description |
+| --- | --- | --- |
+| `OLLAMA_MODEL` | `qwen3.5:2b` | Local Ollama model name used by `ChatOllama` |
+| `OLLAMA_BASE_URL` | `http://localhost:11434` | Ollama API base URL |
+| `OPENROUTER_API_KEY` | *(empty)* | Required only if uncommenting the `ChatOpenRouter` option in a script |
+
+### DeepCoder
+
+| Variable | Default | Description |
+| --- | --- | --- |
+| `DEEPCODER_MODEL` | `ollama:qwen3.5:9b` | Any LangChain provider string (e.g., `openai:gpt-4.1-mini`) |
+| `DEEPCODER_WORKDIR` | `./workspace` | Directory the agent is allowed to read, edit, and run commands in |
+| `DEEPCODER_KEEP_ALIVE` | `30m` | How long Ollama keeps the model loaded between turns |
+| `DEEPCODER_NUM_CTX` | `8192` | Context window size (Ollama's smaller default truncates silently) |
+| `DEEPCODER_SHELL_TIMEOUT` | `120` | Max seconds a single `execute` command may run |
+| `DEEPCODER_AUTO_APPROVE` | *(empty)* | Set to `1` / `true` to skip approval modals (demos only) |
+
+### Optional Cloud & Observability Keys
+
+| Variable | Description |
+| --- | --- |
+| `OPENAI_API_KEY` | Required when using OpenAI models (`openai:...`) |
+| `TAVILY_API_KEY` | Required for the legacy web-search research agents (`01-Intro/`, `DeepResearch/`) |
+| `LANGSMITH_TRACING`, `LANGSMITH_API_KEY`, `LANGSMITH_PROJECT`, `LANGSMITH_ENDPOINT` | Optional LangSmith trace logging (template in [`.env.example`](.env.example)) |
+
+---
+
+## Repository Layout
+
+```text
 .
-├── deepagents_101/            # 101 series — 20 self-contained episodes (deepagents 0.7.x)
-│   ├── 01-deepagent_intro/    #   each: NN-name.py + README.md
+├── deepagents_101/                           # Deep Agents 101 — 21 episodes (deepagents 0.7.x)
+│   ├── 01-deepagent_intro/                   #   .py + .ipynb + README.md + slides + diagrams/
 │   ├── ...
-│   └── 20-mcp_tools/
-├── episodes/                  # CodeIt series — 15 standalone episodes
-│   ├── 01-model-factory/      #   each: NN-name.py + README.md
+│   ├── 20-mcp_tools/
+│   └── README.md
+├── deepcoding_agent/                         # DeepCoder — 18-part Textual TUI coding agent (0.7.x)
+│   ├── 01-intro/                             #   complete runnable snapshot per part
 │   ├── ...
-│   └── 15-stretch/
-├── deepcoding_agent/          # DeepCoder series — 14 multi-module Textual TUI episodes
-│   ├── 01-intro/              #   each: main.py + config.py + agent.py + ... + test_smoke.py
-│   ├── ...
-│   └── 14-subagents/
-├── 01-Intro/                  # Legacy: research agent with Tavily web search
-├── DeepResearch/              # Legacy: Streamlit + LangGraph research assistant
-├── utils.py                   # Legacy: trace/summary/save helpers
-├── pyproject.toml             # codeit package config (uv-managed)
-├── uv.lock
-├── .env.example               # env var template
+│   ├── 18-mcp-packaging/                     #   final app + MCP bridge + pyproject.toml
+│   ├── _tools/diff_lines.py                  #   150-line-per-part budget checker
+│   └── README.md
+├── 01-Intro/                                 # Legacy: standalone Tavily research agent
+├── DeepResearch/                             # Legacy: Streamlit + LangGraph research assistant
+├── benchmark_llm.py                          # OpenAI-compatible sequential & concurrent LLM benchmark
+├── utils.py                                  # Legacy trace, summary, and JSON export helpers
+├── Agentic_Design_Patterns-Notes.md          # 21 Agentic Design Patterns study notes (+ Mermaid)
+├── Agentic_Design_Patterns-Notes.pdf         # PDF edition of the study notes
+├── Agentic Design Patterns - Study Notes.md  # Companion synthesis notes with book/video citations
+├── .env.example                              # Environment variable template
+├── pyproject.toml                            # Ruff/pytest config & legacy package manifest
+├── LICENSE                                   # Apache License 2.0
 └── README.md
 ```
 
-## Testing & lint
+---
+
+## Testing and Lint
 
 ```bash
-ruff check .                          # lint (config in pyproject.toml)
-pytest deepcoding_agent/              # DeepCoder smoke tests — fake agents, no model needed
+# Lint the repository (configured in pyproject.toml: line-length=100, py311)
+ruff check .
+
+# Run one DeepCoder part's headless smoke tests (run inside the part folder)
+cd deepcoding_agent/18-mcp-packaging
+python -m pytest test_smoke.py -q -p anyio
+
+# Run all DeepCoder headless smoke tests (Parts 08–18, offline, no Ollama needed)
+for f in deepcoding_agent/*/test_smoke.py; do
+    (cd "$(dirname "$f")" && python -m pytest test_smoke.py -q -p anyio)
+done
+
+# Verify DeepCoder's ≤150-line-per-part budget across all 18 parts
+python deepcoding_agent/_tools/diff_lines.py
 ```
 
-The DeepCoder smoke tests drive the Textual app with fake agents, so they run offline. `episodes/` and `deepagents_101/` have no test suite — validate changes by running the affected script end-to-end.
+`deepagents_101/` episodes are standalone teaching scripts and notebooks without a unit test suite — validate changes by executing the affected script or notebook end-to-end.
 
-## Legacy: research agents
+---
 
-Before the three series above, the repo contained two research-focused examples:
+## Legacy Research Agents
 
-- **`01-Intro/01-intro.py`** — a deep research agent that uses Tavily web search, planning, and trace logging.
-- **`DeepResearch/`** — a Streamlit web UI over a LangGraph plan → search → synthesize workflow (own `requirements.txt` + `.env.example`; run with `streamlit run app.py`).
+Before the two `deepagents 0.7.x` series above, this repository started with two Tavily-powered research examples:
 
-See [`01-Intro/`](01-Intro/) and [`DeepResearch/README.md`](DeepResearch/README.md) for details.
+- **[`01-Intro/01-intro.py`](01-Intro/01-intro.py)** — a single-script deep research agent using Tavily web search, Ollama (`gpt-oss:20b`), and trace/summary utilities from [`utils.py`](utils.py).
+- **[`DeepResearch/`](DeepResearch/)** — a Streamlit web UI over a LangGraph `Planning → Research → Synthesis` workflow, complete with its own [`requirements.txt`](DeepResearch/requirements.txt), [`.env.example`](DeepResearch/.env.example), and [`README.md`](DeepResearch/README.md) (`streamlit run app.py`).
+
+---
 
 ## License
 
-MIT — see [LICENSE](LICENSE).
+Licensed under the **Apache License 2.0** — see [LICENSE](LICENSE) for details.
