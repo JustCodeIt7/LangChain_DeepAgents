@@ -20,7 +20,7 @@ from langchain.agents.middleware import TodoListMiddleware
 from rich import print
 
 from langchain_ollama import ChatOllama
-from langchain_openrouter import ChatOpenRouter
+
 load_dotenv()
 
 
@@ -30,14 +30,14 @@ load_dotenv()
 # Make sure Ollama is running and you have pulled the model (e.g., ollama pull qwen3.5:2b)
 model = ChatOllama(
     model=os.getenv("OLLAMA_MODEL", "qwen3.5:2b"),
-    base_url=os.getenv("OLLAMA_BASE_URL", "http://localhost:11434")
+    base_url=os.getenv("OLLAMA_BASE_URL", "http://localhost:11434"),
+    temperature=0,  # repeatable output: the run you rehearse is the run you record
+    reasoning=False,  # skip hidden "thinking" tokens: faster, and no empty answers
 )
 #
 # Option 2: OpenRouter
-# model = ChatOpenRouter(
-#     model="meta/muse-spark-1.3-contributor",
-#     temperature=0
-# )
+# from langchain_openrouter import ChatOpenRouter
+# model = ChatOpenRouter(model="meta/muse-spark-1.3-contributor", temperature=0)
 
 # %% Step 2: The corpus — the agent's "world"
 # In a real research agent these would be web pages or PDFs. Keeping them local
@@ -122,4 +122,3 @@ report = final_state["files"].get("/report.md")
 print("\n[bold green]/report.md[/bold green]")
 print(report["content"] if report else "[red]The agent did not write a report.[/red]")
 
-# %%

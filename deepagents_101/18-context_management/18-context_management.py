@@ -18,7 +18,7 @@ from langgraph.checkpoint.memory import InMemorySaver
 from rich import print
 
 from langchain_ollama import ChatOllama
-from langchain_openrouter import ChatOpenRouter
+
 load_dotenv()
 
 
@@ -28,14 +28,14 @@ load_dotenv()
 # Make sure Ollama is running and you have pulled the model (e.g., ollama pull qwen3.5:2b)
 model = ChatOllama(
     model=os.getenv("OLLAMA_MODEL", "qwen3.5:2b"),
-    base_url=os.getenv("OLLAMA_BASE_URL", "http://localhost:11434")
+    base_url=os.getenv("OLLAMA_BASE_URL", "http://localhost:11434"),
+    temperature=0,  # repeatable output: the run you rehearse is the run you record
+    reasoning=False,  # skip hidden "thinking" tokens: faster, and no empty answers
 )
 #
 # Option 2: OpenRouter
-# model = ChatOpenRouter(
-#     model="meta/muse-spark-1.3-contributor",
-#     temperature=0
-# )
+# from langchain_openrouter import ChatOpenRouter
+# model = ChatOpenRouter(model="meta/muse-spark-1.3-contributor", temperature=0)
 
 # %% Step 2: Force summarization to trigger early
 # Every deep agent already summarizes automatically, but only near the model's
@@ -124,4 +124,3 @@ print(f"\n[bold green]Recall after compression:[/bold green] {str(answer).strip(
 print("\n[dim]Also automatic: tool results over ~20k tokens are written to a[/dim]")
 print("[dim]file and replaced with a preview + path the agent can read later.[/dim]")
 
-# %%

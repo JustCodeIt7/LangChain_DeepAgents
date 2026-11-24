@@ -19,7 +19,7 @@ from dotenv import load_dotenv  # loads OPENAI_API_KEY / OLLAMA_BASE_URL from .e
 from rich import print  # colorized console output
 
 from langchain_ollama import ChatOllama
-from langchain_openrouter import ChatOpenRouter
+
 # Pull API keys and model settings out of .env so no secrets live in the script
 load_dotenv()
 
@@ -30,16 +30,14 @@ load_dotenv()
 # Make sure Ollama is running and you have pulled the model (e.g., ollama pull qwen3.5:2b)
 model = ChatOllama(
     model=os.getenv("OLLAMA_MODEL", "qwen3.5:2b"),
-    base_url=os.getenv("OLLAMA_BASE_URL", "http://localhost:11434")
+    base_url=os.getenv("OLLAMA_BASE_URL", "http://localhost:11434"),
+    temperature=0,  # repeatable output: the run you rehearse is the run you record
+    reasoning=False,  # skip hidden "thinking" tokens: faster, and no empty answers
 )
 #
 # Option 2: OpenRouter
-# model = ChatOpenRouter(
-#     model="meta/muse-spark-1.3-contributor",
-#     temperature=0
-# )
-
-# %%
+# from langchain_openrouter import ChatOpenRouter
+# model = ChatOpenRouter(model="meta/muse-spark-1.3-contributor", temperature=0)
 
 
 def text_of(message) -> str:
@@ -88,16 +86,16 @@ agent = create_deep_agent(
     system_prompt="You are a concise assistant. Answer in one short sentence.",  # keep demo output tight
 )
 
-print(f"\n[bold]Created a deep agent backed by:[/bold] [yellow]{MODEL}[/yellow]")
+print(f"\n[bold]Created a deep agent backed by:[/bold] [yellow]{model.model}[/yellow]")
 
 # %% Step 4: Run it
 ################################ Invoke the Agent ################################
 
 # Input is a message list, exactly like any LangChain/LangGraph agent.
 # We tell it not to use tools so this first demo stays fast and predictable.
-question = "What is 7 times 6? use your tools"
+question = "What is 7 times 6? Answer directly without using any tools."
 result = agent.invoke({"messages": [{"role": "user", "content": question}]})  # run one turn to completion
-print(result)
+
 # %% Step 5: Inspect what happened
 ################################ Inspect the Resulting State ################################
 
@@ -117,4 +115,3 @@ for message in result["messages"]:
 # The last message is always the agent's final reply to the user
 print(f"\n[bold green]Final answer:[/bold green] {text_of(result['messages'][-1])}")
 
-# %%

@@ -17,7 +17,7 @@ from langchain.agents import create_agent  # builds a plain (non-deep) agent
 from rich import print
 
 from langchain_ollama import ChatOllama
-from langchain_openrouter import ChatOpenRouter
+
 load_dotenv()
 
 
@@ -27,14 +27,14 @@ load_dotenv()
 # Make sure Ollama is running and you have pulled the model (e.g., ollama pull qwen3.5:2b)
 model = ChatOllama(
     model=os.getenv("OLLAMA_MODEL", "qwen3.5:2b"),
-    base_url=os.getenv("OLLAMA_BASE_URL", "http://localhost:11434")
+    base_url=os.getenv("OLLAMA_BASE_URL", "http://localhost:11434"),
+    temperature=0,  # repeatable output: the run you rehearse is the run you record
+    reasoning=False,  # skip hidden "thinking" tokens: faster, and no empty answers
 )
 #
 # Option 2: OpenRouter
-# model = ChatOpenRouter(
-#     model="meta/muse-spark-1.3-contributor",
-#     temperature=0
-# )
+# from langchain_openrouter import ChatOpenRouter
+# model = ChatOpenRouter(model="meta/muse-spark-1.3-contributor", temperature=0)
 
 def text_of(message) -> str:
     """Normalize message content across providers (str vs content blocks)."""
@@ -56,7 +56,7 @@ def celsius_to_fahrenheit(celsius: float) -> float:
 
 # %% Step 3: Declarative subagent with its own tools and model
 # `tools` REPLACES the inherited tool set for this subagent (it does not add to
-# it), and `model` overrides the orchestrator's model. Here we reuse MODEL, but
+# it), and `model` overrides the orchestrator's model. Here we reuse `model`, but
 # this is where you would drop in a cheaper or larger model for the sub-task.
 converter_subagent = {
     "name": "converter",
@@ -66,7 +66,7 @@ converter_subagent = {
         "then state the result in one short sentence."
     ),
     "tools": [celsius_to_fahrenheit],
-    "model": MODEL,
+    "model": model,
 }
 
 # %% Step 4: A pre-compiled graph as a subagent
@@ -111,4 +111,3 @@ for message in result["messages"]:
 
 print(f"[bold green]Final answer:[/bold green] {text_of(result['messages'][-1])}")
 
-# %%

@@ -18,7 +18,7 @@ from dotenv import load_dotenv
 from rich import print
 
 from langchain_ollama import ChatOllama
-from langchain_openrouter import ChatOpenRouter
+
 load_dotenv()
 
 
@@ -28,14 +28,14 @@ load_dotenv()
 # Make sure Ollama is running and you have pulled the model (e.g., ollama pull qwen3.5:2b)
 model = ChatOllama(
     model=os.getenv("OLLAMA_MODEL", "qwen3.5:2b"),
-    base_url=os.getenv("OLLAMA_BASE_URL", "http://localhost:11434")
+    base_url=os.getenv("OLLAMA_BASE_URL", "http://localhost:11434"),
+    temperature=0,  # repeatable output: the run you rehearse is the run you record
+    reasoning=False,  # skip hidden "thinking" tokens: faster, and no empty answers
 )
 #
 # Option 2: OpenRouter
-# model = ChatOpenRouter(
-#     model="meta/muse-spark-1.3-contributor",
-#     temperature=0
-# )
+# from langchain_openrouter import ChatOpenRouter
+# model = ChatOpenRouter(model="meta/muse-spark-1.3-contributor", temperature=0)
 
 def text_of(message) -> str:
     """Normalize message content across providers (str vs content blocks)."""
@@ -67,15 +67,17 @@ agent = create_deep_agent(
     backend=StateBackend(),
     system_prompt=(
         "You are a file assistant. Use ls, read_file and edit_file to work "
-        "with the user's notes. Keep replies to one sentence."
+        "with the user's notes. Do each step once, then reply in one sentence."
     ),
 )
 
 # %% Step 4: Run — note the seed files go in the INVOKE INPUT, not the constructor
 # The agent reads state, so `files` is passed alongside `messages`.
+# edit_file swaps one exact string for another, so tell the agent WHERE the
+# new line goes — "append to the end" gives a small model nothing to match on.
 task = (
-    "List the files you can see, read /notes/todo.md, then append the line "
-    "'- [ ] record episode 5' to the end of that file."
+    "Use ls on /notes, then read_file /notes/todo.md, then use edit_file to add "
+    "the line '- [ ] record episode 5' after the line '- [ ] write tutorial'."
 )
 result = agent.invoke({"messages": [{"role": "user", "content": task}], "files": seed_files})
 
@@ -93,4 +95,3 @@ print(f"[yellow]{final_content}[/yellow]")
 
 print(f"[bold green]Final answer:[/bold green] {text_of(result['messages'][-1])}")
 
-# %%

@@ -1,2 +1,0 @@
-Edit File Tool
-Edit File Tool is used to edit the content of a file. It is used to replace a specific string in a file with another string. The tool is useful when you need to make changes to a file but do not want to rewrite the entire file.

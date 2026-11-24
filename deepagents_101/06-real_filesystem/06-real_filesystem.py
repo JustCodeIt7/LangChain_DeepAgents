@@ -10,15 +10,16 @@ Run:  python 06-real_filesystem.py
 
 # %% Step 1: Imports and setup
 import os
+import shutil
 from pathlib import Path
 
 from deepagents import create_deep_agent
 from deepagents.backends import FilesystemBackend  # reads/writes actual files
 from dotenv import load_dotenv
 from rich import print
-from langchain_openrouter import ChatOpenRouter
 
 from langchain_ollama import ChatOllama
+
 load_dotenv()
 
 
@@ -28,14 +29,14 @@ load_dotenv()
 # Make sure Ollama is running and you have pulled the model (e.g., ollama pull qwen3.5:2b)
 model = ChatOllama(
     model=os.getenv("OLLAMA_MODEL", "qwen3.5:2b"),
-    base_url=os.getenv("OLLAMA_BASE_URL", "http://localhost:11434")
+    base_url=os.getenv("OLLAMA_BASE_URL", "http://localhost:11434"),
+    temperature=0,  # repeatable output: the run you rehearse is the run you record
+    reasoning=False,  # skip hidden "thinking" tokens: faster, and no empty answers
 )
 #
 # Option 2: OpenRouter
-# model = ChatOpenRouter(
-#     model="meta/muse-spark-1.3-contributor",
-#     temperature=0
-# )
+# from langchain_openrouter import ChatOpenRouter
+# model = ChatOpenRouter(model="meta/muse-spark-1.3-contributor", temperature=0)
 
 def text_of(message) -> str:
     """Normalize message content across providers (str vs content blocks)."""
@@ -49,10 +50,10 @@ def text_of(message) -> str:
 # Always scope a real filesystem agent to a directory you are happy for it to
 # modify. Here we use ./workspace inside the episode folder.
 WORKSPACE = Path(__file__).resolve().parent / "workspace"
-WORKSPACE.mkdir(exist_ok=True)
+# Rebuild it on every run so Step 5 proves THIS run made the changes.
+shutil.rmtree(WORKSPACE, ignore_errors=True)
+WORKSPACE.mkdir()
 (WORKSPACE / "shopping.md").write_text("# Shopping\n- milk\n")
-# Remove any leftover from a prior run so Step 5 proves THIS run created the file.
-(WORKSPACE / "greeting.txt").unlink(missing_ok=True)
 
 print(f"[bold cyan]Workspace:[/bold cyan] [yellow]{WORKSPACE}[/yellow]")
 print(f"  seeded: {[p.name for p in WORKSPACE.iterdir()]}")
@@ -90,4 +91,3 @@ for path in sorted(WORKSPACE.iterdir()):
     print(f"\n[yellow]{path.name}[/yellow]")
     print(path.read_text())
 
-# %%

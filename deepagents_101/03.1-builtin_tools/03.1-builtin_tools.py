@@ -1,30 +1,26 @@
 """
-03 - Built-in Tools
-===================
-Deep Agents supplies filesystem tools and a `task` subagent tool automatically.
-`LocalShellBackend` also exposes `execute`; TodoListMiddleware opts into
-`write_todos`. This demo makes every tool act in a disposable lesson workspace.
+03.1 - Built-in Tools
+=====================
+- Every deep agent gets filesystem tools and a `task` subagent tool for free
+- `LocalShellBackend` adds `execute`; `TodoListMiddleware` adds `write_todos`
+- Demo: four short prompts that make the agent use all ten tools, then a scorecard
 
-Run: python 03.1-builtin_tools.py
-Override: DEEPAGENTS_MODEL=openai:gpt-4.1-mini python 03.1-builtin_tools.py
+Run:  python 03.1-builtin_tools.py
 """
 
-# %% Step 1: Imports and model configuration
+# %% Step 1: Imports and setup
 import os
-import time
+import shutil
 from pathlib import Path
 
 from deepagents import create_deep_agent
-from deepagents.backends import LocalShellBackend
+from deepagents.backends import LocalShellBackend  # real files + a real shell
 from dotenv import load_dotenv
-from langchain.agents.middleware import TodoListMiddleware
+from langchain.agents.middleware import TodoListMiddleware  # supplies write_todos
 from rich import print
 
 from langchain_ollama import ChatOllama
-from langchain_openrouter import ChatOpenRouter
-############################ Environment & Model Configuration ###########################
 
-# Pull API keys and model overrides from a local .env file
 load_dotenv()
 
 
@@ -34,130 +30,78 @@ load_dotenv()
 # Make sure Ollama is running and you have pulled the model (e.g., ollama pull qwen3.5:2b)
 model = ChatOllama(
     model=os.getenv("OLLAMA_MODEL", "qwen3.5:2b"),
-    base_url=os.getenv("OLLAMA_BASE_URL", "http://localhost:11434")
+    base_url=os.getenv("OLLAMA_BASE_URL", "http://localhost:11434"),
+    temperature=0,  # repeatable output: the run you rehearse is the run you record
+    reasoning=False,  # skip hidden "thinking" tokens: faster, and no empty answers
 )
 #
 # Option 2: OpenRouter
-# model = ChatOpenRouter(
-#     model="meta/muse-spark-1.3-contributor",
-#     temperature=0
-# )
+# from langchain_openrouter import ChatOpenRouter
+# model = ChatOpenRouter(model="meta/muse-spark-1.3-contributor", temperature=0)
 
-# %% Step 2: Create safe, repeatable data for the agent to explore
-def seed_workspace() -> None:
-    """Reset only this tutorial's sample files before each run."""
-    # Recreate the data folder so reruns always start from a known state
-    data = WORKSPACE / "data"
-    data.mkdir(parents=True, exist_ok=True)
-    # Create initial sample files for the agent to interact with
-    (data / "fruits.txt").write_text("apple\nbanana\ncherry\n")
-    (data / "colors.txt").write_text("red\nblue\ngreen\n")
-    # Create a notes file for the agent to edit
-    (WORKSPACE / "notes.md").write_text("# Notes\n- status: draft\n")
-    # Ensure the veggies file is initially absent so the agent can create it
-    (data / "veggies.txt").unlink(missing_ok=True)
+# %% Step 2: A throwaway workspace the agent is allowed to change
+# Rebuilt on every run, so each take of the demo starts from the same files.
+WORKSPACE = Path(__file__).resolve().parent / "workspace"
+shutil.rmtree(WORKSPACE, ignore_errors=True)
+(WORKSPACE / "data").mkdir(parents=True)
+(WORKSPACE / "data" / "fruits.txt").write_text("apple\nbanana\ncherry\n")
+(WORKSPACE / "data" / "colors.txt").write_text("red\nblue\ngreen\n")
+(WORKSPACE / "notes.md").write_text("# Notes\n- status: draft\n")
 
-
-################################ Agent Construction ################################
-# %% Step 3: Build an agent with every available harness tool
-def build_agent():
-    """LocalShellBackend adds execute; middleware adds write_todos."""
-    # Jail shell + filesystem access to the workspace and cap runaway commands
-    backend = LocalShellBackend(root_dir=str(WORKSPACE.resolve()), timeout=30)
-    return create_deep_agent(
-        model=model,
-        backend=backend,
-        middleware=[TodoListMiddleware()],  # Opt in to the write_todos planning tool
-        # Force explicit tool usage so the demo can prove each tool works
-        system_prompt="""You are demonstrating Deep Agents tools in a throwaway workspace.
-            For every requested operation, call the named tool exactly; never replace a filesystem 
-            operation with execute.Use relative paths. Keep final answers brief. workspace 
-            path is: ./ all file operations should be relative
-            to this path.""",
-    )
-
-
-############################ Prompt Script & Tool Tracking ###########################
-# %% Step 4: Short prompts that explicitly cover every tool
-# Each prompt names the tools it should trigger, spreading coverage across turns
-PROMPTS = [
-    (  # tools: ls, read_file, write_todos
-        "1. Use write_todos to plan these two items, then use ls on data and "
-        "read_file on data/fruits.txt and tell me what fruits are listed."
+# %% Step 3: Build an agent that has EVERY built-in tool
+# Free with any deep agent:  ls, read_file, write_file, edit_file, delete, glob, grep, task
+# Added by the backend:      execute      (LocalShellBackend can run a shell — ep. 07)
+# Added by the middleware:   write_todos  (planning is opt-in in 0.7 — ep. 04)
+agent = create_deep_agent(
+    model=model,
+    backend=LocalShellBackend(root_dir=str(WORKSPACE), timeout=30),
+    middleware=[TodoListMiddleware()],
+    system_prompt=(
+        "You are demonstrating your built-in tools. Call each tool the user names, "
+        "in the order given, one at a time. Reply with one short sentence."
     ),
-    (  # tools: edit_file, write_file
-        "2. Use write_file to create data/veggies.txt containing carrot, pepper, and basil on "
-        "separate lines. Then use edit_file to change 'draft' to 'final' in notes.md."
+)
+
+# %% Step 4: Four prompts, one tool family each
+# Naming the tool in the prompt keeps a small model on script. File tools take
+# paths from the workspace root (/data/...); the shell runs inside the workspace.
+PROMPTS = {
+    "Explore": (
+        "Use ls on /data. Use read_file on /data/fruits.txt. Use glob with pattern "
+        "**/*.txt. Use grep to search for 'blue'."
     ),
-    (  # tools: glob, grep, execute
-        "3. Use glob to find every .txt file. Use grep to find the file containing 'blue'. "
-        "Use execute to run exactly: wc -l data/*.txt"
+    "Change": (
+        "Use write_file to create /data/veggies.txt containing carrot and pepper on "
+        "separate lines. Then use edit_file on /notes.md to replace 'draft' with 'final'."
     ),
-    (  # tools: task, delete, write_todos
-        "4. Use task to delegate counting all lines in data/*.txt to a subagent."
-        "Then use the delete tool to remove data/veggies.txt, complete the "
-        "todos, and summarize the results."
-    ),  # delete
-    ("5. use delete tool to remove a file from the workspace and tell me the file you removed"),
-    (
-        "6. List all built-in tools available to you in deepagents with a brief description of "
-        "each, and write each tool's name and description to a markdown file named tools.md  "
-        "or edit_file tool. in the workspace directory using the write_file"
+    "Run": (
+        "Use execute to run exactly: wc -l data/fruits.txt"
+        " Then use the delete tool to remove /data/veggies.txt."
     ),
-]
+    "Plan and delegate": (
+        "Use write_todos to plan two steps. Then call the task tool so that a subagent "
+        "reads /data/colors.txt and lists the colors."
+    ),
+}
 
+BUILT_INS = ["ls", "read_file", "glob", "grep", "write_file", "edit_file", "execute",
+             "delete", "write_todos", "task"]
+called = []
 
-def tool_names(messages: list) -> set[str]:
-    """Collect tool names from the agent's LangChain messages."""
-    # Flatten tool_calls across all messages; plain text messages simply contribute nothing
-    tool_names = set()
-    # Iterate over all messages and collect the names of tools that were called
-    for message in messages:
-        # Skip messages with no tool calls (i.e., "tool_calls" attribute is missing or empty)
-        for call in getattr(message, "tool_calls", []) or []:
-            tool_names.add(call["name"])
-    # Return the collected set of tool names
-    return tool_names
+for title, prompt in PROMPTS.items():
+    result = agent.invoke({"messages": [{"role": "user", "content": prompt}]})
+    # Every tool call is recorded on the AI messages in the returned state.
+    tools = [c["name"] for m in result["messages"] for c in getattr(m, "tool_calls", None) or []]
+    called += tools
+    print(f"\n[bold magenta]{title}[/bold magenta]  [dim]{prompt}[/dim]")
+    print(f"  tools:  [green]{', '.join(tools) or 'none'}[/green]")
+    print(f"  answer: {result['messages'][-1].text.strip()[:160]}")
 
+# %% Step 5: The scorecard — which built-in tools actually fired?
+print("\n[bold cyan]Built-in tool coverage[/bold cyan]")
+for name in BUILT_INS:
+    print(f"  {name:11} {'[green]yes[/green]' if name in called else '[red]no[/red]'}")
+print(f"\n[bold]{len(set(called) & set(BUILT_INS))}/{len(BUILT_INS)} tools used[/bold]")
 
-############################ Conversation Loop & Coverage Report ###########################
-# %% Step 5: Run the guided conversation and report actual coverage
-def main() -> None:
-    """Invoke each prompt, preserving messages so the agent can continue its plan."""
-    start = time.time()  # Track wall-clock cost of the whole multi-turn run
-    seed_workspace()
-    # Initialize the agent, message history, and set of called tools
-    agent, messages, called = build_agent(), [], set()
-    print(f"[dim]model: {MODEL}  workspace: {WORKSPACE}[/dim]")
-
-    # Replay the full history each turn so the agent keeps its todo list context
-    for turn, prompt in enumerate(PROMPTS, start=1):
-        print(f"\n[bold magenta]--- Turn {turn} ---[/bold magenta]")
-        print(f"Prompt: {prompt}")
-        # Invoke the agent with the current prompt and the accumulated message history
-        result = agent.invoke({"messages": messages + [{"role": "user", "content": prompt}]})
-        # print("Got results finding new tool calls...")
-        # Update the message history and determine which tools were newly called this turn
-        messages = result["messages"]
-        tools_used = tool_names(messages)
-        # Determine which tools were newly called this turn
-        new_calls = tools_used - called  # Report only tools first seen this turn
-
-        called.update(new_calls)  # Accumulate coverage across every turn
-        print("\nTools Used:", ", ".join(sorted(tools_used)) or "none")
-        print("\nAnswer: \n")
-        # print(messages[-1].content)  # Show only the agent's latest reply
-        print(messages[-1])
-
-    # Score the run against the expected built-in tool list
-    print("\n[bold cyan]Built-in tool coverage[/bold cyan]")
-    for name in BUILT_INS:
-        # Check if the current built-in tool was called during the conversation
-        marker = "[green]yes[/green]" if name in called else "[red]no[/red]"
-        print(f"  {name:11} {marker}")  # Pad names so the yes/no column lines up
-    # print(f"\n[bold green]Final answer:[/bold green] {messages[-1].text}")
-    end = time.time()
-    print(f"\n[bold yellow]Total execution time: {end - start:.2f} seconds[/bold yellow]")
-
-if __name__ == "__main__":
-    main()
+# %% Step 6: Proof on disk — the agent's edits are real files
+print(f"\n[bold cyan]notes.md after the run:[/bold cyan]\n{(WORKSPACE / 'notes.md').read_text()}")

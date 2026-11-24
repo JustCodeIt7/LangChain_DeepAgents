@@ -5,7 +5,7 @@
 - That gives the agent a `write_todos` tool for multi-step work
 - Watch the plan evolve live with `stream(stream_mode="updates")`
 
-Run:  python 04-planning_todos.py
+Run:  python 04.2-planning_todos.py
 """
 
 # %% Step 1: Imports and setup
@@ -17,7 +17,7 @@ from langchain.agents.middleware import TodoListMiddleware  # supplies write_tod
 from rich import print
 
 from langchain_ollama import ChatOllama
-from langchain_openrouter import ChatOpenRouter
+
 load_dotenv()
 
 
@@ -27,14 +27,14 @@ load_dotenv()
 # Make sure Ollama is running and you have pulled the model (e.g., ollama pull qwen3.5:2b)
 model = ChatOllama(
     model=os.getenv("OLLAMA_MODEL", "qwen3.5:2b"),
-    base_url=os.getenv("OLLAMA_BASE_URL", "http://localhost:11434")
+    base_url=os.getenv("OLLAMA_BASE_URL", "http://localhost:11434"),
+    temperature=0,  # repeatable output: the run you rehearse is the run you record
+    reasoning=False,  # skip hidden "thinking" tokens: faster, and no empty answers
 )
 #
 # Option 2: OpenRouter
-# model = ChatOpenRouter(
-#     model="meta/muse-spark-1.3-contributor",
-#     temperature=0
-# )
+# from langchain_openrouter import ChatOpenRouter
+# model = ChatOpenRouter(model="meta/muse-spark-1.3-contributor", temperature=0)
 
 # %% Step 2: Opt in to planning
 # Without this middleware there is no write_todos tool at all. (In deepagents
@@ -44,8 +44,8 @@ agent = create_deep_agent(
     middleware=[TodoListMiddleware()],
     system_prompt=(
         "You are a careful planner. For any multi-step request, FIRST call "
-        "write_todos to lay out the steps, update it as you go, then give the "
-        "final answer in a separate message."
+        "write_todos to list the steps, mark each one completed with write_todos "
+        "as you finish it, then give the final answer. Use no other tools."
     ),
 )
 
@@ -53,7 +53,7 @@ agent = create_deep_agent(
 # Three distinct steps is the sweet spot — enough to justify planning,
 # small enough to stay fast.
 task = (
-    "plan and Do these three things: 1) compute 12 * 12, 2) reverse the word 'agents', "
+    "Do these three things: 1) compute 12 * 12, 2) reverse the word 'agents', "
     "3) give me both results in one final sentence."
 )
 
@@ -94,4 +94,3 @@ for index, snapshot in enumerate(todo_snapshots, start=1):
 if not todo_snapshots:
     print("  [yellow]The model answered without planning — try a longer task.[/yellow]")
 
-# %%

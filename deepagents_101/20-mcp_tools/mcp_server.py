@@ -6,7 +6,7 @@ yourself. Any MCP client (Claude Desktop, an IDE, another agent) could use it to
 
 from mcp.server.fastmcp import FastMCP
 
-mcp = FastMCP("inventory")
+mcp = FastMCP("inventory", log_level="WARNING")  # keep request logs off the console
 
 
 @mcp.tool()

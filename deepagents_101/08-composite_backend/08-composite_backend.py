@@ -8,6 +8,7 @@
 Run:  python 08-composite_backend.py
 """
 
+# %% Step 1: Imports and setup
 import os
 import shutil
 from pathlib import Path
@@ -18,7 +19,7 @@ from dotenv import load_dotenv
 from rich import print
 
 from langchain_ollama import ChatOllama
-from langchain_openrouter import ChatOpenRouter
+
 load_dotenv()
 
 
@@ -28,14 +29,14 @@ load_dotenv()
 # Make sure Ollama is running and you have pulled the model (e.g., ollama pull qwen3.5:2b)
 model = ChatOllama(
     model=os.getenv("OLLAMA_MODEL", "qwen3.5:2b"),
-    base_url=os.getenv("OLLAMA_BASE_URL", "http://localhost:11434")
+    base_url=os.getenv("OLLAMA_BASE_URL", "http://localhost:11434"),
+    temperature=0,  # repeatable output: the run you rehearse is the run you record
+    reasoning=False,  # skip hidden "thinking" tokens: faster, and no empty answers
 )
 #
 # Option 2: OpenRouter
-# model = ChatOpenRouter(
-#     model="meta/muse-spark-1.3-contributor",
-#     temperature=0
-# )
+# from langchain_openrouter import ChatOpenRouter
+# model = ChatOpenRouter(model="meta/muse-spark-1.3-contributor", temperature=0)
 
 def text_of(message) -> str:
     """Normalize message content across providers (str vs content blocks)."""
@@ -103,4 +104,3 @@ on_disk = disk_file.read_text() if disk_file.exists() else "(missing)"
 print("\n[bold cyan]Real side — ./workspace on disk:[/bold cyan]")
 print(f"  {disk_file.name}: [yellow]{on_disk}[/yellow]")
 
-# %%

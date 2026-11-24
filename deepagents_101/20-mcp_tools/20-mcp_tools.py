@@ -21,7 +21,7 @@ from langchain_mcp_adapters.client import MultiServerMCPClient
 from rich import print
 
 from langchain_ollama import ChatOllama
-from langchain_openrouter import ChatOpenRouter
+
 load_dotenv()
 
 
@@ -31,14 +31,14 @@ load_dotenv()
 # Make sure Ollama is running and you have pulled the model (e.g., ollama pull qwen3.5:2b)
 model = ChatOllama(
     model=os.getenv("OLLAMA_MODEL", "qwen3.5:2b"),
-    base_url=os.getenv("OLLAMA_BASE_URL", "http://localhost:11434")
+    base_url=os.getenv("OLLAMA_BASE_URL", "http://localhost:11434"),
+    temperature=0,  # repeatable output: the run you rehearse is the run you record
+    reasoning=False,  # skip hidden "thinking" tokens: faster, and no empty answers
 )
 #
 # Option 2: OpenRouter
-# model = ChatOpenRouter(
-#     model="meta/muse-spark-1.3-contributor",
-#     temperature=0
-# )
+# from langchain_openrouter import ChatOpenRouter
+# model = ChatOpenRouter(model="meta/muse-spark-1.3-contributor", temperature=0)
 
 # %% Step 2: Point at the MCP server
 # mcp_server.py sits next to this file and exposes one tool: check_stock.
@@ -84,13 +84,13 @@ async def main() -> None:
         model=model,
         tools=tools,
         system_prompt=(
-            "You are an inventory assistant. Use the check_stock tool to answer "
-            "stock questions. Report the numbers plainly."
+            "You are an inventory assistant. Call check_stock once for each product "
+            "the user names, then report the numbers in one sentence."
         ),
     )
 
     # %% Step 5: Await the run (ainvoke, not invoke)
-    question = "Do we have any widgets and gizmos in stock?"
+    question = "How many widgets and how many gizmos are in stock?"
     result = await agent.ainvoke({"messages": [{"role": "user", "content": question}]})
 
     print("\n[bold cyan]MCP tool calls:[/bold cyan]")
@@ -104,4 +104,3 @@ async def main() -> None:
 # %% Step 6: Drive the event loop
 asyncio.run(main())
 
-# %%

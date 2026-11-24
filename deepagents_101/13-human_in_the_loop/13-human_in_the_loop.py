@@ -19,7 +19,7 @@ from langgraph.types import Command  # carries the human's decision back in
 from rich import print
 
 from langchain_ollama import ChatOllama
-from langchain_openrouter import ChatOpenRouter
+
 load_dotenv()
 
 
@@ -29,14 +29,14 @@ load_dotenv()
 # Make sure Ollama is running and you have pulled the model (e.g., ollama pull qwen3.5:2b)
 model = ChatOllama(
     model=os.getenv("OLLAMA_MODEL", "qwen3.5:2b"),
-    base_url=os.getenv("OLLAMA_BASE_URL", "http://localhost:11434")
+    base_url=os.getenv("OLLAMA_BASE_URL", "http://localhost:11434"),
+    temperature=0,  # repeatable output: the run you rehearse is the run you record
+    reasoning=False,  # skip hidden "thinking" tokens: faster, and no empty answers
 )
 #
 # Option 2: OpenRouter
-# model = ChatOpenRouter(
-#     model="meta/muse-spark-1.3-contributor",
-#     temperature=0
-# )
+# from langchain_openrouter import ChatOpenRouter
+# model = ChatOpenRouter(model="meta/muse-spark-1.3-contributor", temperature=0)
 
 def text_of(message) -> str:
     """Normalize message content across providers (str vs content blocks)."""
@@ -102,7 +102,7 @@ run_with_decision({"type": "approve"}, thread_id="approve-run")
 # %% Step 6: Reject — the tool is skipped and your message goes back to the model
 print("[bold cyan]2. REJECT[/bold cyan]")
 run_with_decision(
-    {"type": "reject", "message": "Do not email anyone. Draft it for me instead."},
+    {"type": "reject", "message": "Do not send this email. Just confirm that nothing was sent."},
     thread_id="reject-run",
 )
 
@@ -118,4 +118,3 @@ run_with_decision(
 #              {"type": "respond", "message": "Already sent it myself."}
 print("[dim]See Step 7 in the source for the 'edit' and 'respond' payloads.[/dim]")
 
-# %%

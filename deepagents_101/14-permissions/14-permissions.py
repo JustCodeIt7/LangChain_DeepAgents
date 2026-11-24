@@ -18,7 +18,7 @@ from dotenv import load_dotenv
 from rich import print
 
 from langchain_ollama import ChatOllama
-from langchain_openrouter import ChatOpenRouter
+
 load_dotenv()
 
 
@@ -28,14 +28,14 @@ load_dotenv()
 # Make sure Ollama is running and you have pulled the model (e.g., ollama pull qwen3.5:2b)
 model = ChatOllama(
     model=os.getenv("OLLAMA_MODEL", "qwen3.5:2b"),
-    base_url=os.getenv("OLLAMA_BASE_URL", "http://localhost:11434")
+    base_url=os.getenv("OLLAMA_BASE_URL", "http://localhost:11434"),
+    temperature=0,  # repeatable output: the run you rehearse is the run you record
+    reasoning=False,  # skip hidden "thinking" tokens: faster, and no empty answers
 )
 #
 # Option 2: OpenRouter
-# model = ChatOpenRouter(
-#     model="meta/muse-spark-1.3-contributor",
-#     temperature=0
-# )
+# from langchain_openrouter import ChatOpenRouter
+# model = ChatOpenRouter(model="meta/muse-spark-1.3-contributor", temperature=0)
 
 def text_of(message) -> str:
     """Normalize message content across providers (str vs content blocks)."""
@@ -70,7 +70,10 @@ agent = create_deep_agent(
     model=model,
     backend=StateBackend(),
     permissions=permissions,
-    system_prompt="You are a file assistant. Attempt what is asked; report failures plainly.",
+    system_prompt=(
+        "You are a file assistant. Attempt what is asked exactly once. If a tool "
+        "returns an error, do not retry; report the error in one sentence."
+    ),
 )
 
 
@@ -108,4 +111,3 @@ print(f"  [bold green]Agent says:[/bold green] {text_of(allowed['messages'][-1])
 # paths that are risky but sometimes legitimate.
 print("\n[dim]Tip: mode='interrupt' asks a human instead of deciding (see ep. 13).[/dim]")
 
-# %%

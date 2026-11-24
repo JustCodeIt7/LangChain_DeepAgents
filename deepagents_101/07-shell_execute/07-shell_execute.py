@@ -18,7 +18,7 @@ from dotenv import load_dotenv
 from rich import print
 
 from langchain_ollama import ChatOllama
-from langchain_openrouter import ChatOpenRouter
+
 load_dotenv()
 
 
@@ -28,14 +28,14 @@ load_dotenv()
 # Make sure Ollama is running and you have pulled the model (e.g., ollama pull qwen3.5:2b)
 model = ChatOllama(
     model=os.getenv("OLLAMA_MODEL", "qwen3.5:2b"),
-    base_url=os.getenv("OLLAMA_BASE_URL", "http://localhost:11434")
+    base_url=os.getenv("OLLAMA_BASE_URL", "http://localhost:11434"),
+    temperature=0,  # repeatable output: the run you rehearse is the run you record
+    reasoning=False,  # skip hidden "thinking" tokens: faster, and no empty answers
 )
 #
 # Option 2: OpenRouter
-# model = ChatOpenRouter(
-#     model="meta/muse-spark-1.3-contributor",
-#     temperature=0
-# )
+# from langchain_openrouter import ChatOpenRouter
+# model = ChatOpenRouter(model="meta/muse-spark-1.3-contributor", temperature=0)
 
 def text_of(message) -> str:
     """Normalize message content across providers (str vs content blocks)."""
@@ -46,23 +46,16 @@ def text_of(message) -> str:
 
 
 # %% Step 2: Why the default backend cannot run commands
-# The `execute` tool is only attached when the backend can actually run a
-# shell. On the default StateBackend (a virtual filesystem) the tool is not
-# offered to the model at all — a safe default. Let's confirm that.
+# `execute` is only offered to the model when the backend can actually run a
+# shell. On the default StateBackend (a virtual filesystem) it is hidden, and a
+# call to it anyway just returns an error — a safe default. Let's confirm that.
 virtual_agent = create_deep_agent(model=model, backend=StateBackend())
 denied = virtual_agent.invoke(
     {"messages": [{"role": "user", "content": "Use the execute tool to run: echo hi"}]}
 )
-attempted = [
-    call
-    for message in denied["messages"]
-    for call in (getattr(message, "tool_calls", []) or [])
-    if call["name"] == "execute"
-]
 
 print("[bold cyan]1. StateBackend (virtual, no shell):[/bold cyan]")
-print(f"  execute tool calls: [red]{len(attempted)}[/red]")
-print(f"  agent: [dim]{text_of(denied['messages'][-1]).strip()[:100]}...[/dim]")
+print(f"  agent: [dim]{text_of(denied['messages'][-1]).strip()[:110]}...[/dim]")
 
 # %% Step 3: Prepare a scratch workspace
 WORKSPACE = Path(__file__).resolve().parent / "workspace"
@@ -106,4 +99,3 @@ created = WORKSPACE / "greeting.txt"
 print("\n[bold cyan]greeting.txt on disk:[/bold cyan]")
 print(f"[yellow]{created.read_text() if created.exists() else '(not created)'}[/yellow]")
 
-# %%

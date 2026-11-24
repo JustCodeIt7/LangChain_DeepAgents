@@ -15,11 +15,10 @@ import os
 
 from deepagents import create_deep_agent
 from dotenv import load_dotenv
-from langchain.chat_models import init_chat_model  # builds a model from a string spec
 from rich import print
 
 from langchain_ollama import ChatOllama
-from langchain_openrouter import ChatOpenRouter
+
 # Pull provider credentials / model overrides from a local .env file
 load_dotenv()
 
@@ -30,16 +29,15 @@ load_dotenv()
 # Make sure Ollama is running and you have pulled the model (e.g., ollama pull qwen3.5:2b)
 model = ChatOllama(
     model=os.getenv("OLLAMA_MODEL", "qwen3.5:2b"),
-    base_url=os.getenv("OLLAMA_BASE_URL", "http://localhost:11434")
+    base_url=os.getenv("OLLAMA_BASE_URL", "http://localhost:11434"),
+    temperature=0,  # repeatable output: the run you rehearse is the run you record
+    reasoning=False,  # skip hidden "thinking" tokens: faster, and no empty answers
 )
 #
 # Option 2: OpenRouter
-# model = ChatOpenRouter(
-#     model="meta/muse-spark-1.3-contributor",
-#     temperature=0
-# )
+# from langchain_openrouter import ChatOpenRouter
+# model = ChatOpenRouter(model="meta/muse-spark-1.3-contributor", temperature=0)
 
-# %%
 ################################ Helper: Ask an Agent ################################
 
 def ask(agent, question: str) -> str:
@@ -58,20 +56,22 @@ QUESTION = "In one short sentence, what is LangChain? Do not use tools."
 
 # deepagents hands the string to init_chat_model, so any provider LangChain
 # supports works: "ollama:...", "openai:...", "anthropic:...", "google_genai:..."
-string_agent = create_deep_agent(model=model)
+# Zero config — but a string cannot carry settings such as base_url or temperature.
+MODEL_STRING = os.getenv("DEEPAGENTS_MODEL", "ollama:qwen3.5:2b")
+string_agent = create_deep_agent(model=MODEL_STRING)
 print("[bold cyan]A. model as a string[/bold cyan]")
-print(f"spec: [yellow]{MODEL}[/yellow]")
-print(f"{ask(string_agent, QUESTION)}\n")
+print(f"  spec: [yellow]{MODEL_STRING}[/yellow]")
+print(f"  {ask(string_agent, QUESTION)}\n")
 
 # %% Step 3: Option B — pass a pre-built model instance
 ################################ B. Model as an Instance ################################
 
 # Build the model yourself when you need to tune parameters (temperature,
 # max_tokens, timeouts, base_url...). deepagents uses the instance as-is.
-llm = init_chat_model(MODEL, temperature=0)  # temperature=0 for deterministic output
-instance_agent = create_deep_agent(model=llm)
+# The `model` from Step 1 is exactly this: a ChatOllama pointed at a base_url.
+instance_agent = create_deep_agent(model=model)
 print("[bold cyan]B. model as an instance[/bold cyan]")
-print(f"  class: [yellow]{type(llm).__name__}[/yellow] (temperature=0)")
+print(f"  class: [yellow]{type(model).__name__}[/yellow] (model={model.model})")
 print(f"  {ask(instance_agent, QUESTION)}\n")
 
 # %% Step 4: The system prompt steers behavior
@@ -82,7 +82,12 @@ print(f"  {ask(instance_agent, QUESTION)}\n")
 # That is why the agent still knows how to use write_file, task, etc.
 pirate_agent = create_deep_agent(
     model=model,
-    system_prompt="You are a pirate. Answer every question in pirate speak, briefly.",  # Persona layered on top of built-in instructions
+    # Persona layered on top of the built-in instructions. Be concrete: small
+    # models follow "start with Arrr" far better than a vague "talk like a pirate".
+    system_prompt=(
+        "You are a pirate. Always answer in pirate speak: start with 'Arrr' and "
+        "call the user 'matey'. One sentence only."
+    ),
 )
 print("[bold cyan]C. custom system_prompt[/bold cyan]")
 print(f"  {ask(pirate_agent, QUESTION)}\n")
@@ -97,4 +102,3 @@ debug_agent = create_deep_agent(model=model, debug=True)  # Stream every LangGra
 answer = ask(debug_agent, "Say the word 'ready' and nothing else.")  # Minimal prompt keeps the trace readable
 print(f"\n[bold green]Final answer:[/bold green] {answer}")
 
-# %%
